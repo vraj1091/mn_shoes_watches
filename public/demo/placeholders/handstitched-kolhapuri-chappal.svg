@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+<rect width="1000" height="1000" fill="#F2F3F5"/>
+<g transform="translate(300 110) scale(2)" fill="none" stroke="#5D6570" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M72 24c-26 2-36 30-34 66 2 44 12 76 36 84 24 7 44-6 52-30 10-30 6-74-8-100-10-16-26-22-46-20z"/><path d="M42 70c26-10 64-10 90-2M40 104c30-8 64-8 92 0"/><path d="M84 30v18"/></g>
+<g font-family="'Segoe UI', Arial, Helvetica, sans-serif" font-size="64" font-weight="600" fill="#5D6570"><text x="500" y="720" text-anchor="middle">Handstitched</text><text x="500" y="798" text-anchor="middle">Kolhapuri chappal</text></g>
+</svg>

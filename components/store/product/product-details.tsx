@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { describeWaterResistance, formatNumberSpec, WRIST_WIDTH_MM } from "@/lib/catalog/specs";
 import { t } from "@/lib/i18n";
 import type { ProductPageData } from "@/lib/data/catalog";
@@ -152,16 +153,16 @@ export function ProductGallery({ title, images }: { title: string; images: Produ
   return (
     <ul className="-mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0">
       {images.map((image, i) => (
-        <li key={image.url} className={`w-[86vw] shrink-0 snap-center sm:w-auto ${i === 0 ? "sm:col-span-2" : ""}`}>
-          <img
+        <li key={image.url} className={`photo-tile relative aspect-square w-[86vw] shrink-0 snap-center overflow-hidden rounded-md sm:w-auto ${i === 0 ? "sm:col-span-2" : ""}`}>
+          <Image
             src={image.url}
             alt={image.alt}
-            width={image.width}
-            height={image.height}
-            loading={i === 0 ? "eager" : "lazy"}
-            fetchPriority={i === 0 ? "high" : undefined}
-            decoding="async"
-            className="aspect-[4/5] w-full rounded-md object-cover"
+            fill
+            sizes={i === 0 ? "(min-width: 1024px) 55vw, 90vw" : "(min-width: 1024px) 27vw, 90vw"}
+            preload={i === 0}
+            placeholder={image.blurDataUrl ? "blur" : "empty"}
+            blurDataURL={image.blurDataUrl ?? undefined}
+            className={image.url.endsWith(".svg") ? "object-cover mix-blend-normal" : "object-contain p-[4%]"}
           />
         </li>
       ))}

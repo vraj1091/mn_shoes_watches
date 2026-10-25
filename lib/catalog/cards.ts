@@ -8,6 +8,8 @@ export function toCardData(product: IndexedProduct, lowStockThreshold: number, n
     id: product.id,
     href: `/product/${product.slug}`,
     title: product.title,
+    brand: product.brand?.name ?? null,
+    badge: product.badges[0] ?? null,
     minPrice: product.minPrice,
     maxPrice: product.maxPrice,
     compareAtPrice: product.compareAtPrice,

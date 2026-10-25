@@ -183,7 +183,8 @@
     "saleTitle": "Sale",
     "saleIntro": "Everything currently reduced, with the original price shown next to the sale price. Prices include GST.",
     "saleEmpty": "Nothing is on sale right now. New offers appear here first.",
-    "anyPrice": "Any price"
+    "anyPrice": "Any price",
+    "rating": "Rated {rating} out of 5 from {count} reviews"
   },
   "product": {
     "inclTaxes": "incl. all taxes",

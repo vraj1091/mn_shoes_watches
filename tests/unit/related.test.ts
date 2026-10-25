@@ -38,6 +38,9 @@ const product = (id: string, categoryId: string, overrides: Partial<IndexedProdu
   tagSlugs: [],
   image: null,
   hoverImage: null,
+  brand: null,
+  badges: [],
+  isPlaceholderPhoto: false,
   ...overrides,
 });
 

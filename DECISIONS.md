@@ -317,3 +317,30 @@ filters, buttons and the whole admin are set in Hanken Grotesk, with tabular num
 Before, the panel used the page colour with a faint shadow, so in dark mode the category page underneath seemed to
 run into it. It now uses the raised token, a border and the overlay shadow, dims the page below, and closes on
 Escape, a click outside, the pointer leaving, and any route change (including back and forward).
+
+**47. Demo data comes from DummyJSON and is removable in one step.**
+`npm run seed` fetches five DummyJSON categories, downloads every photo into `public/demo/` (6 MB, committed, so
+the site never loads their CDN), converts prices with round(USD × 85 / 100) × 100 − 1 so they end in 99, and keeps
+a compare-at price only for discounts of 8% or more. Titles and descriptions are rewritten in plain copy; the API
+supplies only photos, prices, discounts and reviews. Generic DummyJSON brands are renamed (Heritage Time, Aurelle,
+Solaris). Categories without DummyJSON photos get two products each with a generated SVG placeholder (the photo
+tile colour, a line drawing and the name) marked `isPlaceholderPhoto`; the hand-written Oxford, Derby, Chelsea
+boot, Kolhapuri, Oud Noir, Mitti attar and belt from Phase 2 are reused there. Every demo record carries
+`isDemo`; `lib/demo/remove.ts` deletes exactly those (plus the older "sample" products) and is shared by the seed,
+which resets demo data on each run, and by the admin's "Remove all demo data" button. Store structure (categories,
+attributes, size charts, shipping zones, policy pages, settings) is not demo data and is kept. The API response is
+saved in `prisma/demo/dummyjson.json`, so the seed also works offline. Brands came back with this brief
+(it supersedes decision 36). Real brand names (Rolex, Chanel, Nike) are for local demonstration only and must be
+removed before the shop goes live; the admin shows a banner while demo data exists.
+
+**48. The Turbopack disk cache is off for `next dev`.**
+With Next.js 16.4.3 on Windows, restarting the dev server with the cache from the previous run made every page
+reload itself in a loop: the dev server told the browser that the page's entry chunk had changed. Clearing
+`.next/dev` fixed it only until the next restart. `experimental.turbopackFileSystemCacheForDev: false` fixes it
+for good, at the cost of a slower first compile after each start. Production builds keep their cache.
+
+**49. One totals function for the bag, checkout and demo orders.**
+`lib/commerce/totals.ts` works out subtotal, coupon discount (spread over lines in proportion to their value),
+free delivery above the threshold (₹1,999, after discount), the COD fee and GST, including 18% GST inside the
+delivery and COD charges. GST is taken out of GST-inclusive prices per line with the product's tax-class slab
+(`lib/commerce/gst.ts`). The demo orders are built with it, so their totals are exactly what checkout would charge.

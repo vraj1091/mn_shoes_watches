@@ -1,8 +1,7 @@
 /*
- * Seed catalogue: the category tree from the brief, attribute templates, starter tax classes,
- * a size chart, twelve sample products, search synonyms and sample collections. Everything here
- * is editable in the admin; sample products carry the tag "sample" so they are easy to remove.
- * The shop does not use brands (owner's choice, DECISIONS.md 36).
+ * Store structure: the category tree from the brief, attribute templates, starter tax classes, a
+ * size chart, search synonyms and collections. Everything here is editable in the admin and is
+ * kept when demo data is removed. Demo products, brands and orders live in prisma/demo.
  */
 
 export type TemplateCode = "shoes" | "watches" | "perfumes" | "accessories";
@@ -53,14 +52,24 @@ const COLOURS = [
   { value: "Natural tan", swatchHex: "#c08a55" },
   { value: "White and navy", swatchHex: "#e9e7e2" },
   { value: "Black and brown", swatchHex: "#2b2119" },
+  { value: "Red, white and black", swatchHex: "#b3202a" },
+  { value: "White and red", swatchHex: "#d8392f" },
+  { value: "White and green", swatchHex: "#2e6b4a" },
+  { value: "Multicolour", swatchHex: "#e2b33c" },
+  { value: "Gold", swatchHex: "#c9a54a" },
+  { value: "Silver", swatchHex: "#c7c9cc" },
+  { value: "Tortoiseshell", swatchHex: "#6b4226" },
+  { value: "Clear", swatchHex: "#e8ecef" },
 ];
 
-const UK_SIZES = [5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 12];
+export const UK_SIZES = [5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 12];
 
 const NOTES = [
   "Bergamot", "Lemon", "Pink pepper", "Cardamom", "Saffron", "Mint", "Green apple", "Lavender",
   "Rose", "Jasmine", "Orange blossom", "Oud", "Geranium", "Petrichor", "Leather", "Tobacco",
   "Sandalwood", "Vetiver", "Amber", "Musk", "Vanilla", "Patchouli", "Cedarwood", "Benzoin",
+  "Grapefruit", "Pear", "Melon", "Pineapple", "Mango", "Green tea", "Tuberose", "Orris", "Violet", "Tonka bean",
+  "Rangoon creeper", "Neroli", "Ginger",
 ];
 
 export const ATTRIBUTES: AttributeSeed[] = [
@@ -78,7 +87,7 @@ export const ATTRIBUTES: AttributeSeed[] = [
     code: "upper_material",
     name: "Upper material",
     type: "SELECT",
-    values: ["Full-grain leather", "Suede", "Patent leather", "Nubuck", "Canvas", "Knit mesh", "Synthetic leather", "Vegetable-tanned leather"],
+    values: ["Full-grain leather", "Suede", "Patent leather", "Nubuck", "Canvas", "Knit mesh", "Synthetic leather", "Vegetable-tanned leather", "Nylon and suede", "Embroidered leather"],
   },
   { code: "sole_material", name: "Sole material", type: "SELECT", values: ["Leather", "Rubber", "Crepe rubber", "TPR", "EVA", "PU"] },
   { code: "closure", name: "Closure", type: "SELECT", values: ["Lace-up", "Slip-on", "Buckle", "Elastic sides", "Hook and loop", "Toe loop"] },
@@ -111,13 +120,15 @@ export const ATTRIBUTES: AttributeSeed[] = [
       { value: "Green", swatchHex: "#2f4a3a" },
       { value: "Blush", swatchHex: "#e8c9bd" },
       { value: "Champagne", swatchHex: "#d9c7a0" },
+      { value: "Grey", swatchHex: "#6b6f75" },
+      { value: "Blue", swatchHex: "#2c4a7a" },
     ],
   },
   {
     code: "case_material",
     name: "Case material",
     type: "SELECT",
-    values: ["Stainless steel", "Rose-gold-tone steel", "Gold-tone steel", "Titanium", "Ceramic", "Brass", "Aluminium"],
+    values: ["Stainless steel", "Rose-gold-tone steel", "Gold-tone steel", "Titanium", "Ceramic", "Brass", "Aluminium", "18 ct rose gold", "Steel and 18 ct gold"],
   },
   {
     code: "strap_material",
@@ -138,6 +149,8 @@ export const ATTRIBUTES: AttributeSeed[] = [
       { value: "Steel", swatchHex: "#b9bcc0" },
       { value: "Rose gold", swatchHex: "#c99a86" },
       { value: "Navy", swatchHex: "#1f2a44" },
+      { value: "Two-tone", swatchHex: "#b9a77a" },
+      { value: "Gold", swatchHex: "#c9a54a" },
     ],
   },
   { code: "movement", name: "Movement", type: "SELECT", values: ["Quartz", "Automatic", "Hand-wound mechanical", "Solar quartz", "Smart"] },
@@ -155,7 +168,7 @@ export const ATTRIBUTES: AttributeSeed[] = [
     name: "Volume",
     type: "SELECT",
     isVariantAxis: true,
-    values: [6, 12, 30, 50, 100, 150, 200].map((ml) => ({ value: `${ml} ml`, sortKey: ml })),
+    values: [6, 12, 30, 50, 75, 100, 150, 200].map((ml) => ({ value: `${ml} ml`, sortKey: ml })),
   },
   {
     code: "concentration",
@@ -180,7 +193,20 @@ export const ATTRIBUTES: AttributeSeed[] = [
     code: "material",
     name: "Material",
     type: "SELECT",
-    values: ["Full-grain leather", "Genuine leather", "Canvas", "Cotton blend", "Acetate", "Metal", "Polycarbonate", "Cardboard"],
+    values: ["Full-grain leather", "Genuine leather", "Canvas", "Cotton blend", "Acetate", "Metal", "Polycarbonate", "Cardboard", "Cedar wood", "Wax and brushes"],
+  },
+  {
+    code: "frame_material",
+    name: "Frame",
+    type: "SELECT",
+    values: ["Acetate", "Acetate and metal", "Metal", "Polycarbonate"],
+  },
+  {
+    code: "lens",
+    name: "Lenses",
+    type: "SELECT",
+    helpText: "UV400 blocks UVA and UVB rays up to 400 nm.",
+    values: ["Tinted, UV400", "Gradient, UV400", "Polarised, UV400", "Clear, no UV filter", "Novelty print, not for driving"],
   },
   {
     code: "size",
@@ -190,6 +216,7 @@ export const ATTRIBUTES: AttributeSeed[] = [
     values: [
       ...["Free size", "S", "M", "L", "XL"].map((value, index) => ({ value, sortKey: index })),
       ...[30, 32, 34, 36, 38, 40, 42].map((waist) => ({ value: `${waist} in`, sortKey: 100 + waist })),
+      ...[18, 20, 22].map((lug) => ({ value: `${lug} mm`, sortKey: 200 + lug })),
     ],
   },
 ];
@@ -210,7 +237,7 @@ export const TEMPLATES: { code: TemplateCode; name: string; attributes: string[]
     name: "Perfumes",
     attributes: ["volume_ml", "concentration", "top_notes", "heart_notes", "base_notes", "longevity", "occasion"],
   },
-  { code: "accessories", name: "Accessories", attributes: ["material", "colour", "size"] },
+  { code: "accessories", name: "Accessories", attributes: ["material", "colour", "size", "frame_material", "lens"] },
 ];
 
 // ─── Categories ─────────────────────────────────────────────────────────────
@@ -407,7 +434,7 @@ export const CATEGORY_TREE: CategorySeed[] = [
     children: [
       { ...leaf("Belts", "belts"), taxClass: "Leather goods" },
       { ...leaf("Wallets", "wallets"), taxClass: "Leather goods" },
-      { ...leaf("Sunglasses", "sunglasses"), taxClass: "Sunglasses" },
+      { ...leaf("Sunglasses", "sunglasses"), taxClass: "Sunglasses", filters: ["frame_material", "lens", "colour"] },
       { ...leaf("Socks", "socks"), taxClass: "Socks" },
       { ...leaf("Shoe care", "shoe-care"), taxClass: "Shoe care" },
       { ...leaf("Watch straps", "watch-straps"), taxClass: "Watch straps" },
@@ -440,395 +467,9 @@ export const SHOE_SIZE_CHART = {
   ],
 };
 
-// ─── Products ───────────────────────────────────────────────────────────────
+// Products, brands and pairings are demo data: see prisma/demo/products.ts.
 
-export type ProductSeed = {
-  title: string;
-  slug: string;
-  template: TemplateCode;
-  categories: string[]; // category paths; the first is the primary category
-  gender: "MEN" | "WOMEN" | "UNISEX";
-  summary: string;
-  description: string[];
-  highlights: string[];
-  care?: string;
-  warranty?: string;
-  warrantyMonths?: number;
-  attributes: Record<string, string | string[] | number>;
-  // Variant axes in display order, e.g. [["colour", ["Black", "Brown"]], ["size_uk", ["UK 7", "UK 8"]]]
-  axes: [string, string[]][];
-  skuPrefix: string;
-  price: number | ((values: string[]) => number);
-  compareAtPrice?: number | ((values: string[]) => number);
-  weightGrams: number;
-  dimensionsCm: [number, number, number];
-};
-
-const sizes = (from: number, to: number) => UK_SIZES.filter((size) => size >= from && size <= to && Number.isInteger(size)).map((size) => `UK ${size}`);
-
-export const PRODUCTS: ProductSeed[] = [
-  {
-    title: "Kensington plain-toe Oxford",
-    slug: "kensington-plain-toe-oxford",
-    template: "shoes",
-    categories: ["mens-shoes/formal/oxfords"],
-    gender: "MEN",
-    summary: "The Kensington is a plain-toe Oxford: a formal lace-up shoe with closed lacing, cut from full-grain calf leather.",
-    description: [
-      "The Kensington is a plain-toe Oxford: a formal lace-up shoe with closed lacing, cut from full-grain calf leather. The lacing sits under the front of the shoe, which keeps the line clean and slim, so it looks right with a suit, a bandhgala or a sherwani.",
-      "It is lined in soft leather and built on a Goodyear-welted leather sole, stitched rather than glued, so a cobbler can resole it when the sole wears through. The heel has a rubber insert for grip on polished floors.",
-      "Fit: true to UK size on a slim to regular foot. If your feet are wide, choose the Hartley Derby instead.",
-    ],
-    highlights: ["Full-grain calf leather upper", "Leather lining", "Goodyear-welted, resoleable leather sole", "Rubber heel insert for grip"],
-    care: "Wipe with a dry cloth after wearing and use cedar shoe trees. Polish with a matching cream every few weeks. Let the shoes rest a day between wears.",
-    warranty: "6 months against manufacturing defects in stitching and sole bonding.",
-    warrantyMonths: 6,
-    attributes: {
-      upper_material: "Full-grain leather",
-      sole_material: "Leather",
-      closure: "Lace-up",
-      occasion: ["Formal", "Office", "Wedding"],
-      width: "Standard",
-      heel_height_cm: 2.5,
-    },
-    axes: [
-      ["colour", ["Black", "Brown"]],
-      ["size_uk", sizes(6, 11)],
-    ],
-    skuPrefix: "CF-KEN",
-    price: 4_499_00,
-    compareAtPrice: 5_499_00,
-    weightGrams: 1_150,
-    dimensionsCm: [33, 22, 12],
-  },
-  {
-    title: "Hartley leather Derby",
-    slug: "hartley-leather-derby",
-    template: "shoes",
-    categories: ["mens-shoes/formal/derbys", "mens-shoes/formal"],
-    gender: "MEN",
-    summary: "The Hartley is a Derby: a lace-up shoe with open lacing, which adjusts more than an Oxford and suits a wider foot.",
-    description: [
-      "The Hartley is a Derby: a lace-up shoe with open lacing, which adjusts more than an Oxford and suits a wider foot or a high instep. It is smart enough for the office and relaxed enough for chinos at the weekend.",
-      "The upper is full-grain leather with a softly rounded toe. A cushioned leather footbed and a stitched rubber sole make it comfortable for long days on your feet.",
-    ],
-    highlights: ["Open lacing for a wider foot", "Cushioned leather footbed", "Stitched rubber sole"],
-    care: "Brush off dust, then apply neutral cream polish. Keep away from direct sunlight to stop the tan leather fading unevenly.",
-    warranty: "6 months against manufacturing defects.",
-    warrantyMonths: 6,
-    attributes: {
-      upper_material: "Full-grain leather",
-      sole_material: "Rubber",
-      closure: "Lace-up",
-      occasion: ["Office", "Formal", "Casual"],
-      width: "Wide",
-      heel_height_cm: 2.5,
-    },
-    axes: [
-      ["colour", ["Tan", "Dark brown"]],
-      ["size_uk", sizes(6, 11)],
-    ],
-    skuPrefix: "CF-HAR",
-    price: 3_799_00,
-    weightGrams: 1_100,
-    dimensionsCm: [33, 22, 12],
-  },
-  {
-    title: "Mayfair suede Chelsea boot",
-    slug: "mayfair-suede-chelsea-boot",
-    template: "shoes",
-    categories: ["mens-shoes/boots/chelsea"],
-    gender: "MEN",
-    summary: "The Mayfair is a Chelsea boot: an ankle-high slip-on boot with elastic side panels and a pull tab at the back.",
-    description: [
-      "The Mayfair is a Chelsea boot: an ankle-high slip-on boot with elastic side panels and a pull tab at the back. No laces, so it goes on in seconds.",
-      "Made in soft suede on a lightweight crepe rubber sole that grips well and cushions each step. Wear it with dark jeans or slim chinos.",
-    ],
-    highlights: ["Suede upper", "Elastic side panels and heel pull tab", "Crepe rubber sole"],
-    care: "Brush suede with a suede brush when dry. Treat with a suede protector spray before the first wear. Do not use cream polish.",
-    warranty: "6 months against manufacturing defects.",
-    warrantyMonths: 6,
-    attributes: {
-      upper_material: "Suede",
-      sole_material: "Crepe rubber",
-      closure: "Elastic sides",
-      occasion: ["Casual", "Party", "Travel"],
-      width: "Standard",
-      heel_height_cm: 3,
-    },
-    axes: [
-      ["colour", ["Tan", "Black"]],
-      ["size_uk", sizes(6, 11)],
-    ],
-    skuPrefix: "CF-MAY",
-    price: 5_999_00,
-    compareAtPrice: 6_999_00,
-    weightGrams: 1_400,
-    dimensionsCm: [34, 24, 13],
-  },
-  {
-    title: "Court leather sneaker",
-    slug: "court-leather-sneaker",
-    template: "shoes",
-    categories: ["mens-shoes/casual/sneakers", "mens-shoes/casual"],
-    gender: "MEN",
-    summary: "The Court is a low-top leather sneaker with a stitched cupsole, plain enough to wear with jeans, chinos or a kurta.",
-    description: [
-      "The Court is a low-top leather sneaker with a stitched cupsole, plain enough to wear with jeans, chinos or a kurta. Smooth full-grain leather keeps its shape better than canvas and cleans with a damp cloth.",
-      "A removable cushioned insole and padded collar make it comfortable from the first wear.",
-    ],
-    highlights: ["Full-grain leather upper", "Stitched rubber cupsole", "Removable cushioned insole"],
-    care: "Wipe with a damp cloth and mild soap. Clean the sole edges with a soft brush. Air-dry away from heat.",
-    warranty: "3 months against manufacturing defects.",
-    warrantyMonths: 3,
-    attributes: {
-      upper_material: "Full-grain leather",
-      sole_material: "Rubber",
-      closure: "Lace-up",
-      occasion: ["Casual", "Travel", "Daily wear"],
-      width: "Standard",
-      heel_height_cm: 3,
-    },
-    axes: [
-      ["colour", ["White", "White and navy"]],
-      ["size_uk", sizes(6, 11)],
-    ],
-    skuPrefix: "CF-CRT",
-    price: 2_999_00,
-    compareAtPrice: 3_499_00,
-    weightGrams: 950,
-    dimensionsCm: [32, 21, 12],
-  },
-  {
-    title: "Handstitched Kolhapuri chappal",
-    slug: "handstitched-kolhapuri-chappal",
-    template: "shoes",
-    categories: ["mens-shoes/ethnic/kolhapuris", "mens-shoes/sandals-slides-flip-flops/sandals"],
-    gender: "MEN",
-    summary: "A Kolhapuri chappal is an open leather sandal hand-made in Maharashtra, with a plaited toe loop and stitched leather layers.",
-    description: [
-      "A Kolhapuri chappal is an open leather sandal hand-made in Maharashtra, with a plaited toe loop and stitched leather layers. This pair is cut from vegetable-tanned leather that darkens and softens with wear.",
-      "Expect it to feel stiff for the first few days. After that, the footbed takes the shape of your foot.",
-    ],
-    highlights: ["Vegetable-tanned leather", "Hand-plaited toe loop", "Stitched, layered leather sole"],
-    care: "Keep dry. If they get wet, dry them in the shade, not in the sun. Rub in a little coconut oil once a month to keep the leather supple.",
-    attributes: {
-      upper_material: "Vegetable-tanned leather",
-      sole_material: "Leather",
-      closure: "Toe loop",
-      occasion: ["Festive", "Casual", "Daily wear"],
-      width: "Standard",
-      heel_height_cm: 1.5,
-    },
-    axes: [
-      ["colour", ["Natural tan"]],
-      ["size_uk", sizes(6, 11)],
-    ],
-    skuPrefix: "CF-KOL",
-    price: 1_299_00,
-    weightGrams: 500,
-    dimensionsCm: [30, 15, 8],
-  },
-  {
-    title: "Harbour chronograph watch, 42 mm",
-    slug: "harbour-chronograph-watch-42mm",
-    template: "watches",
-    categories: ["watches/men/chronograph", "watches/men"],
-    gender: "MEN",
-    summary: "The Harbour is a 42 mm quartz chronograph: a watch with a built-in stopwatch, on a solid stainless steel bracelet.",
-    description: [
-      "The Harbour is a 42 mm quartz chronograph: a watch with a built-in stopwatch, on a solid stainless steel bracelet. Three sub-dials time up to 60 minutes to a twentieth of a second.",
-      "It is water-resistant to 100 m, which means you can swim and snorkel with it, though not dive. The sapphire-coated mineral glass resists everyday scratches, and the bracelet links can be removed at the shop for a free fit.",
-    ],
-    highlights: ["42 mm stainless steel case", "Quartz chronograph movement", "Water-resistant to 100 m: swimming and snorkelling", "Bracelet sized free at the shop"],
-    care: "Rinse with fresh water after swimming in the sea or a pool. Do not press the chronograph pushers under water. Battery change recommended every 2–3 years.",
-    warranty: "2 years against manufacturing defects in the movement.",
-    warrantyMonths: 24,
-    attributes: {
-      dial_size_mm: 42,
-      case_material: "Stainless steel",
-      strap_material: "Stainless steel bracelet",
-      strap_colour: "Steel",
-      movement: "Quartz",
-      display: "Analog",
-      water_resistance_m: 100,
-    },
-    axes: [["dial_colour", ["Navy", "Black"]]],
-    skuPrefix: "NG-HBR42",
-    price: 8_995_00,
-    compareAtPrice: 10_995_00,
-    weightGrams: 450,
-    dimensionsCm: [12, 10, 8],
-  },
-  {
-    title: "Field automatic watch, 40 mm",
-    slug: "field-automatic-watch-40mm",
-    template: "watches",
-    categories: ["watches/men/automatic", "watches/men"],
-    gender: "MEN",
-    summary: "The Field is a 40 mm automatic watch: a mechanical watch that winds itself from the movement of your wrist, with no battery.",
-    description: [
-      "The Field is a 40 mm automatic watch: a mechanical watch that winds itself from the movement of your wrist, with no battery. Through the exhibition case back you can see the rotor turn as you move.",
-      "Its matte dial with large numerals reads clearly at a glance. It runs for about 40 hours once fully wound, and keeps time within a few seconds a day, which is normal for an automatic.",
-      "Water-resistant to 50 m: safe for hand washing and rain, and brief swimming, but take it off for long swims.",
-    ],
-    highlights: ["Self-winding automatic movement, about 40 hours' reserve", "Exhibition case back", "Water-resistant to 50 m", "Genuine leather strap, 20 mm lug width"],
-    care: "Wear it most days, or wind it with the crown, to keep it running. Keep it away from strong magnets such as speakers. Service every 4–5 years.",
-    warranty: "2 years against manufacturing defects in the movement.",
-    warrantyMonths: 24,
-    attributes: {
-      dial_size_mm: 40,
-      dial_colour: "Green",
-      case_material: "Stainless steel",
-      strap_material: "Leather",
-      movement: "Automatic",
-      display: "Analog",
-      water_resistance_m: 50,
-    },
-    axes: [["strap_colour", ["Brown", "Black"]]],
-    skuPrefix: "NG-FLD40",
-    price: 14_500_00,
-    weightGrams: 400,
-    dimensionsCm: [12, 10, 8],
-  },
-  {
-    title: "Aria women's watch, 32 mm",
-    slug: "aria-womens-watch-32mm",
-    template: "watches",
-    categories: ["watches/women/analog", "watches/women"],
-    gender: "WOMEN",
-    summary: "The Aria is a 32 mm women's analog watch on a fine steel mesh bracelet that adjusts to any wrist without tools.",
-    description: [
-      "The Aria is a 32 mm women's analog watch on a fine steel mesh bracelet that adjusts to any wrist without tools: slide the clasp and press it shut.",
-      "A slim 7 mm case slips under a cuff, and the quartz movement keeps accurate time for about three years per battery. Water-resistant to 30 m, which means splash-proof: fine for hand washing, not for swimming.",
-    ],
-    highlights: ["Slim 32 mm case, 7 mm thick", "Adjustable steel mesh bracelet", "Water-resistant to 30 m: splash-proof, not for swimming"],
-    care: "Wipe the mesh with a soft dry cloth. Avoid perfume and lotion on the bracelet, which dull the finish.",
-    warranty: "1 year against manufacturing defects in the movement.",
-    warrantyMonths: 12,
-    attributes: {
-      dial_size_mm: 32,
-      case_material: "Rose-gold-tone steel",
-      strap_material: "Steel mesh",
-      strap_colour: "Rose gold",
-      movement: "Quartz",
-      display: "Analog",
-      water_resistance_m: 30,
-    },
-    axes: [["dial_colour", ["White", "Blush"]]],
-    skuPrefix: "NG-ARI32",
-    price: 5_495_00,
-    weightGrams: 300,
-    dimensionsCm: [12, 10, 8],
-  },
-  {
-    title: "Classic couple watch set, 40 mm and 30 mm",
-    slug: "classic-couple-watch-set",
-    template: "watches",
-    categories: ["watches/couple-sets"],
-    gender: "UNISEX",
-    summary: "A couple set is a matching pair of watches, one larger and one smaller; this one pairs a 40 mm and a 30 mm quartz watch.",
-    description: [
-      "A couple set is a matching pair of watches, one larger and one smaller; this one pairs a 40 mm and a 30 mm quartz watch with the same white dial and black leather straps.",
-      "It comes in a two-slot gift box, ready for an anniversary or a wedding. Both watches are water-resistant to 30 m: splash-proof, not for swimming.",
-    ],
-    highlights: ["Matching 40 mm and 30 mm watches", "Black leather straps", "Two-slot gift box"],
-    care: "Keep leather straps dry, and let them air out after a hot day. Battery change recommended every 2–3 years.",
-    warranty: "1 year against manufacturing defects in the movements.",
-    warrantyMonths: 12,
-    attributes: {
-      dial_size_mm: 40,
-      dial_colour: "White",
-      case_material: "Stainless steel",
-      strap_material: "Leather",
-      strap_colour: "Black",
-      movement: "Quartz",
-      display: "Analog",
-      water_resistance_m: 30,
-    },
-    axes: [],
-    skuPrefix: "NG-CPL",
-    price: 9_990_00,
-    weightGrams: 700,
-    dimensionsCm: [20, 14, 9],
-  },
-  {
-    title: "Oud Noir eau de parfum",
-    slug: "oud-noir-eau-de-parfum",
-    template: "perfumes",
-    categories: ["perfumes/eau-de-parfum", "perfumes/unisex"],
-    gender: "UNISEX",
-    summary: "Oud Noir is a warm, woody eau de parfum that opens with saffron and pink pepper and settles into oud, amber and sandalwood.",
-    description: [
-      "Oud Noir is a warm, woody eau de parfum that opens with saffron and pink pepper and settles into oud, amber and sandalwood. Rose sits in the heart and softens the oud, so it never smells smoky or sharp.",
-      "As an eau de parfum it lasts eight hours or more on the skin and stays close for the evening. Suited to weddings, festive evenings and cooler months.",
-    ],
-    highlights: ["Eau de parfum, very long-lasting (8+ hours)", "Notes of saffron, rose, oud and amber", "For men and women"],
-    care: "Store away from sunlight and heat, with the cap on. A perfume kept this way stays true for three years or more.",
-    attributes: {
-      concentration: "Eau de parfum",
-      top_notes: ["Saffron", "Pink pepper"],
-      heart_notes: ["Rose", "Oud"],
-      base_notes: ["Amber", "Sandalwood", "Musk"],
-      longevity: "Very long-lasting (8+ hours)",
-      occasion: ["Wedding", "Festive", "Party"],
-    },
-    axes: [["volume_ml", ["50 ml", "100 ml"]]],
-    skuPrefix: "SL-OUD",
-    price: (values) => (values[0] === "100 ml" ? 2_999_00 : 1_899_00),
-    weightGrams: 350,
-    dimensionsCm: [14, 8, 6],
-  },
-  {
-    title: "Mitti attar",
-    slug: "mitti-attar",
-    template: "perfumes",
-    categories: ["perfumes/attar", "perfumes/unisex"],
-    gender: "UNISEX",
-    summary: "Mitti attar is an alcohol-free perfume oil that smells of the first rain on dry earth, distilled from baked clay over a sandalwood base.",
-    description: [
-      "Mitti attar is an alcohol-free perfume oil that smells of the first rain on dry earth, distilled from baked clay over a sandalwood base. It is one of the oldest attars made in Kannauj.",
-      "One or two drops on the wrists or behind the ears last most of the day. Being free of alcohol, it does not sting and suits prayer and daily wear.",
-    ],
-    highlights: ["Alcohol-free perfume oil", "Petrichor and sandalwood", "Long-lasting from one or two drops"],
-    care: "Keep the bottle upright and tightly closed, away from sunlight. Attar oil can stain light fabric, so apply to skin, not clothes.",
-    attributes: {
-      concentration: "Attar",
-      top_notes: ["Petrichor"],
-      heart_notes: ["Vetiver"],
-      base_notes: ["Sandalwood"],
-      longevity: "Long-lasting (6–8 hours)",
-      occasion: ["Daily wear", "Festive"],
-    },
-    axes: [["volume_ml", ["6 ml", "12 ml"]]],
-    skuPrefix: "SL-MIT",
-    price: (values) => (values[0] === "12 ml" ? 1_399_00 : 799_00),
-    weightGrams: 120,
-    dimensionsCm: [8, 5, 5],
-  },
-  {
-    title: "Reversible leather belt",
-    slug: "reversible-leather-belt",
-    template: "accessories",
-    categories: ["accessories/belts"],
-    gender: "MEN",
-    summary: "A reversible belt has a different colour on each side and a buckle that turns, so one belt matches both black and brown shoes.",
-    description: [
-      "A reversible belt has a different colour on each side and a buckle that turns, so one belt matches both black and brown shoes. Twist the buckle a half-turn to switch.",
-      "Cut from a single strip of genuine leather, 35 mm wide, with a brushed steel buckle. Order your trouser waist size.",
-    ],
-    highlights: ["Black on one side, brown on the other", "Turning steel buckle", "35 mm wide, fits standard trouser loops"],
-    care: "Hang it up rather than rolling it tightly. Wipe with a dry cloth; condition the leather twice a year.",
-    warranty: "6 months against buckle and stitching defects.",
-    warrantyMonths: 6,
-    attributes: { material: "Genuine leather", colour: "Black and brown" },
-    axes: [["size", ["32 in", "34 in", "36 in", "38 in", "40 in"]]],
-    skuPrefix: "CF-BLT",
-    price: 1_499_00,
-    weightGrams: 300,
-    dimensionsCm: [20, 12, 5],
-  },
-];
+export const sizes = (from: number, to: number) => UK_SIZES.filter((size) => size >= from && size <= to && Number.isInteger(size)).map((size) => `UK ${size}`);
 
 // ─── Search synonyms ────────────────────────────────────────────────────────
 // One-way entries correct a common misspelling; two-way entries treat both words as the same.
@@ -854,15 +495,6 @@ export const SYNONYMS: { term: string; synonym: string; twoWay: boolean }[] = [
   { term: "trainers", synonym: "sneakers", twoWay: true },
   { term: "smartwatch", synonym: "smart watch", twoWay: true },
 ];
-
-// ─── "Complete the look" pairings (product slug → related product slugs) ────
-export const COMPLETE_THE_LOOK: Record<string, string[]> = {
-  "kensington-plain-toe-oxford": ["reversible-leather-belt", "field-automatic-watch-40mm"],
-  "hartley-leather-derby": ["reversible-leather-belt"],
-  "mayfair-suede-chelsea-boot": ["reversible-leather-belt", "oud-noir-eau-de-parfum"],
-  "harbour-chronograph-watch-42mm": ["court-leather-sneaker", "oud-noir-eau-de-parfum"],
-  "handstitched-kolhapuri-chappal": ["mitti-attar"],
-};
 
 // ─── Collections ────────────────────────────────────────────────────────────
 // Rule-based, so they stay correct as products change. A landingPath makes an indexable page

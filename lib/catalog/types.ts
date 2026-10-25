@@ -65,6 +65,10 @@ export type IndexedProduct = {
   availableAxisValueIds: string[];
   swatches: Swatch[];
   tagSlugs: string[];
+  brand: { id: string; name: string; slug: string } | null;
+  /** Owner-set labels such as "Bestseller" or "Limited stock", shown on cards. */
+  badges: string[];
+  isPlaceholderPhoto: boolean;
   image: CardImage | null;
   hoverImage: CardImage | null;
 };
@@ -81,6 +85,8 @@ export type ProductCardData = {
   id: string;
   href: string;
   title: string;
+  brand: string | null;
+  badge: string | null;
   minPrice: number;
   maxPrice: number;
   compareAtPrice: number | null;

@@ -11,4 +11,13 @@ export const tags = {
   products: "products",
   product: (slug: string) => `product:${slug}`,
   synonyms: "synonyms",
+  brands: "brands",
+  banners: "banners",
+  content: "content", // pages and Journal posts
+  reviews: "reviews",
+  discounts: "discounts",
+  shipping: "shipping",
 } as const;
+
+/** Every fixed tag, for "expire everything" after a demo reset or a bulk import. */
+export const ALL_TAGS: string[] = Object.values(tags).flatMap((tag) => (typeof tag === "string" ? [tag] : []));

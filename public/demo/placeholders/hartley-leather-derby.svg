@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+<rect width="1000" height="1000" fill="#F2F3F5"/>
+<g transform="translate(300 110) scale(2)" fill="none" stroke="#5D6570" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 128c0-16 10-24 32-27l40-6c14-14 30-24 52-20 26 5 40 22 42 46v7H18z"/><path d="M14 146h174"/><path d="M84 96l10 14M98 92l10 14M112 88l9 13"/><path d="M150 140v-12"/></g>
+<g font-family="'Segoe UI', Arial, Helvetica, sans-serif" font-size="64" font-weight="600" fill="#5D6570"><text x="500" y="720" text-anchor="middle">Hartley leather</text><text x="500" y="798" text-anchor="middle">Derby</text></g>
+</svg>

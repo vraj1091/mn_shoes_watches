@@ -53,6 +53,7 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Everything except Next.js assets, API routes and uploaded media, which answer their own 404s.
-  matcher: ["/((?!_next/|api/|media/).*)"],
+  // Everything except Next.js assets, API routes, uploaded media and the demo photos in public/demo,
+  // which answer their own 404s.
+  matcher: ["/((?!_next/|api/|media/|demo/).*)"],
 };

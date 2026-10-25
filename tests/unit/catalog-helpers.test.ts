@@ -29,6 +29,9 @@ const base: IndexedProduct = {
   tagSlugs: [],
   image: null,
   hoverImage: null,
+  brand: null,
+  badges: [],
+  isPlaceholderPhoto: false,
 };
 
 describe("collection rules", () => {

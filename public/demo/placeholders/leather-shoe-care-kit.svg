@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+<rect width="1000" height="1000" fill="#F2F3F5"/>
+<g transform="translate(300 110) scale(2)" fill="none" stroke="#5D6570" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="72" cy="130" rx="40" ry="14"/><path d="M32 130v16c0 8 18 14 40 14s40-6 40-14v-16"/><rect x="118" y="52" width="58" height="26" rx="6"/><path d="M124 78v20M136 78v20M148 78v20M160 78v20M170 78v20"/></g>
+<g font-family="'Segoe UI', Arial, Helvetica, sans-serif" font-size="64" font-weight="600" fill="#5D6570"><text x="500" y="720" text-anchor="middle">Leather shoe care</text><text x="500" y="798" text-anchor="middle">kit</text></g>
+</svg>

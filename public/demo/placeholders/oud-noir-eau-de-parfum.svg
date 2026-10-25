@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+<rect width="1000" height="1000" fill="#F2F3F5"/>
+<g transform="translate(300 110) scale(2)" fill="none" stroke="#5D6570" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="52" y="78" width="96" height="104" rx="12"/><rect x="84" y="60" width="32" height="18"/><rect x="76" y="30" width="48" height="30" rx="4"/><rect x="72" y="112" width="56" height="34" rx="2"/></g>
+<g font-family="'Segoe UI', Arial, Helvetica, sans-serif" font-size="64" font-weight="600" fill="#5D6570"><text x="500" y="720" text-anchor="middle">Oud Noir eau de</text><text x="500" y="798" text-anchor="middle">parfum, 100 ml</text></g>
+</svg>

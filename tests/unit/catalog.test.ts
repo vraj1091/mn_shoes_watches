@@ -1,15 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildSearchText, listingFields, slugify } from "@/lib/catalog/listing";
-import {
-  ATTRIBUTES,
-  CATEGORY_TREE,
-  COLLECTIONS,
-  COMPLETE_THE_LOOK,
-  PRODUCTS,
-  TAX_CLASSES,
-  TEMPLATES,
-  type CategorySeed,
-} from "@/prisma/seed/catalog";
+import { CATEGORY_TREE, COLLECTIONS, TAX_CLASSES, type CategorySeed } from "@/prisma/seed/catalog";
 
 describe("listing fields", () => {
   const variant = (price: number, compareAtPrice: number | null, stockOnHand: number, isActive = true) => ({
@@ -79,27 +70,6 @@ describe("seed catalogue", () => {
     }
   });
 
-  it("puts every sample product in existing categories with known attributes", () => {
-    const attributeCodes = new Set(ATTRIBUTES.map((attribute) => attribute.code));
-    expect(PRODUCTS).toHaveLength(12);
-    for (const product of PRODUCTS) {
-      for (const path of product.categories) expect(paths, product.title).toContain(path);
-      const template = TEMPLATES.find((item) => item.code === product.template)!;
-      for (const code of [...Object.keys(product.attributes), ...product.axes.map(([code]) => code)]) {
-        expect(attributeCodes.has(code), `${product.title}: ${code}`).toBe(true);
-        expect(template.attributes, `${product.title}: ${code}`).toContain(code);
-      }
-    }
-  });
-
-  it("pairs only products that exist", () => {
-    const slugs = new Set(PRODUCTS.map((product) => product.slug));
-    for (const [from, related] of Object.entries(COMPLETE_THE_LOOK)) {
-      expect(slugs.has(from), from).toBe(true);
-      for (const slug of related) expect(slugs.has(slug), slug).toBe(true);
-    }
-  });
-
   it("puts collection landing pages under an existing department", () => {
     const departments = new Set(CATEGORY_TREE.map((department) => department.slug));
     for (const collection of COLLECTIONS) {
@@ -109,7 +79,7 @@ describe("seed catalogue", () => {
 
   it("never writes banned marketing words", () => {
     const banned = /\b(elevate|unleash|seamless|revolutionise|game-changer)\b|discover the perfect|welcome to our store/i;
-    const copy = JSON.stringify({ CATEGORY_TREE, PRODUCTS, COLLECTIONS });
+    const copy = JSON.stringify({ CATEGORY_TREE, COLLECTIONS });
     expect(copy).not.toMatch(banned);
   });
 

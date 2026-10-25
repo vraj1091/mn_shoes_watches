@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import type { Suggestions } from "@/lib/search/types";
@@ -116,8 +117,8 @@ export function SearchBox({
           href: product.href,
           content: (
             <span className="flex items-center gap-3">
-              <span className="size-12 shrink-0 overflow-hidden rounded-sm bg-surface">
-                {product.image && <img src={product.image} alt="" width={48} height={48} className="size-full object-cover" />}
+              <span className="photo-tile relative size-12 shrink-0 overflow-hidden rounded-sm">
+                {product.image && <Image src={product.image} alt="" fill sizes="48px" className="object-contain p-1" />}
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-sm text-ink">{product.title}</span>

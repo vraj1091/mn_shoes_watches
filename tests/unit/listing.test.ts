@@ -85,6 +85,9 @@ const product = (overrides: Partial<IndexedProduct> & { id: string }): IndexedPr
   tagSlugs: [],
   image: null,
   hoverImage: null,
+  brand: null,
+  badges: [],
+  isPlaceholderPhoto: false,
   ...overrides,
 });
 

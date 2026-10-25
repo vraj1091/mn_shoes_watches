@@ -287,6 +287,7 @@ model Customer {
   firstOrderAt        DateTime?
   lastOrderAt         DateTime?
   anonymizedAt        DateTime? // set when a deletion request is completed
+  isDemo              Boolean   @default(false) // seeded demo record; removed by Settings → Remove demo data
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
@@ -570,6 +571,7 @@ model Brand {
   countryOfOrigin  String?
   website          String?
   isFeatured       Boolean  @default(false) // homepage brand strip
+  isDemo           Boolean  @default(false) // seeded demo record; removed by Settings → Remove demo data
   isActive         Boolean  @default(true)
   position         Int      @default(0)
   faqs             Json?
@@ -641,6 +643,10 @@ model Product {
   replacementProductId String? // an ARCHIVED product 301s here
   replacement          Product?           @relation("Replacement", fields: [replacementProductId], references: [id], onDelete: SetNull)
   isFeatured           Boolean            @default(false)
+  isDemo               Boolean            @default(false) // seeded demo record; removed by Settings → Remove demo data
+  isPlaceholderPhoto   Boolean            @default(false) // generated SVG instead of a real photo; the admin asks for one
+  videoUrl             String? // YouTube or Vimeo link shown in the gallery
+  badges               Json? // ["Bestseller", "Limited edition"], shown on cards and the product page
   faqs                 Json?
 
   // Kept in sync from variants and orders so listing, sorting and filtering stay single-table
@@ -854,6 +860,7 @@ model Media {
   renditions   Json? // generated at upload: [{ width, format: "avif" | "webp", key, bytes }]
   checksum     String? // SHA-256, flags duplicate uploads
   originalName String?
+  isDemo       Boolean        @default(false) // seeded demo record; removed by Settings → Remove demo data
   posterId     String? // videos must have one
   poster       Media?         @relation("VideoPoster", fields: [posterId], references: [id], onDelete: SetNull)
   uploadedById String?
@@ -1154,6 +1161,7 @@ model Order {
   ipAddress           String?
   userAgent           String?
   attribution         Json? // utm_* and referrer, only for shoppers who consented
+  isDemo              Boolean            @default(false) // seeded demo record; removed by Settings → Remove demo data
   createdAt           DateTime           @default(now())
   updatedAt           DateTime           @updatedAt
 
@@ -1555,6 +1563,7 @@ model Discount {
   isActive          Boolean       @default(true)
   publicLabel       String? // "Flat ₹300 off watches above ₹4,999"
   showOnProductPage Boolean       @default(false)
+  isDemo            Boolean       @default(false) // seeded demo record; removed by Settings → Remove demo data
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
 
@@ -1629,6 +1638,7 @@ model Review {
   repliedAt       DateTime?
   repliedById     String?
   helpfulCount    Int          @default(0)
+  isDemo          Boolean      @default(false) // seeded demo record; removed by Settings → Remove demo data
   publishedAt     DateTime?
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
@@ -1704,6 +1714,7 @@ model Banner {
   videoId        String? // muted loop; the desktop image doubles as its poster
   video          Media?          @relation("BannerVideo", fields: [videoId], references: [id], onDelete: SetNull)
   textTone       TextTone        @default(DARK) // text colour that reads on this image
+  isDemo         Boolean         @default(false) // seeded demo record; removed by Settings → Remove demo data
   startsAt       DateTime?
   endsAt         DateTime?
   position       Int             @default(0)
@@ -1749,6 +1760,7 @@ model Author {
   avatarId String?
   avatar   Media?  @relation(fields: [avatarId], references: [id], onDelete: SetNull)
   sameAs   Json? // profile links for the Person entity
+  isDemo   Boolean @default(false) // seeded demo record; removed by Settings → Remove demo data
 
   posts Post[]
 
@@ -1783,6 +1795,7 @@ model Post {
   status           ContentStatus @default(DRAFT)
   publishedAt      DateTime?
   readingMinutes   Int?
+  isDemo           Boolean       @default(false) // seeded demo record; removed by Settings → Remove demo data
   faqs             Json?
   metaTitle        String?
   metaDescription  String?

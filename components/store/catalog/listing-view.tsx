@@ -25,6 +25,7 @@ export function cardLabels(): CardLabels {
     from: t("catalog.from"),
     moreSwatches: t("catalog.moreSwatches"),
     originalPrice: t("catalog.originalPrice"),
+    rating: t("catalog.rating"),
   };
 }
 
