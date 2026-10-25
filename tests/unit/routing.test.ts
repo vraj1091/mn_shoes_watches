@@ -57,9 +57,9 @@ describe("route decisions in the proxy", () => {
   it("knows every file app/ serves at the root, and 404s any other file path", () => {
     // Metadata routes: robots.ts serves /robots.txt, sitemap.ts /sitemap.xml, icon.svg itself.
     const served: Record<string, string> = { "robots.ts": "robots.txt", "sitemap.ts": "sitemap.xml", "manifest.ts": "manifest.webmanifest" };
-    const special = new Set(["layout.tsx", "page.tsx", "not-found.tsx", "error.tsx", "global-error.tsx", "loading.tsx", "template.tsx", "default.tsx", "globals.css"]);
+    const special = new Set(["layout.tsx", "page.tsx", "not-found.tsx", "error.tsx", "global-error.tsx", "loading.tsx", "template.tsx", "default.tsx"]);
     const files = readdirSync(path.resolve("app"), { withFileTypes: true })
-      .filter((entry) => entry.isFile() && !special.has(entry.name))
+      .filter((entry) => entry.isFile() && !special.has(entry.name) && !entry.name.endsWith(".css"))
       .map((entry) => served[entry.name] ?? entry.name);
     expect(files).toContain("robots.txt");
     for (const file of files) expect(FIXED_FILES.has(file), file).toBe(true);
