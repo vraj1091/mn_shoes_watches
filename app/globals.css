@@ -1,0 +1,372 @@
+@import "tailwindcss";
+
+/* dark: follows the phone unless the shopper picked light or dark in the footer switch. */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) {
+      @slot;
+    }
+  }
+}
+
+/*
+ * MN Shoes & Watches design tokens (docs/BRIEF.md, Part 3).
+ * Three colour families only — Ink, Cognac, Bottle Green — plus error red. Tailwind's default
+ * palette is removed so no other colour can be used by accident. Components use the semantic
+ * tokens (canvas, fg, accent, …), which switch for dark mode in one place below.
+ */
+
+@theme {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --color-ink-50: #f8f6f2;
+  --color-ink-100: #f1ede7;
+  --color-ink-200: #e3ddd6;
+  --color-ink-300: #c9c1ba;
+  --color-ink-400: #a39a93;
+  --color-ink-500: #7a706a;
+  --color-ink-600: #5f5650;
+  --color-ink-700: #463e38;
+  --color-ink-800: #2e2824;
+  --color-ink-900: #1f1a17;
+  --color-ink-950: #14110f;
+
+  --color-cognac-50: #fbf4ec;
+  --color-cognac-100: #f7e8da;
+  --color-cognac-200: #eed0b4;
+  --color-cognac-300: #dfaa7e;
+  --color-cognac-400: #cc8550;
+  --color-cognac-500: #b5652e;
+  --color-cognac-600: #9a4f24;
+  --color-cognac-700: #7a3e1d;
+  --color-cognac-800: #5e3017;
+  --color-cognac-900: #432211;
+  --color-cognac-950: #2a150a;
+
+  --color-bottle-50: #eef5f1;
+  --color-bottle-100: #d6e8de;
+  --color-bottle-200: #add1be;
+  --color-bottle-300: #7fb59a;
+  --color-bottle-400: #4f9475;
+  --color-bottle-500: #2f7558;
+  --color-bottle-600: #245d46;
+  --color-bottle-700: #1f4d3a;
+  --color-bottle-800: #183b2d;
+  --color-bottle-900: #112a20;
+  --color-bottle-950: #0a1a14;
+
+  /* The one colour outside the families: form errors and destructive admin actions only. */
+  --color-error: #b42318;
+
+  /* Type scale (px): 12, 14, 16, 18, 20, 24, 30, 38, 48, 60 */
+  --text-*: initial;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.5;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.55;
+  --text-base: 1rem;
+  --text-base--line-height: 1.6;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.6;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.45;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 1.3;
+  --text-3xl: 1.875rem;
+  --text-3xl--line-height: 1.2;
+  --text-4xl: 2.375rem;
+  --text-4xl--line-height: 1.15;
+  --text-5xl: 3rem;
+  --text-5xl--line-height: 1.08;
+  --text-6xl: 3.75rem;
+  --text-6xl--line-height: 1.04;
+
+  /* 4 px on buttons and inputs, 8 px on cards and images; full only for swatches and dots. */
+  --radius-*: initial;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-full: 9999px;
+
+  --shadow-*: initial;
+  --shadow-overlay: 0 12px 32px -12px rgb(20 17 15 / 0.28);
+
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Motion explains something or is not used: drawers, sheets, overlays (150–250 ms). */
+  --animate-drawer-in-left: drawer-in-left 240ms var(--ease-out);
+  --animate-drawer-out-left: drawer-out-left 180ms var(--ease-out);
+  --animate-drawer-in-right: drawer-in-right 240ms var(--ease-out);
+  --animate-drawer-out-right: drawer-out-right 180ms var(--ease-out);
+  --animate-fade-in: fade-in 200ms var(--ease-out);
+  --animate-fade-out: fade-out 150ms var(--ease-out);
+  --animate-sheet-up: sheet-up 240ms var(--ease-out);
+
+  @keyframes sheet-up {
+    from {
+      transform: translateY(100%);
+    }
+  }
+
+  @keyframes drawer-in-left {
+    from {
+      transform: translateX(-100%);
+    }
+  }
+  @keyframes drawer-out-left {
+    to {
+      transform: translateX(-100%);
+    }
+  }
+  @keyframes drawer-in-right {
+    from {
+      transform: translateX(100%);
+    }
+  }
+  @keyframes drawer-out-right {
+    to {
+      transform: translateX(100%);
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+}
+
+/* Semantic tokens: utilities such as bg-canvas, text-fg, border-line, text-accent. */
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-raised: var(--raised);
+  --color-subtle: var(--subtle);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-on-primary: var(--on-primary);
+  --color-scrim: var(--scrim);
+
+  --font-display: var(--font-bodoni), "Bodoni 72", Didot, Georgia, serif;
+  --font-sans: var(--font-hanken), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+  --canvas: var(--color-ink-50);
+  --raised: var(--color-ink-50);
+  --subtle: var(--color-ink-100);
+  --line: var(--color-ink-200);
+  --line-strong: var(--color-ink-300);
+  --fg: var(--color-ink-900);
+  --muted: var(--color-ink-500);
+  --accent: var(--color-cognac-600);
+  --accent-soft: var(--color-cognac-50);
+  --success: var(--color-bottle-700);
+  --success-soft: var(--color-bottle-50);
+  --primary: var(--color-ink-900);
+  --primary-hover: var(--color-ink-700);
+  --on-primary: var(--color-ink-50);
+  --scrim: rgb(20 17 15 / 0.48);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --canvas: var(--color-ink-950);
+  --raised: var(--color-ink-900);
+  --subtle: var(--color-ink-900);
+  --line: var(--color-ink-800);
+  --line-strong: var(--color-ink-700);
+  --fg: var(--color-ink-100);
+  --muted: var(--color-ink-400);
+  --accent: var(--color-cognac-400);
+  --accent-soft: var(--color-cognac-950);
+  --success: var(--color-bottle-400);
+  --success-soft: var(--color-bottle-950);
+  --primary: var(--color-ink-50);
+  --primary-hover: var(--color-ink-200);
+  --on-primary: var(--color-ink-900);
+  --scrim: rgb(0 0 0 / 0.64);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --canvas: var(--color-ink-950);
+    --raised: var(--color-ink-900);
+    --subtle: var(--color-ink-900);
+    --line: var(--color-ink-800);
+    --line-strong: var(--color-ink-700);
+    --fg: var(--color-ink-100);
+    --muted: var(--color-ink-400);
+    --accent: var(--color-cognac-400);
+    --accent-soft: var(--color-cognac-950);
+    --success: var(--color-bottle-400);
+    --success-soft: var(--color-bottle-950);
+    --primary: var(--color-ink-50);
+    --primary-hover: var(--color-ink-200);
+    --on-primary: var(--color-ink-900);
+    --scrim: rgb(0 0 0 / 0.64);
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--canvas);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: var(--color-cognac-200);
+    color: var(--color-ink-900);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+}
+
+@layer utilities {
+  /* A loose hand-drawn stroke under one word (Part 3, "small human details"). */
+  .scribble {
+    position: relative;
+    white-space: nowrap;
+  }
+  .scribble::after {
+    content: "";
+    position: absolute;
+    left: -2%;
+    right: -2%;
+    bottom: -0.12em;
+    height: 0.32em;
+    background-color: var(--accent);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 8.5C38 4 79 3 118 4.6c25 1 52 2.9 80 1.1' fill='none' stroke='black' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E")
+      center / 100% 100% no-repeat;
+    pointer-events: none;
+  }
+
+  .measure {
+    max-width: 68ch;
+  }
+}
+
+/* Native <dialog> drawers (mobile menu, later the bag and filters). */
+dialog.drawer-left {
+  inset: 0 auto 0 0;
+}
+dialog.drawer-left[open] {
+  animation: var(--animate-drawer-in-left);
+}
+dialog.drawer-left[open]::backdrop {
+  animation: var(--animate-fade-in);
+}
+dialog.sheet-bottom {
+  inset: auto 0 0 0;
+}
+dialog.sheet-bottom[open] {
+  animation: var(--animate-sheet-up);
+}
+dialog.sheet-bottom[open]::backdrop {
+  animation: var(--animate-fade-in);
+}
+dialog.modal-center[open] {
+  animation: var(--animate-fade-in);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Owner-written rich text (descriptions, buying guides, policies), sanitised when saved. */
+@layer components {
+  .rich-text {
+    max-width: 68ch;
+    font-size: var(--text-base);
+    line-height: 1.6;
+  }
+  .rich-text > * + * {
+    margin-top: 1em;
+  }
+  .rich-text h2,
+  .rich-text h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    line-height: 1.25;
+    margin-top: 1.6em;
+  }
+  .rich-text h2 {
+    font-size: var(--text-2xl);
+  }
+  .rich-text h3 {
+    font-size: var(--text-xl);
+  }
+  .rich-text a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .rich-text ul,
+  .rich-text ol {
+    padding-left: 1.25em;
+  }
+  .rich-text ul {
+    list-style: disc;
+  }
+  .rich-text ol {
+    list-style: decimal;
+  }
+  .rich-text li + li {
+    margin-top: 0.35em;
+  }
+  .rich-text strong {
+    font-weight: 600;
+  }
+}

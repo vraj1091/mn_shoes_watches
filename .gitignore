@@ -1,0 +1,38 @@
+# dependencies
+node_modules/
+
+# next.js
+.next/
+out/
+next-env.d.ts
+
+# production build
+build/
+
+# prisma client (generated on install)
+lib/generated/
+
+# local data: SQLite database, search index, cache, uploads, backups
+data/
+
+# env files (.env.example is committed)
+.env
+.env.*
+!.env.example
+
+# tests and audits
+test-results/
+playwright-report/
+playwright/.cache/
+.lighthouseci/
+coverage/
+
+# misc
+.DS_Store
+Thumbs.db
+*.log
+*.tsbuildinfo
+.vercel
+
+# editor tools
+.qodo/

@@ -1,0 +1,5 @@
+{
+  "port": 3210,
+  "dataDir": "data/e2e",
+  "owner": { "email": "owner@e2e.test", "name": "Test Owner", "password": "e2e-owner-password-1" }
+}
