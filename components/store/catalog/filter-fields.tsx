@@ -8,10 +8,10 @@ export function priceLabel(range: PriceRange): string {
   return t("catalog.priceBetween", { min: formatPrice(range.min), max: formatPrice(range.max) });
 }
 
-const legend = "mb-2 text-sm font-semibold text-fg";
+const legend = "mb-2 text-sm font-semibold text-ink";
 const row =
-  "flex min-h-11 cursor-pointer items-center gap-3 text-sm text-fg has-disabled:cursor-not-allowed has-disabled:text-muted";
-const box = "size-5 shrink-0 accent-[var(--accent)]";
+  "flex min-h-11 cursor-pointer items-center gap-3 text-sm text-ink has-disabled:cursor-not-allowed has-disabled:text-muted";
+const box = "size-5 shrink-0 accent-[var(--link)]";
 
 /**
  * The filter fields, rendered on the server with live counts. Used inside the desktop sidebar and

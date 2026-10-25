@@ -10,9 +10,10 @@ import { HeaderShell } from "./header-shell";
 import { MobileNav } from "./mobile-nav";
 import { SearchBox } from "./search/search-box";
 import { searchLabels } from "./search/search-labels";
+import { ThemeControl, ThemeControlInline } from "@/components/theme/theme-control";
 
 const iconButton =
-  "flex size-11 items-center justify-center rounded-sm text-fg transition-colors hover:bg-subtle hover:text-accent";
+  "flex size-11 items-center justify-center rounded-sm text-ink transition-colors hover:bg-surface hover:text-link";
 
 export async function SiteHeader() {
   const [settings, departments, cookieStore] = await Promise.all([
@@ -62,6 +63,7 @@ export async function SiteHeader() {
               caret: <CaretDownIcon size={18} />,
               search: <SearchIcon size={20} />,
             }}
+            theme={<ThemeControlInline />}
           />
 
           <Link
@@ -88,6 +90,10 @@ export async function SiteHeader() {
             <Link href="/search" aria-label={t("common.search")} className={`${iconButton} 2xl:hidden`}>
               <SearchIcon size={22} />
             </Link>
+            {/* On phones the choice lives in the menu drawer, so the header icons never crowd the logo. */}
+            <div className="max-lg:hidden">
+              <ThemeControl />
+            </div>
             <Link href="/account" prefetch={false} aria-label={t("common.account")} className={`${iconButton} max-lg:hidden`}>
               <UserIcon size={22} />
             </Link>

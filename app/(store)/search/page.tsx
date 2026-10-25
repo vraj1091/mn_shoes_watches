@@ -44,7 +44,7 @@ async function Suggestions() {
         <ul className="mt-4 flex flex-wrap gap-2">
           {chips.map((chip) => (
             <li key={chip.id}>
-              <Link href={chip.href} className="inline-flex min-h-11 items-center gap-1 rounded-sm border border-line-strong px-4 text-sm hover:border-fg">
+              <Link href={chip.href} className="inline-flex min-h-11 items-center gap-1 rounded-sm border border-line-strong px-4 text-sm hover:border-ink">
                 {chip.name}
                 {chip.parent && <span className="text-muted">· {chip.parent}</span>}
               </Link>

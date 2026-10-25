@@ -29,7 +29,7 @@ export function SortControl({ action, state, hidden = {} }: { action: string; st
         id="sort"
         name="sort"
         defaultValue={state.sort}
-        className="min-h-11 rounded-sm border border-line-strong bg-canvas py-0 pr-8 pl-3 text-sm text-fg hover:border-fg"
+        className="min-h-11 rounded-sm border border-line-strong bg-canvas py-0 pr-8 pl-3 text-sm text-ink hover:border-ink"
       >
         {SORTS.map((sort) => (
           <option key={sort} value={sort}>

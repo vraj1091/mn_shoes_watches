@@ -10,7 +10,7 @@ export default async function AdminSignInPage() {
   if (await getStaffSession()) redirect("/admin");
   return (
     <>
-      <h1 className="font-display text-3xl">{t("admin.signInTitle")}</h1>
+      <h1 className="text-2xl font-semibold tracking-tight">{t("admin.signInTitle")}</h1>
       <p className="mt-2 mb-8 text-sm text-muted">{t("admin.signInIntro")}</p>
       <StaffSignIn labels={messages("admin")} />
     </>

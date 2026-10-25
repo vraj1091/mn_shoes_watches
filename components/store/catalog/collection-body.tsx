@@ -30,7 +30,7 @@ export function CollectionBody({
         <header>
           <Breadcrumbs items={[...trail, { name: collection.title, href: collection.landingPath ? `/${collection.landingPath}` : `/collections/${collection.slug}` }]} />
           <h1 className="mt-3 font-display text-4xl lg:text-5xl">{collection.title}</h1>
-          {firstPage && collection.intro && <p className="measure mt-4 text-base text-fg lg:text-lg">{collection.intro}</p>}
+          {firstPage && collection.intro && <p className="measure mt-4 text-base text-ink lg:text-lg">{collection.intro}</p>}
         </header>
       }
       empty={

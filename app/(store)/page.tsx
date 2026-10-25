@@ -43,7 +43,7 @@ export default async function HomePage() {
         <div className="lg:col-span-8">
           <p className="text-xs font-semibold tracking-[0.14em] text-muted uppercase">{settings.storeName}</p>
           <h1 className="mt-4 font-display text-4xl sm:text-5xl lg:text-6xl">{t("home.title")}</h1>
-          <p className="measure mt-6 text-lg text-fg sm:text-xl">
+          <p className="measure mt-6 text-lg text-ink sm:text-xl">
             {location ? (
               <>
                 {t("home.lineBefore")} <span className="scribble">{t("home.lineWord")}</span>{" "}
@@ -70,7 +70,7 @@ export default async function HomePage() {
         <ul className="self-end border-t border-line lg:col-span-4 lg:border-t-0 lg:border-l lg:pl-8">
           {promises.map((line) => (
             <li key={line} className="flex items-start gap-3 border-b border-line py-3 text-base last:border-b-0">
-              <CheckIcon size={20} className="mt-0.5 shrink-0 text-success" />
+              <CheckIcon size={20} className="mt-0.5 shrink-0 text-stock" />
               {line}
             </li>
           ))}
@@ -104,7 +104,7 @@ export default async function HomePage() {
         <section id="visit" aria-labelledby="visit-heading" className="mx-auto mt-24 max-w-screen-xl scroll-mt-24 px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
             {/* The owner's store photo goes here (Phase 6); until then a plain tile, never a stock image. */}
-            <div className="flex aspect-[4/3] items-end rounded-md bg-subtle p-6 lg:col-span-7">
+            <div className="flex aspect-[4/3] items-end rounded-md bg-surface p-6 lg:col-span-7">
               <p className="font-display text-2xl text-muted">{location.name}</p>
             </div>
             <div className="lg:col-span-4 lg:col-start-9">
@@ -153,7 +153,7 @@ function DepartmentTile({ name, href, count, shape }: { name: string; href: stri
   return (
     <Link
       href={href}
-      className={`group flex flex-col justify-between rounded-md bg-subtle p-5 transition-colors duration-200 hover:bg-accent-soft sm:p-6 lg:aspect-auto lg:h-full ${TILE_SHAPES[shape]}`}
+      className={`group flex flex-col justify-between rounded-md bg-surface p-5 transition-colors duration-200 hover:bg-surface sm:p-6 lg:aspect-auto lg:h-full ${TILE_SHAPES[shape]}`}
     >
       <span className="text-sm text-muted">{t("home.subcategories", { count })}</span>
       <span className="flex items-end justify-between gap-3">

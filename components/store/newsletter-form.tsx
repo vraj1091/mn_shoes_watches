@@ -19,7 +19,7 @@ export function NewsletterForm({ labels }: { labels: Labels }) {
 
   if (state.status === "done") {
     return (
-      <p role="status" className="text-sm text-success">
+      <p role="status" className="text-sm text-stock">
         {labels.done}
       </p>
     );
@@ -53,7 +53,7 @@ export function NewsletterForm({ labels }: { labels: Labels }) {
       {/* Honeypot: hidden from people and screen readers, filled in by bots. */}
       <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden className="hidden" />
       {message && (
-        <p id="newsletter-message" role="alert" className="mt-2 text-sm text-error">
+        <p id="newsletter-message" role="alert" className="mt-2 text-sm text-sale">
           {message}
         </p>
       )}

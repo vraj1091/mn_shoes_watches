@@ -291,3 +291,29 @@ adds the crawler list editable in Settings and the sitemap index.
   landing and product pages. Performance 89–92 with simulated throttling; with real (DevTools) throttling the
   largest element paints at 1.5–1.6 s, inside the 2.5 s target, and the score is held back by about 0.5 s of
   main-thread work while React starts the page. That startup cost is the Phase 8 performance item.
+
+## Storefront completion (brief of 26 Oct 2026)
+
+**44. One colour source with light and dark modes.**
+The owner replaced Ink, Cognac and Bottle Green with Graphite (neutrals), Oxford Navy (brand) and Brass (accent),
+plus a sale/error red and an in-stock green used only for meaning. Every value lives once in
+`lib/design/tokens.ts`. `npm run tokens` writes `app/theme.css` (Tailwind theme colours and the semantic CSS
+variables) and `app/icon.svg`; emails, the proxy's 404 page and the 2FA QR code import the same values. A unit test
+fails if the generated files are stale, if any file outside the tokens hard-codes a colour, or if any
+text/background pair falls below WCAG AA. `npm run check:contrast` prints the same check. Two pairs in the brief
+needed adjusting: rating stars use Brass 600 in light mode (Brass 500 is 2.8:1 on white, below the 3:1 graphics
+minimum), and text on the photo tile stays Graphite 600 in both modes because the tile stays light. Form-field
+borders use Graphite 600 in light mode so they reach 3:1 on the grey surface. Product colour swatches are product
+data (the colour of the item), not theme colours, and are stored with the product.
+
+**45. Theme switching uses next-themes with the class strategy.**
+The default is the device setting; a choice is stored under the key the shop already used. next-themes sets the
+class before the first paint, so there is no flash. The switch is a menu in the desktop header and the admin, and a
+row of three buttons in the phone menu drawer (a fourth header icon would crowd the logo at 390 px). The serif
+(Bodoni Moda) is kept for the hero, page titles and editorial section headings; product names, prices, navigation,
+filters, buttons and the whole admin are set in Hanken Grotesk, with tabular numerals for prices.
+
+**46. The mega menu floats on the raised surface above a dimmed page.**
+Before, the panel used the page colour with a faint shadow, so in dark mode the category page underneath seemed to
+run into it. It now uses the raised token, a border and the overlay shadow, dims the page below, and closes on
+Escape, a click outside, the pointer leaving, and any route change (including back and forward).

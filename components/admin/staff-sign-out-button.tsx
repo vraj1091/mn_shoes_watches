@@ -11,7 +11,7 @@ export function StaffSignOutButton() {
         await staffAuthClient.signOut();
         reloadTo("/admin/sign-in");
       }}
-      className="min-h-11 rounded-sm px-2 text-sm text-muted hover:bg-subtle hover:text-fg"
+      className="min-h-11 rounded-sm px-2 text-sm text-muted hover:bg-surface hover:text-ink"
     >
       Sign out
     </button>

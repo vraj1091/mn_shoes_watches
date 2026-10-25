@@ -6,6 +6,7 @@ import { can, ROLE_LABELS, type Permission } from "@/lib/auth/permissions";
 import { HomeIcon, ShieldIcon, StoreIcon } from "@/components/icons";
 import { AdminNavLink } from "./admin-nav-link";
 import { StaffSignOutButton } from "./staff-sign-out-button";
+import { ThemeControl } from "@/components/theme/theme-control";
 
 type NavItem = { href: string; label: string; icon: ReactNode; permission?: Permission };
 
@@ -25,14 +26,15 @@ export async function AdminFrame({ children }: { children: ReactNode }) {
     <div className="min-h-dvh lg:grid lg:grid-cols-[16rem_1fr]">
       <aside className="border-b border-line bg-raised lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col lg:border-r lg:border-b-0">
         <div className="flex h-14 items-center justify-between px-4 lg:h-16 lg:px-5">
-          <Link href="/admin" className="font-display text-lg">
+          <Link href="/admin" className="text-lg font-semibold tracking-tight">
             MN admin
           </Link>
           <div className="flex items-center gap-1 lg:hidden">
-            <Link href="/" className="flex min-h-11 items-center gap-2 px-2 text-sm text-muted hover:text-fg">
+            <Link href="/" className="flex min-h-11 items-center gap-2 px-2 text-sm text-muted hover:text-ink">
               <StoreIcon size={18} />
               Shop
             </Link>
+            <ThemeControl />
             <StaffSignOutButton />
           </div>
         </div>
@@ -48,10 +50,15 @@ export async function AdminFrame({ children }: { children: ReactNode }) {
           </ul>
         </nav>
         <div className="hidden border-t border-line p-4 lg:block">
-          <p className="truncate text-sm font-medium">{user.name}</p>
-          <p className="truncate text-xs text-muted">{ROLE_LABELS[user.role]}</p>
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium">{user.name}</p>
+              <p className="truncate text-xs text-muted">{ROLE_LABELS[user.role]}</p>
+            </div>
+            <ThemeControl align="left" />
+          </div>
           <div className="mt-3 flex items-center justify-between gap-2">
-            <Link href="/" className="flex min-h-11 items-center gap-2 text-sm text-muted hover:text-fg">
+            <Link href="/" className="flex min-h-11 items-center gap-2 text-sm text-muted hover:text-ink">
               <StoreIcon size={18} />
               View shop
             </Link>
@@ -69,7 +76,7 @@ export function AdminPage({ title, intro, actions, children }: { title: string; 
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-10 lg:py-10">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl lg:text-4xl">{title}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight lg:text-3xl">{title}</h1>
           {intro && <div className="mt-2 text-base text-muted">{intro}</div>}
         </div>
         {actions}

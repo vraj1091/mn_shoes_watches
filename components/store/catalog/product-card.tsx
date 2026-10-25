@@ -27,7 +27,7 @@ export function ProductCard({ product, labels, eager = false }: { product: Produ
 
   return (
     <article className="group relative flex flex-col">
-      <div className="relative aspect-[4/5] overflow-hidden rounded-md bg-subtle">
+      <div className="photo-tile relative aspect-[4/5] overflow-hidden rounded-md">
         {product.image ? (
           <>
             {/* Images get the responsive loader with uploads in Phase 4; the alt is empty because the title names the product. */}
@@ -54,30 +54,30 @@ export function ProductCard({ product, labels, eager = false }: { product: Produ
           </>
         ) : (
           // No photo yet: a plain tile with the name, never a stock image (Part 3).
-          <span aria-hidden className="absolute inset-0 flex items-end p-4 font-display text-xl leading-tight text-muted">
+          <span aria-hidden className="absolute inset-0 flex items-end p-4 text-lg leading-tight font-semibold">
             {product.title}
           </span>
         )}
         <div className="absolute top-2 left-2 flex flex-col items-start gap-1">
           {!product.inStock ? (
-            <span className="rounded-sm bg-canvas px-2 py-0.5 text-xs font-medium text-muted">{labels.soldOut}</span>
+            <span className="rounded-sm bg-raised px-2 py-0.5 text-xs font-medium text-ink">{labels.soldOut}</span>
           ) : product.isNew ? (
-            <span className="rounded-sm bg-accent px-2 py-0.5 text-xs font-medium text-canvas">{labels.new}</span>
+            <span className="rounded-sm bg-badge px-2 py-0.5 text-xs font-medium text-badge-ink">{labels.new}</span>
           ) : null}
         </div>
       </div>
 
-      <h3 className="mt-3 text-base leading-snug text-fg">
+      <h3 className="mt-3 line-clamp-2 text-card font-medium text-ink">
         <Link
           href={product.href}
-          className="after:absolute after:inset-0 after:rounded-md focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-4 focus-visible:after:outline-accent"
+          className="after:absolute after:inset-0 after:rounded-md focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-4 focus-visible:after:outline-link"
         >
           {product.title}
         </Link>
       </h3>
 
-      <p className="mt-1 flex flex-wrap items-baseline gap-x-2 text-base tabular-nums">
-        <span className={discount ? "font-medium text-accent" : "font-medium text-fg"}>
+      <p className="price mt-1 flex flex-wrap items-baseline gap-x-2 text-base">
+        <span className={discount ? "font-medium text-sale" : "font-medium text-ink"}>
           {product.maxPrice > product.minPrice ? fill(labels.from, { price }) : price}
         </span>
         {product.compareAtPrice && discount > 0 && (
@@ -86,7 +86,7 @@ export function ProductCard({ product, labels, eager = false }: { product: Produ
               <span className="sr-only">{fill(labels.originalPrice, { price: formatPrice(product.compareAtPrice) })}</span>
               <span aria-hidden>{formatPrice(product.compareAtPrice)}</span>
             </s>
-            <span className="text-sm text-accent">{fill(labels.percentOff, { percent: discount })}</span>
+            <span className="text-sm text-sale">{fill(labels.percentOff, { percent: discount })}</span>
           </>
         )}
       </p>
@@ -101,7 +101,7 @@ export function ProductCard({ product, labels, eager = false }: { product: Produ
       )}
 
       {product.lowStockCount !== null && (
-        <p className="mt-1 text-sm text-accent">{fill(labels.onlyLeft, { count: product.lowStockCount })}</p>
+        <p className="mt-1 text-sm text-sale">{fill(labels.onlyLeft, { count: product.lowStockCount })}</p>
       )}
     </article>
   );

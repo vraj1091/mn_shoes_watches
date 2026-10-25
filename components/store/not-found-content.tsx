@@ -17,7 +17,7 @@ export async function NotFoundContent() {
         <label htmlFor="not-found-search" className="sr-only">
           {t("header.searchLabel")}
         </label>
-        <div className="flex flex-1 items-center gap-2 rounded-sm border border-line-strong px-3 focus-within:border-fg">
+        <div className="flex flex-1 items-center gap-2 rounded-sm border border-line-strong px-3 focus-within:border-ink">
           <SearchIcon size={20} className="text-muted" />
           <input
             id="not-found-search"
@@ -49,7 +49,7 @@ export async function NotFoundContent() {
         </nav>
       )}
 
-      <Link href="/" className="mt-12 inline-block text-accent underline decoration-1 underline-offset-4 hover:decoration-2">
+      <Link href="/" className="mt-12 inline-block text-link underline decoration-1 underline-offset-4 hover:decoration-2">
         {t("common.backToShop")}
       </Link>
     </div>

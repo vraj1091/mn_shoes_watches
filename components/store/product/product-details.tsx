@@ -53,14 +53,14 @@ export function SpecsTable({ specs }: { specs: ProductPageData["specs"] }) {
   if (specs.length === 0) return null;
   return (
     <section aria-labelledby="specs-heading">
-      <h2 id="specs-heading" className="font-display text-2xl">
+      <h2 id="specs-heading" className="text-xl font-semibold">
         {t("product.specs")}
       </h2>
       <dl className="mt-4 border-t border-line">
         {specs.map((spec) => (
           <div key={spec.label} className="grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-4 border-b border-line py-3 text-sm">
             <dt className="text-muted">{spec.label}</dt>
-            <dd className="text-fg">{spec.value}</dd>
+            <dd className="text-ink">{spec.value}</dd>
           </div>
         ))}
       </dl>
@@ -87,14 +87,14 @@ export function WatchFacts({ attributes }: { attributes: Attributes }) {
     <section aria-labelledby="watch-heading" className="space-y-6">
       {dial !== null && (
         <figure>
-          <h2 id="watch-heading" className="font-display text-2xl">
+          <h2 id="watch-heading" className="text-xl font-semibold">
             {t("product.dialTitle", { size: formatNumberSpec(dial, "mm") })}
           </h2>
           <svg viewBox={`0 0 ${width} ${height}`} className="mt-4 w-full max-w-sm" role="img" aria-label={t("product.dialTitle", { size: formatNumberSpec(dial, "mm") })}>
-            <rect x="0" y={centerY - wrist / 2} width={width} height={wrist} rx={wrist / 2.4} className="fill-subtle stroke-line-strong" strokeWidth="2" />
+            <rect x="0" y={centerY - wrist / 2} width={width} height={wrist} rx={wrist / 2.4} className="fill-surface stroke-line-strong" strokeWidth="2" />
             <rect x={width / 2 - (dial * scale) / 2.6} y={centerY - wrist / 2 - 8} width={(dial * scale) / 1.3} height={wrist + 16} rx="6" className="fill-line" />
-            <circle cx={width / 2} cy={centerY} r={(dial * scale) / 2} className="fill-canvas stroke-fg" strokeWidth="3" />
-            <line x1={width / 2} y1={centerY} x2={width / 2} y2={centerY - (dial * scale) / 2.8} className="stroke-fg" strokeWidth="3" strokeLinecap="round" />
+            <circle cx={width / 2} cy={centerY} r={(dial * scale) / 2} className="fill-canvas stroke-ink" strokeWidth="3" />
+            <line x1={width / 2} y1={centerY} x2={width / 2} y2={centerY - (dial * scale) / 2.8} className="stroke-ink" strokeWidth="3" strokeLinecap="round" />
             <line x1={width / 2} y1={centerY} x2={width / 2 + (dial * scale) / 3.4} y2={centerY} className="stroke-accent" strokeWidth="2" strokeLinecap="round" />
           </svg>
           <figcaption className="mt-2 text-sm text-muted">{t("product.dialCaption")}</figcaption>
@@ -121,12 +121,12 @@ export function PerfumeNotes({ attributes }: { attributes: Attributes }) {
 
   return (
     <section aria-labelledby="notes-heading">
-      <h2 id="notes-heading" className="font-display text-2xl">
+      <h2 id="notes-heading" className="text-xl font-semibold">
         {t("product.notesTitle")}
       </h2>
       <ol className="mt-4 flex flex-col items-center gap-2">
         {tiers.map((tier) => (
-          <li key={tier.key} className={`${tier.width} rounded-md bg-subtle px-4 py-3 text-center`}>
+          <li key={tier.key} className={`${tier.width} rounded-md bg-surface px-4 py-3 text-center`}>
             <p className="text-xs font-semibold tracking-[0.12em] text-muted uppercase">
               {tier.label} <span className="font-normal tracking-normal normal-case">· {tier.hint}</span>
             </p>
@@ -144,8 +144,8 @@ export function ProductGallery({ title, images }: { title: string; images: Produ
     // No photo yet: a plain tile with the name, never a stock image (Part 3). Hidden from screen
     // readers, which already have the name from the heading.
     return (
-      <div aria-hidden className="flex aspect-[4/5] items-end rounded-md bg-subtle p-6 lg:p-10">
-        <p className="font-display text-3xl leading-tight text-muted lg:text-5xl">{title}</p>
+      <div aria-hidden className="photo-tile flex aspect-[4/5] items-end rounded-md p-6 lg:p-10">
+        <p className="text-2xl leading-tight font-semibold lg:text-4xl">{title}</p>
       </div>
     );
   }
@@ -161,7 +161,7 @@ export function ProductGallery({ title, images }: { title: string; images: Produ
             loading={i === 0 ? "eager" : "lazy"}
             fetchPriority={i === 0 ? "high" : undefined}
             decoding="async"
-            className="aspect-[4/5] w-full rounded-md bg-subtle object-cover"
+            className="aspect-[4/5] w-full rounded-md object-cover"
           />
         </li>
       ))}

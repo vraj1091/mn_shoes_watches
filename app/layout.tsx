@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { connection } from "next/server";
 import { Bodoni_Moda, Hanken_Grotesk } from "next/font/google";
+import { resolve } from "@/lib/design/tokens";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 import "./globals.css";
 
 const display = Bodoni_Moda({
@@ -20,7 +22,7 @@ const sans = Hanken_Grotesk({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.APP_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(process.env.APP_URL ?? "http://localhost:3001"),
   formatDetection: { telephone: false },
 };
 
@@ -28,13 +30,10 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f8f6f2" },
-    { media: "(prefers-color-scheme: dark)", color: "#14110f" },
+    { media: "(prefers-color-scheme: light)", color: resolve("light").canvas },
+    { media: "(prefers-color-scheme: dark)", color: resolve("dark").canvas },
   ],
 };
-
-// Applies a saved light/dark choice before first paint; without one, CSS follows the phone.
-const themeScript = `(function(){try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}})()`;
 
 /*
  * Every page renders at request time from cached data (DECISIONS.md 23). Marking the root
@@ -47,11 +46,11 @@ export const instant = false;
 export default async function RootLayout({ children }: { children: ReactNode }) {
   await connection();
   return (
+    // next-themes sets the theme class on <html> before React hydrates.
     <html lang="en-IN" className={`${display.variable} ${sans.variable}`} suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
-      <body className="min-h-dvh">{children}</body>
+      <body className="min-h-dvh">
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

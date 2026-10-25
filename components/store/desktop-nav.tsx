@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import type { NavCategory } from "@/lib/data/navigation";
 
@@ -15,13 +16,22 @@ type Props = {
 /**
  * Mega menu built as a disclosure navigation (WAI-ARIA pattern for site menus): each department
  * is a button that opens a panel of plain links. Opens on click, on Enter/Space, and on hover with
- * a short delay; Escape or a click outside closes it.
+ * a short delay. Escape, a click outside and any page change close it. The panel sits on the
+ * raised surface above a dimmed page, so nothing underneath shows through.
  */
 export function DesktopNav({ departments, extraLinks, label, shopAllTemplate, caret }: Props) {
   const [openId, setOpenId] = useState<string | null>(null);
   const navRef = useRef<HTMLElement>(null);
   const hoverTimer = useRef<number | undefined>(undefined);
   const baseId = useId();
+
+  // Close on any route change, including back/forward and links outside the menu.
+  const pathname = usePathname();
+  const [shownFor, setShownFor] = useState(pathname);
+  if (pathname !== shownFor) {
+    setShownFor(pathname);
+    setOpenId(null);
+  }
 
   useEffect(() => {
     if (!openId) return;
@@ -41,6 +51,8 @@ export function DesktopNav({ departments, extraLinks, label, shopAllTemplate, ca
     };
   }, [openId, baseId]);
 
+  useEffect(() => () => window.clearTimeout(hoverTimer.current), []);
+
   const hoverOpen = (id: string | null) => {
     window.clearTimeout(hoverTimer.current);
     hoverTimer.current = window.setTimeout(() => setOpenId(id), id ? 120 : 200);
@@ -56,6 +68,15 @@ export function DesktopNav({ departments, extraLinks, label, shopAllTemplate, ca
         if (!navRef.current?.contains(event.relatedTarget as Node)) setOpenId(null);
       }}
     >
+      {openId && (
+        // Dims the page under the panel. Clicking it closes the menu; so does the mouse moving onto it.
+        <div
+          aria-hidden
+          className="absolute inset-x-0 top-full z-40 h-dvh bg-scrim/40"
+          onClick={() => setOpenId(null)}
+          onPointerEnter={(event) => event.pointerType === "mouse" && hoverOpen(null)}
+        />
+      )}
       <ul className="flex items-center gap-1">
         {departments.map((dept) => {
           const open = openId === dept.id;
@@ -68,7 +89,7 @@ export function DesktopNav({ departments, extraLinks, label, shopAllTemplate, ca
                 aria-expanded={open}
                 aria-controls={panelId}
                 onClick={() => setOpenId(open ? null : dept.id)}
-                className="group flex min-h-11 items-center gap-1 rounded-sm px-3 text-base whitespace-nowrap text-fg transition-colors hover:text-accent aria-expanded:text-accent"
+                className="group flex min-h-11 items-center gap-1 rounded-sm px-3 text-[0.9375rem] font-medium whitespace-nowrap text-ink transition-colors hover:text-link aria-expanded:text-link"
               >
                 {dept.name}
                 <span className="transition-transform duration-200 ease-out group-aria-expanded:rotate-180">{caret}</span>
@@ -76,15 +97,15 @@ export function DesktopNav({ departments, extraLinks, label, shopAllTemplate, ca
               <div
                 id={panelId}
                 hidden={!open}
-                className="absolute inset-x-0 top-full border-b border-line bg-canvas shadow-overlay"
+                className="absolute inset-x-0 top-full z-50 border-y border-line bg-raised shadow-overlay"
               >
                 <div className="mx-auto grid max-w-screen-xl grid-cols-[minmax(0,14rem)_1fr] gap-10 px-8 py-8">
                   <div className="border-r border-line pr-8">
-                    <p className="font-display text-2xl">{dept.name}</p>
+                    <p className="text-lg font-semibold">{dept.name}</p>
                     <Link
                       href={dept.href}
                       onClick={() => setOpenId(null)}
-                      className="mt-3 inline-block text-sm text-accent underline decoration-1 underline-offset-4 hover:decoration-2"
+                      className="mt-2 inline-block text-sm text-link underline decoration-1 underline-offset-4 hover:decoration-2"
                     >
                       {shopAllTemplate.replace("{name}", dept.name.toLowerCase())}
                     </Link>
@@ -95,7 +116,7 @@ export function DesktopNav({ departments, extraLinks, label, shopAllTemplate, ca
                         <Link
                           href={group.href}
                           onClick={() => setOpenId(null)}
-                          className="text-sm font-semibold tracking-wide text-fg hover:text-accent"
+                          className="text-sm font-semibold text-ink hover:text-link"
                         >
                           {group.name}
                         </Link>
@@ -106,7 +127,7 @@ export function DesktopNav({ departments, extraLinks, label, shopAllTemplate, ca
                                 <Link
                                   href={leaf.href}
                                   onClick={() => setOpenId(null)}
-                                  className="block py-0.5 text-sm text-muted hover:text-accent"
+                                  className="block py-0.5 text-sm text-muted hover:text-link"
                                 >
                                   {leaf.name}
                                 </Link>
@@ -126,8 +147,8 @@ export function DesktopNav({ departments, extraLinks, label, shopAllTemplate, ca
           <li key={link.href}>
             <Link
               href={link.href}
-              className={`flex min-h-11 items-center rounded-sm px-3 text-base whitespace-nowrap transition-colors hover:text-accent ${
-                link.highlight ? "text-accent" : "text-fg"
+              className={`flex min-h-11 items-center rounded-sm px-3 text-[0.9375rem] font-medium whitespace-nowrap transition-colors hover:text-link ${
+                link.highlight ? "text-sale" : "text-ink"
               }`}
             >
               {link.label}

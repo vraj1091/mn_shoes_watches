@@ -38,13 +38,13 @@ export function ActiveFilters({
           href={chip.href}
           scroll={false}
           aria-label={t("catalog.removeFilter", { label: chip.label })}
-          className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-accent px-3 text-sm text-accent hover:bg-accent-soft"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-line-strong px-3 text-sm text-ink hover:bg-surface"
         >
           {chip.label}
           <CloseIcon size={14} />
         </Link>
       ))}
-      <Link href={clearAll} scroll={false} className="inline-flex min-h-11 items-center px-2 text-sm text-muted underline underline-offset-4 hover:text-fg">
+      <Link href={clearAll} scroll={false} className="inline-flex min-h-11 items-center px-2 text-sm text-muted underline underline-offset-4 hover:text-ink">
         {t("catalog.clearAll")}
       </Link>
     </div>

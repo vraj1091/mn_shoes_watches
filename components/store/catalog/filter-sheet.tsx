@@ -28,7 +28,7 @@ export function FilterSheet({ action, label, title, closeLabel, closeIcon, filte
           document.documentElement.style.overflow = "hidden";
           dialog.current?.showModal();
         }}
-        className="inline-flex min-h-11 items-center gap-2 rounded-sm border border-line-strong px-4 text-sm font-medium text-fg hover:border-fg lg:hidden"
+        className="inline-flex min-h-11 items-center gap-2 rounded-sm border border-line-strong px-4 text-sm font-medium text-ink hover:border-ink lg:hidden"
       >
         {filterIcon}
         {label}
@@ -38,14 +38,14 @@ export function FilterSheet({ action, label, title, closeLabel, closeIcon, filte
         aria-labelledby="filter-sheet-title"
         onClose={() => document.documentElement.style.removeProperty("overflow")}
         onClick={(event) => event.target === event.currentTarget && close()}
-        className="sheet-bottom m-0 mt-auto max-h-[88dvh] w-full max-w-none rounded-t-md bg-canvas p-0 text-fg backdrop:bg-scrim lg:hidden"
+        className="sheet-bottom m-0 mt-auto max-h-[88dvh] w-full max-w-none rounded-t-md bg-raised p-0 text-ink backdrop:bg-scrim lg:hidden"
       >
         <FilterForm action={action} autoSubmit={false} onSubmitted={close} className="flex max-h-[88dvh] flex-col">
           <div className="flex h-14 shrink-0 items-center justify-between border-b border-line pr-2 pl-5">
-            <h2 id="filter-sheet-title" className="font-display text-xl">
+            <h2 id="filter-sheet-title" className="text-lg font-semibold">
               {title}
             </h2>
-            <button type="button" aria-label={closeLabel} onClick={close} className="flex size-11 items-center justify-center rounded-sm hover:bg-subtle">
+            <button type="button" aria-label={closeLabel} onClick={close} className="flex size-11 items-center justify-center rounded-sm hover:bg-surface">
               {closeIcon}
             </button>
           </div>

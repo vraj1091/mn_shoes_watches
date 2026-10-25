@@ -77,7 +77,7 @@ export function BuyBox({ options, variants, initial, lowStockThreshold, emiFrom,
     <div>
       <div className="mt-4">
         <p className="flex flex-wrap items-baseline gap-x-3 tabular-nums">
-          <span className={`font-display text-3xl ${discount ? "text-accent" : "text-fg"}`}>
+          <span className={`price text-3xl font-semibold ${discount ? "text-sale" : "text-ink"}`}>
             {!variant && summary.from ? fill(labels.from, { price: formatPrice(price) }) : formatPrice(price)}
           </span>
           {compareAt && discount > 0 && (
@@ -86,7 +86,7 @@ export function BuyBox({ options, variants, initial, lowStockThreshold, emiFrom,
                 <span className="sr-only">{fill(labels.originalPrice, { price: formatPrice(compareAt) })}</span>
                 <span aria-hidden>{formatPrice(compareAt)}</span>
               </s>
-              <span className="text-base text-accent">{fill(labels.percentOff, { percent: discount })}</span>
+              <span className="text-base text-sale">{fill(labels.percentOff, { percent: discount })}</span>
             </>
           )}
         </p>
@@ -99,7 +99,7 @@ export function BuyBox({ options, variants, initial, lowStockThreshold, emiFrom,
         return (
           <fieldset key={option.attributeId} className="mt-6">
             <div className="mb-2 flex items-center justify-between gap-3">
-              <legend className="text-sm text-fg">
+              <legend className="text-sm text-ink">
                 {chosen ? fill(labels.selectedValue, { name: option.name, value: chosen.label }) : option.name}
               </legend>
               {isSizeOption(option) && sizeGuide}
@@ -115,9 +115,9 @@ export function BuyBox({ options, variants, initial, lowStockThreshold, emiFrom,
                     key={value.id}
                     className={
                       option.style === "SWATCH"
-                        ? "relative flex size-11 cursor-pointer items-center justify-center rounded-full border border-transparent has-checked:border-fg has-focus-visible:outline-2 has-focus-visible:outline-accent"
-                        : `relative flex min-h-11 min-w-14 cursor-pointer items-center justify-center rounded-sm border px-3 text-sm tabular-nums has-focus-visible:outline-2 has-focus-visible:outline-accent ${
-                            selected ? "border-fg bg-primary text-on-primary" : "border-line-strong text-fg hover:border-fg"
+                        ? "relative flex size-11 cursor-pointer items-center justify-center rounded-full border border-transparent has-checked:border-ink has-focus-visible:outline-2 has-focus-visible:outline-link"
+                        : `relative flex min-h-11 min-w-14 cursor-pointer items-center justify-center rounded-sm border px-3 text-sm tabular-nums has-focus-visible:outline-2 has-focus-visible:outline-link ${
+                            selected ? "border-ink bg-primary text-on-primary" : "border-line-strong text-ink hover:border-ink"
                           } ${available ? "" : "text-muted line-through decoration-1"} ${exists ? "" : "opacity-40"}`
                     }
                     title={option.style === "SWATCH" ? name : undefined}
@@ -158,11 +158,11 @@ export function BuyBox({ options, variants, initial, lowStockThreshold, emiFrom,
             <span className="text-muted">{fill(labels.chooseOption, { name: missing.name.replace(/\s*\(.*\)$/, "").toLowerCase() })}</span>
           )
         ) : variant.stock === 0 ? (
-          <span className="font-medium text-fg">{labels.soldOut}</span>
+          <span className="font-medium text-ink">{labels.soldOut}</span>
         ) : variant.stock <= lowStockThreshold ? (
-          <span className="font-medium text-accent">{fill(labels.onlyLeft, { count: variant.stock })}</span>
+          <span className="font-medium text-sale">{fill(labels.onlyLeft, { count: variant.stock })}</span>
         ) : (
-          <span className="font-medium text-success">{labels.inStock}</span>
+          <span className="font-medium text-stock">{labels.inStock}</span>
         )}
         {variant && <span className="ml-3 text-muted">{fill(labels.sku, { sku: variant.sku })}</span>}
       </div>
@@ -175,7 +175,7 @@ export function BuyBox({ options, variants, initial, lowStockThreshold, emiFrom,
 function NotifyMe({ variant, labels }: { variant: VariantDef; labels: BuyBoxLabels }) {
   const [state, action, pending] = useActionState<NotifyState, FormData>(requestBackInStock, { status: "idle" });
   if (state.status === "done") {
-    return <p className="mt-4 rounded-sm bg-success-soft px-4 py-3 text-sm text-success">{labels.notifyDone}</p>;
+    return <p className="mt-4 rounded-sm bg-surface px-4 py-3 text-sm text-stock">{labels.notifyDone}</p>;
   }
   const message =
     state.status === "invalid" ? labels.notifyInvalid : state.status === "busy" ? labels.notifyBusy : state.status === "error" ? labels.notifyError : null;
@@ -195,7 +195,7 @@ function NotifyMe({ variant, labels }: { variant: VariantDef; labels: BuyBoxLabe
           autoComplete="email"
           required
           placeholder={labels.notifyEmail}
-          className="block min-h-11 w-full rounded-sm border border-line-strong bg-canvas px-3 text-base text-fg placeholder:text-muted focus-visible:border-fg"
+          className="block min-h-11 w-full rounded-sm border border-line-strong bg-canvas px-3 text-base text-ink placeholder:text-muted focus-visible:border-ink"
         />
         <button
           type="submit"
@@ -206,7 +206,7 @@ function NotifyMe({ variant, labels }: { variant: VariantDef; labels: BuyBoxLabe
         </button>
       </div>
       {message && (
-        <p role="alert" className="mt-2 text-sm text-error">
+        <p role="alert" className="mt-2 text-sm text-sale">
           {message}
         </p>
       )}

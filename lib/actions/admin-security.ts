@@ -2,6 +2,7 @@
 
 import QRCode from "qrcode";
 import { requireStaff } from "@/lib/auth/session";
+import { hex } from "@/lib/design/tokens";
 
 /**
  * Turns the authenticator link from Better Auth into a QR code. Done on the server so the QR
@@ -15,6 +16,6 @@ export async function totpQrCode(totpUri: string): Promise<string> {
     type: "svg",
     margin: 1,
     errorCorrectionLevel: "M",
-    color: { dark: "#1f1a17", light: "#f8f6f2" },
+    color: { dark: hex("graphite-950"), light: hex("graphite-0") },
   });
 }

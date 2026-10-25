@@ -147,7 +147,7 @@ export function ListingView({
             </>
           ) : scopeSize > 0 ? (
             // Filters left nothing: a quiet box with the way back.
-            <div className="rounded-md bg-subtle px-6 py-12 text-center">{empty}</div>
+            <div className="rounded-md bg-surface px-6 py-12 text-center">{empty}</div>
           ) : (
             // Nothing in this listing at all: the caller's message and suggestions.
             <div className="mt-2">{empty}</div>

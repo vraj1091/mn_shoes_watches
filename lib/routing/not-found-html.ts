@@ -1,11 +1,20 @@
 import messages from "@/messages/en.json";
+import { resolve, type Mode } from "@/lib/design/tokens";
 import { formatPrice } from "@/lib/format/money";
+
+const PAGE_TOKENS = ["canvas", "surface", "line", "line-strong", "ink", "muted", "link", "primary", "on-primary"] as const;
+
+/** The design tokens this page uses, as CSS variables, from lib/design/tokens.ts. */
+const cssVars = (mode: Mode) => {
+  const values = resolve(mode);
+  return PAGE_TOKENS.map((token) => `--${token}:${values[token]}`).join(";");
+};
 
 /*
  * The 404 page proxy.ts sends for unknown shop URLs. Pages stream with a fixed 200 status, and a
  * proxy rewrite cannot carry a 404 either (tested 25 Oct 2026), so this one page is plain HTML
  * written here: real 404 status, works without JavaScript, and still offers search, the main
- * categories and bestsellers (Part 4, page 11). Colours mirror the design tokens in globals.css.
+ * categories and bestsellers (Part 4, page 11). Colours come from lib/design/tokens.ts.
  */
 
 export type NotFoundData = {
@@ -42,31 +51,31 @@ export function notFoundHtml({ storeName, departments, bestsellers }: NotFoundDa
 <title>${escape(text.metaTitle)} | ${name}</title>
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <style>
-:root{color-scheme:light;--canvas:#f8f6f2;--subtle:#f1ede7;--line:#e3ddd6;--line-strong:#c9c1ba;--fg:#1f1a17;--muted:#7a706a;--accent:#9a4f24;--primary:#1f1a17;--on-primary:#f8f6f2}
-@media (prefers-color-scheme:dark){:root{color-scheme:dark;--canvas:#14110f;--subtle:#1f1a17;--line:#2e2824;--line-strong:#463e38;--fg:#f1ede7;--muted:#a39a93;--accent:#cc8550;--primary:#f8f6f2;--on-primary:#1f1a17}}
+:root{color-scheme:light;${cssVars("light")}}
+@media (prefers-color-scheme:dark){:root{color-scheme:dark;${cssVars("dark")}}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--canvas);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{margin:0;background:var(--canvas);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 header{border-bottom:1px solid var(--line)}
 .wrap{max-width:72rem;margin:0 auto;padding:0 16px}
 header .wrap{display:flex;align-items:center;min-height:56px}
-.logo{font:400 20px/1 "Bodoni 72",Didot,Georgia,serif;color:var(--fg);text-decoration:none}
+.logo{font:600 19px/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);text-decoration:none}
 main{padding:64px 0 96px}
 .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0}
 h1{font:500 38px/1.15 "Bodoni 72",Didot,Georgia,serif;margin:12px 0 0;text-wrap:balance}
 .intro{font-size:18px;color:var(--muted);max-width:60ch;margin:16px 0 0}
 form{display:flex;gap:8px;max-width:36rem;margin:32px 0 0}
-input{flex:1;min-height:44px;padding:0 12px;border:1px solid var(--line-strong);border-radius:4px;background:var(--canvas);color:var(--fg);font:inherit}
+input{flex:1;min-height:44px;padding:0 12px;border:1px solid var(--line-strong);border-radius:4px;background:var(--canvas);color:var(--ink);font:inherit}
 button,.button{display:inline-flex;align-items:center;min-height:44px;padding:0 20px;border:0;border-radius:4px;background:var(--primary);color:var(--on-primary);font-family:inherit;font-size:16px;font-weight:500;line-height:1;text-decoration:none;cursor:pointer}
 h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:56px 0 16px;font-weight:600}
 ul{list-style:none;margin:0;padding:0}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:1px solid var(--line-strong);border-radius:4px;color:var(--fg);text-decoration:none}
-.chip:hover,.list a:hover{color:var(--accent)}
+.chip{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:1px solid var(--line-strong);border-radius:4px;color:var(--ink);text-decoration:none}
+.chip:hover,.list a:hover{color:var(--link)}
 .list{border-top:1px solid var(--line);max-width:36rem}
-.list a{display:flex;justify-content:space-between;gap:16px;min-height:48px;align-items:center;border-bottom:1px solid var(--line);color:var(--fg);text-decoration:none}
+.list a{display:flex;justify-content:space-between;gap:16px;min-height:48px;align-items:center;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none}
 .price{font-variant-numeric:tabular-nums;white-space:nowrap}
-.home{display:inline-block;margin-top:48px;color:var(--accent)}
-a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.home{display:inline-block;margin-top:48px;color:var(--link)}
+a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--link);outline-offset:2px}
 @media (min-width:1024px){h1{font-size:48px}}
 </style>
 </head>

@@ -63,7 +63,7 @@ export function LoadMore({ scope, params, page, pageCount, shown, total, gridCla
             type="button"
             onClick={more}
             disabled={pending}
-            className="inline-flex min-h-11 items-center rounded-sm border border-line-strong px-6 text-base font-medium text-fg hover:border-fg disabled:opacity-60"
+            className="inline-flex min-h-11 items-center rounded-sm border border-line-strong px-6 text-base font-medium text-ink hover:border-ink disabled:opacity-60"
           >
             {pending ? labels.loading : labels.loadMore}
           </button>

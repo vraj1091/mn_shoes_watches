@@ -1,74 +1,19 @@
 @import "tailwindcss";
+/* Colours: generated from lib/design/tokens.ts (npm run tokens). */
+@import "./theme.css";
 
-/* dark: follows the phone unless the shopper picked light or dark in the footer switch. */
-@custom-variant dark {
-  &:where([data-theme="dark"], [data-theme="dark"] *) {
-    @slot;
-  }
-  @media (prefers-color-scheme: dark) {
-    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) {
-      @slot;
-    }
-  }
-}
-
-/*
- * MN Shoes & Watches design tokens (docs/BRIEF.md, Part 3).
- * Three colour families only — Ink, Cognac, Bottle Green — plus error red. Tailwind's default
- * palette is removed so no other colour can be used by accident. Components use the semantic
- * tokens (canvas, fg, accent, …), which switch for dark mode in one place below.
- */
+/* dark: next-themes puts .dark on <html> for a dark choice, or for "system" when the device is dark. */
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-*: initial;
-  --color-transparent: transparent;
-  --color-current: currentColor;
-
-  --color-ink-50: #f8f6f2;
-  --color-ink-100: #f1ede7;
-  --color-ink-200: #e3ddd6;
-  --color-ink-300: #c9c1ba;
-  --color-ink-400: #a39a93;
-  --color-ink-500: #7a706a;
-  --color-ink-600: #5f5650;
-  --color-ink-700: #463e38;
-  --color-ink-800: #2e2824;
-  --color-ink-900: #1f1a17;
-  --color-ink-950: #14110f;
-
-  --color-cognac-50: #fbf4ec;
-  --color-cognac-100: #f7e8da;
-  --color-cognac-200: #eed0b4;
-  --color-cognac-300: #dfaa7e;
-  --color-cognac-400: #cc8550;
-  --color-cognac-500: #b5652e;
-  --color-cognac-600: #9a4f24;
-  --color-cognac-700: #7a3e1d;
-  --color-cognac-800: #5e3017;
-  --color-cognac-900: #432211;
-  --color-cognac-950: #2a150a;
-
-  --color-bottle-50: #eef5f1;
-  --color-bottle-100: #d6e8de;
-  --color-bottle-200: #add1be;
-  --color-bottle-300: #7fb59a;
-  --color-bottle-400: #4f9475;
-  --color-bottle-500: #2f7558;
-  --color-bottle-600: #245d46;
-  --color-bottle-700: #1f4d3a;
-  --color-bottle-800: #183b2d;
-  --color-bottle-900: #112a20;
-  --color-bottle-950: #0a1a14;
-
-  /* The one colour outside the families: form errors and destructive admin actions only. */
-  --color-error: #b42318;
-
-  /* Type scale (px): 12, 14, 16, 18, 20, 24, 30, 38, 48, 60 */
+  /* Type scale (px): 12, 14, 15, 16, 18, 20, 24, 30, 38, 48, 60 */
   --text-*: initial;
   --text-xs: 0.75rem;
   --text-xs--line-height: 1.5;
   --text-sm: 0.875rem;
   --text-sm--line-height: 1.55;
+  --text-card: 0.9375rem; /* product card titles */
+  --text-card--line-height: 1.4;
   --text-base: 1rem;
   --text-base--line-height: 1.6;
   --text-lg: 1.125rem;
@@ -90,10 +35,13 @@
   --radius-*: initial;
   --radius-sm: 4px;
   --radius-md: 8px;
+  --radius-lg: 12px;
   --radius-full: 9999px;
 
+  /* One soft shadow for anything that floats above the page: mega menu, drawers, dialogs. */
   --shadow-*: initial;
-  --shadow-overlay: 0 12px 32px -12px rgb(20 17 15 / 0.28);
+  --shadow-overlay: 0 18px 40px -16px var(--shadow-tint), 0 2px 8px -2px var(--shadow-tint);
+  --shadow-card: 0 1px 2px 0 var(--shadow-tint);
 
   --ease-out: cubic-bezier(0.2, 0, 0, 1);
 
@@ -111,7 +59,6 @@
       transform: translateY(100%);
     }
   }
-
   @keyframes drawer-in-left {
     from {
       transform: translateX(-100%);
@@ -144,85 +91,10 @@
   }
 }
 
-/* Semantic tokens: utilities such as bg-canvas, text-fg, border-line, text-accent. */
 @theme inline {
-  --color-canvas: var(--canvas);
-  --color-raised: var(--raised);
-  --color-subtle: var(--subtle);
-  --color-line: var(--line);
-  --color-line-strong: var(--line-strong);
-  --color-fg: var(--fg);
-  --color-muted: var(--muted);
-  --color-accent: var(--accent);
-  --color-accent-soft: var(--accent-soft);
-  --color-success: var(--success);
-  --color-success-soft: var(--success-soft);
-  --color-primary: var(--primary);
-  --color-primary-hover: var(--primary-hover);
-  --color-on-primary: var(--on-primary);
-  --color-scrim: var(--scrim);
-
+  /* The serif is for the hero and editorial headings only; everything else is sans (DECISIONS.md 45). */
   --font-display: var(--font-bodoni), "Bodoni 72", Didot, Georgia, serif;
   --font-sans: var(--font-hanken), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-}
-
-:root {
-  color-scheme: light;
-  --canvas: var(--color-ink-50);
-  --raised: var(--color-ink-50);
-  --subtle: var(--color-ink-100);
-  --line: var(--color-ink-200);
-  --line-strong: var(--color-ink-300);
-  --fg: var(--color-ink-900);
-  --muted: var(--color-ink-500);
-  --accent: var(--color-cognac-600);
-  --accent-soft: var(--color-cognac-50);
-  --success: var(--color-bottle-700);
-  --success-soft: var(--color-bottle-50);
-  --primary: var(--color-ink-900);
-  --primary-hover: var(--color-ink-700);
-  --on-primary: var(--color-ink-50);
-  --scrim: rgb(20 17 15 / 0.48);
-}
-
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --canvas: var(--color-ink-950);
-  --raised: var(--color-ink-900);
-  --subtle: var(--color-ink-900);
-  --line: var(--color-ink-800);
-  --line-strong: var(--color-ink-700);
-  --fg: var(--color-ink-100);
-  --muted: var(--color-ink-400);
-  --accent: var(--color-cognac-400);
-  --accent-soft: var(--color-cognac-950);
-  --success: var(--color-bottle-400);
-  --success-soft: var(--color-bottle-950);
-  --primary: var(--color-ink-50);
-  --primary-hover: var(--color-ink-200);
-  --on-primary: var(--color-ink-900);
-  --scrim: rgb(0 0 0 / 0.64);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --canvas: var(--color-ink-950);
-    --raised: var(--color-ink-900);
-    --subtle: var(--color-ink-900);
-    --line: var(--color-ink-800);
-    --line-strong: var(--color-ink-700);
-    --fg: var(--color-ink-100);
-    --muted: var(--color-ink-400);
-    --accent: var(--color-cognac-400);
-    --accent-soft: var(--color-cognac-950);
-    --success: var(--color-bottle-400);
-    --success-soft: var(--color-bottle-950);
-    --primary: var(--color-ink-50);
-    --primary-hover: var(--color-ink-200);
-    --on-primary: var(--color-ink-900);
-    --scrim: rgb(0 0 0 / 0.64);
-  }
 }
 
 @layer base {
@@ -233,7 +105,7 @@
 
   body {
     background-color: var(--canvas);
-    color: var(--fg);
+    color: var(--ink);
     font-family: var(--font-sans);
     font-size: var(--text-base);
     line-height: 1.6;
@@ -243,8 +115,6 @@
   h1,
   h2,
   h3 {
-    font-family: var(--font-display);
-    font-weight: 500;
     text-wrap: balance;
   }
 
@@ -253,22 +123,41 @@
   }
 
   ::selection {
-    background-color: var(--color-cognac-200);
-    color: var(--color-ink-900);
+    background-color: var(--selection);
+    color: var(--ink);
   }
 
   :focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--link);
     outline-offset: 2px;
   }
 
   [hidden] {
     display: none !important;
   }
+
+  /* Prices line up in columns and do not jump when they change. */
+  .price {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  /*
+   * Product photos are shot on white, so the tile stays light grey in both modes and the photo is
+   * multiplied into it: the white backdrop takes the tile's colour instead of showing as a box.
+   */
+  .photo-tile {
+    background-color: var(--tile);
+    color: var(--tile-ink);
+  }
+  .photo-tile img {
+    mix-blend-mode: multiply;
+  }
 }
 
 @layer utilities {
-  /* A loose hand-drawn stroke under one word (Part 3, "small human details"). */
+  /* A loose hand-drawn stroke under one word in the hero. */
   .scribble {
     position: relative;
     white-space: nowrap;
@@ -291,14 +180,24 @@
   }
 }
 
-/* Native <dialog> drawers (mobile menu, later the bag and filters). */
+/* Native <dialog> drawers, sheets and modals. */
 dialog.drawer-left {
   inset: 0 auto 0 0;
 }
 dialog.drawer-left[open] {
   animation: var(--animate-drawer-in-left);
 }
-dialog.drawer-left[open]::backdrop {
+dialog.drawer-right {
+  inset: 0 0 0 auto;
+}
+dialog.drawer-right[open] {
+  animation: var(--animate-drawer-in-right);
+}
+dialog.drawer-left[open]::backdrop,
+dialog.drawer-right[open]::backdrop,
+dialog.sheet-bottom[open]::backdrop,
+dialog.modal-center[open]::backdrop {
+  background-color: var(--scrim);
   animation: var(--animate-fade-in);
 }
 dialog.sheet-bottom {
@@ -306,9 +205,6 @@ dialog.sheet-bottom {
 }
 dialog.sheet-bottom[open] {
   animation: var(--animate-sheet-up);
-}
-dialog.sheet-bottom[open]::backdrop {
-  animation: var(--animate-fade-in);
 }
 dialog.modal-center[open] {
   animation: var(--animate-fade-in);
@@ -325,31 +221,30 @@ dialog.modal-center[open] {
   }
 }
 
-/* Owner-written rich text (descriptions, buying guides, policies), sanitised when saved. */
+/* Owner-written rich text (descriptions, guides, policies), sanitised when saved. */
 @layer components {
   .rich-text {
     max-width: 68ch;
     font-size: var(--text-base);
-    line-height: 1.6;
+    line-height: 1.65;
   }
   .rich-text > * + * {
     margin-top: 1em;
   }
   .rich-text h2,
   .rich-text h3 {
-    font-family: var(--font-display);
-    font-weight: 500;
-    line-height: 1.25;
+    font-weight: 600;
+    line-height: 1.3;
     margin-top: 1.6em;
   }
   .rich-text h2 {
-    font-size: var(--text-2xl);
-  }
-  .rich-text h3 {
     font-size: var(--text-xl);
   }
+  .rich-text h3 {
+    font-size: var(--text-lg);
+  }
   .rich-text a {
-    color: var(--accent);
+    color: var(--link);
     text-decoration: underline;
     text-underline-offset: 4px;
   }
@@ -368,5 +263,17 @@ dialog.modal-center[open] {
   }
   .rich-text strong {
     font-weight: 600;
+  }
+  .rich-text table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
+  }
+  .rich-text th,
+  .rich-text td {
+    border-bottom: 1px solid var(--line);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
   }
 }

@@ -116,11 +116,11 @@ export function SearchBox({
           href: product.href,
           content: (
             <span className="flex items-center gap-3">
-              <span className="size-12 shrink-0 overflow-hidden rounded-sm bg-subtle">
+              <span className="size-12 shrink-0 overflow-hidden rounded-sm bg-surface">
                 {product.image && <img src={product.image} alt="" width={48} height={48} className="size-full object-cover" />}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-sm text-fg">{product.title}</span>
+                <span className="block truncate text-sm text-ink">{product.title}</span>
                 <span className="block text-sm text-muted tabular-nums">{product.price}</span>
               </span>
             </span>
@@ -137,7 +137,7 @@ export function SearchBox({
           href: category.href,
           content: (
             <span className="text-sm">
-              <span className="text-fg">{category.name}</span>
+              <span className="text-ink">{category.name}</span>
               {category.context && <span className="text-muted"> · {category.context}</span>}
             </span>
           ),
@@ -152,7 +152,7 @@ export function SearchBox({
           id: `${baseId}-all`,
           href: `/search?q=${encodeURIComponent(trimmed)}`,
           remember: trimmed,
-          content: <span className="text-sm font-medium text-accent">{fill(labels.viewAll, { q: trimmed })}</span>,
+          content: <span className="text-sm font-medium text-link">{fill(labels.viewAll, { q: trimmed })}</span>,
         },
       ],
     });
@@ -164,7 +164,7 @@ export function SearchBox({
         id: `${baseId}-r${i}`,
         href: `/search?q=${encodeURIComponent(item)}`,
         remember: item,
-        content: <span className="text-sm text-fg">{item}</span>,
+        content: <span className="text-sm text-ink">{item}</span>,
       })),
     });
   }
@@ -209,7 +209,7 @@ export function SearchBox({
           {labels.label}
         </label>
         <div
-          className={`flex items-center gap-2 rounded-sm border bg-canvas px-3 transition-colors focus-within:border-fg ${
+          className={`flex items-center gap-2 rounded-sm border bg-canvas px-3 transition-colors focus-within:border-ink ${
             size === "header" ? "border-line hover:border-line-strong" : "border-line-strong"
           }`}
         >
@@ -278,7 +278,7 @@ export function SearchBox({
                         writeRecent([]);
                         setRecent([]);
                       }}
-                      className="mr-3 min-h-9 px-1 text-xs text-muted underline underline-offset-4 hover:text-fg"
+                      className="mr-3 min-h-9 px-1 text-xs text-muted underline underline-offset-4 hover:text-ink"
                     >
                       {labels.clearRecent}
                     </button>
@@ -299,7 +299,7 @@ export function SearchBox({
                       go(option);
                     }}
                     onPointerEnter={() => setActive(position)}
-                    className={`block px-4 py-2 aria-selected:bg-subtle ${section.key === "all" ? "mt-1 border-t border-line pt-3" : ""}`}
+                    className={`block px-4 py-2 aria-selected:bg-surface ${section.key === "all" ? "mt-1 border-t border-line pt-3" : ""}`}
                   >
                     {option.content}
                   </a>

@@ -29,7 +29,7 @@ export function Pagination({
   return (
     <nav aria-label={t("catalog.pagination")} className="mt-10 flex flex-wrap items-center justify-center gap-1">
       {result.page > 1 && (
-        <Link href={href(result.page - 1)} rel="prev" className={`${cell} text-fg hover:bg-subtle`} aria-label={t("catalog.previous")}>
+        <Link href={href(result.page - 1)} rel="prev" className={`${cell} text-ink hover:bg-surface`} aria-label={t("catalog.previous")}>
           <ArrowLeftIcon size={18} />
         </Link>
       )}
@@ -39,17 +39,17 @@ export function Pagination({
             …
           </span>
         ) : page === result.page ? (
-          <span key={page} aria-current="page" className={`${cell} border border-fg font-medium text-fg`}>
+          <span key={page} aria-current="page" className={`${cell} border border-ink font-medium text-ink`}>
             {page}
           </span>
         ) : (
-          <Link key={page} href={href(page)} aria-label={t("catalog.pageNumber", { page })} className={`${cell} text-fg hover:bg-subtle`}>
+          <Link key={page} href={href(page)} aria-label={t("catalog.pageNumber", { page })} className={`${cell} text-ink hover:bg-surface`}>
             {page}
           </Link>
         ),
       )}
       {result.page < result.pageCount && (
-        <Link href={href(result.page + 1)} rel="next" className={`${cell} text-fg hover:bg-subtle`} aria-label={t("catalog.next")}>
+        <Link href={href(result.page + 1)} rel="next" className={`${cell} text-ink hover:bg-surface`} aria-label={t("catalog.next")}>
           <ArrowRightIcon size={18} />
         </Link>
       )}

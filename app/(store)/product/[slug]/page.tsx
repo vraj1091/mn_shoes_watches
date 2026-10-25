@@ -73,7 +73,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
         <ProductGallery title={product.title} images={product.images} />
 
         <div className="mt-6 lg:sticky lg:top-24 lg:mt-0 lg:self-start">
-          <h1 className="font-display text-3xl leading-tight lg:text-4xl">{product.title}</h1>
+          <h1 className="text-2xl leading-tight font-semibold tracking-tight lg:text-3xl">{product.title}</h1>
           {product.summary && <p className="mt-3 text-base text-muted">{product.summary}</p>}
 
           <BuyBox
@@ -118,7 +118,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
       <div className="mt-16 grid gap-12 border-t border-line pt-12 lg:grid-cols-2 lg:gap-16">
         {product.descriptionHtml && (
           <section aria-labelledby="description-heading" className="measure">
-            <h2 id="description-heading" className="font-display text-2xl">
+            <h2 id="description-heading" className="text-xl font-semibold">
               {t("product.description")}
             </h2>
             {/* Sanitised when saved in the admin (Phase 4). */}
@@ -132,7 +132,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
           <section aria-labelledby="care-heading" className="measure space-y-6">
             {product.care && (
               <div>
-                <h2 id="care-heading" className="font-display text-2xl">
+                <h2 id="care-heading" className="text-xl font-semibold">
                   {t("product.care")}
                 </h2>
                 <p className="mt-3 text-base">{product.care}</p>
@@ -140,7 +140,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
             )}
             {product.warranty && (
               <div>
-                <h2 className="font-display text-2xl">{t("product.warranty")}</h2>
+                <h2 className="text-xl font-semibold">{t("product.warranty")}</h2>
                 <p className="mt-3 text-base">{product.warranty}</p>
               </div>
             )}
@@ -176,7 +176,7 @@ function ServiceFacts({ product, settings }: { product: ProductPageData; setting
         <div>
           <p className="font-semibold">{t("product.returnsTitle")}</p>
           <p className="text-muted">{returns.length > 0 ? returns.join(" ") : t("product.returnsNone")}</p>
-          <Link href="/policies/returns-and-exchanges" className="inline-flex min-h-11 items-center text-accent underline underline-offset-4 hover:no-underline">
+          <Link href="/policies/returns-and-exchanges" className="inline-flex min-h-11 items-center text-link underline underline-offset-4 hover:no-underline">
             {t("product.returnsPolicy")}
           </Link>
         </div>

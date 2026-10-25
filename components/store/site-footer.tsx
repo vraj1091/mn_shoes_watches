@@ -3,17 +3,8 @@ import { getPrimaryLocation, getStoreSettings, type SocialLinks } from "@/lib/da
 import { getCategoryNavigation } from "@/lib/data/navigation";
 import { describeOpeningHours } from "@/lib/format/hours";
 import { t } from "@/lib/i18n";
-import {
-  AutoThemeIcon,
-  FacebookIcon,
-  InstagramIcon,
-  MoonIcon,
-  SunIcon,
-  XLogoIcon,
-  YoutubeIcon,
-} from "@/components/icons";
+import { FacebookIcon, InstagramIcon, XLogoIcon, YoutubeIcon } from "@/components/icons";
 import { NewsletterForm } from "./newsletter-form";
-import { ThemeSwitch } from "./theme-switch";
 
 const PAYMENT_METHODS = ["UPI", "Visa", "Mastercard", "RuPay", "Net banking"];
 
@@ -25,7 +16,7 @@ const SOCIAL: { key: keyof SocialLinks; label: string; Icon: typeof InstagramIco
 ];
 
 const heading = "mb-4 text-xs font-semibold tracking-[0.12em] text-muted uppercase";
-const link = "inline-block py-1.5 text-sm text-fg hover:text-accent";
+const link = "inline-block py-1.5 text-sm text-ink hover:text-link";
 
 export async function SiteFooter() {
   const [settings, location, departments] = await Promise.all([
@@ -38,7 +29,7 @@ export async function SiteFooter() {
   const socials = SOCIAL.filter(({ key }) => settings.socialLinks[key]);
 
   return (
-    <footer className="mt-24 border-t border-line">
+    <footer className="mt-24 border-t border-line bg-surface">
       <div className="mx-auto grid max-w-screen-xl gap-12 px-4 py-14 sm:px-6 lg:grid-cols-12 lg:gap-8 lg:px-8">
         <section aria-labelledby="footer-visit" className="lg:col-span-4">
           <h2 id="footer-visit" className="font-display text-3xl">
@@ -202,7 +193,7 @@ export async function SiteFooter() {
               <p className="mb-2 text-sm text-muted">{t("footer.weAccept")}</p>
               <ul className="flex flex-wrap gap-2">
                 {[...PAYMENT_METHODS, t("footer.cashOnDelivery")].map((method) => (
-                  <li key={method} className="rounded-sm border border-line px-2.5 py-1 text-xs font-medium text-fg">
+                  <li key={method} className="rounded-sm border border-line px-2.5 py-1 text-xs font-medium text-ink">
                     {method}
                   </li>
                 ))}
@@ -218,7 +209,7 @@ export async function SiteFooter() {
                         href={settings.socialLinks[key]}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex size-11 items-center justify-center rounded-sm text-fg hover:text-accent"
+                        className="flex size-11 items-center justify-center rounded-sm text-ink hover:text-link"
                       >
                         <Icon size={22} label={label} />
                       </a>
@@ -228,14 +219,6 @@ export async function SiteFooter() {
               </div>
             )}
           </div>
-          <ThemeSwitch
-            legend={t("footer.theme")}
-            options={[
-              { value: "system", label: t("footer.themeSystem"), icon: <AutoThemeIcon size={16} /> },
-              { value: "light", label: t("footer.themeLight"), icon: <SunIcon size={16} /> },
-              { value: "dark", label: t("footer.themeDark"), icon: <MoonIcon size={16} /> },
-            ]}
-          />
         </div>
         <div className="mx-auto flex max-w-screen-xl flex-col gap-1 px-4 pb-10 text-xs text-muted sm:px-6 lg:flex-row lg:justify-between lg:px-8">
           <p>{t("footer.copyright", { year, name: settings.legalName ?? settings.storeName })}</p>

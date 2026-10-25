@@ -136,7 +136,7 @@ export function CustomerSignIn({ labels, next, googleEnabled, phoneEnabled, icon
           {busy ? labels.verifying : labels.verify}
         </Button>
         <div className="flex flex-wrap justify-between gap-3 text-sm">
-          <button type="button" onClick={() => switchMode(mode)} className="min-h-11 text-accent underline underline-offset-4">
+          <button type="button" onClick={() => switchMode(mode)} className="min-h-11 text-link underline underline-offset-4">
             {labels.changeTarget}
           </button>
           <button
@@ -146,7 +146,7 @@ export function CustomerSignIn({ labels, next, googleEnabled, phoneEnabled, icon
               setValue(mode === "email" ? target : target.replace(/^\+91/, ""));
               void sendCode();
             }}
-            className="min-h-11 text-accent underline underline-offset-4 disabled:opacity-60"
+            className="min-h-11 text-link underline underline-offset-4 disabled:opacity-60"
           >
             {labels.resend}
           </button>
@@ -174,7 +174,7 @@ export function CustomerSignIn({ labels, next, googleEnabled, phoneEnabled, icon
             />
           ) : (
             <div className="flex">
-              <span className="flex min-h-11 items-center rounded-l-sm border border-r-0 border-line-strong bg-subtle px-3 text-base text-muted">
+              <span className="flex min-h-11 items-center rounded-l-sm border border-r-0 border-line-strong bg-surface px-3 text-base text-muted">
                 +91
               </span>
               <Input

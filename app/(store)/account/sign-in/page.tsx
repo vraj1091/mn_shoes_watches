@@ -33,7 +33,7 @@ export default async function SignInPage({ searchParams }: Props) {
           />
         </div>
       </div>
-      <aside className="self-start rounded-md bg-subtle p-6 text-base lg:col-span-4 lg:col-start-9 lg:mt-20">
+      <aside className="self-start rounded-md bg-surface p-6 text-base lg:col-span-4 lg:col-start-9 lg:mt-20">
         <p>{t("account.guestNote")}</p>
       </aside>
     </div>

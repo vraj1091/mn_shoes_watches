@@ -12,16 +12,18 @@ type Props = {
   accountLinks: LinkItem[];
   labels: { open: string; title: string; close: string; shopAll: string; searchLabel: string; searchPlaceholder: string };
   icons: { menu: ReactNode; close: ReactNode; caret: ReactNode; search: ReactNode };
+  /** Light / dark / system choice, shown at the bottom of the drawer. */
+  theme?: ReactNode;
 };
 
-const row = "flex min-h-13 w-full items-center justify-between gap-3 px-5 text-base text-fg";
+const row = "flex min-h-13 w-full items-center justify-between gap-3 px-5 text-base text-ink";
 
 /**
  * Phone menu: a drawer with large tap rows (Part 4, "Mobile"). Built on the browser's own modal
  * <dialog>, which traps focus, closes on Escape, makes the page behind it inert and returns
  * focus to the menu button, with no dialog library in the bundle.
  */
-export function MobileNav({ departments, extraLinks, accountLinks, labels, icons }: Props) {
+export function MobileNav({ departments, extraLinks, accountLinks, labels, icons, theme }: Props) {
   const dialog = useRef<HTMLDialogElement>(null);
   const close = () => dialog.current?.close();
   // The page behind the open drawer must not scroll (a CSS :has() rule would cost style work on every DOM change).
@@ -37,7 +39,7 @@ export function MobileNav({ departments, extraLinks, accountLinks, labels, icons
         aria-label={labels.open}
         aria-haspopup="dialog"
         onClick={open}
-        className="-ml-2 flex size-11 items-center justify-center rounded-sm text-fg hover:bg-subtle lg:hidden"
+        className="-ml-2 flex size-11 items-center justify-center rounded-sm text-ink hover:bg-surface lg:hidden"
       >
         {icons.menu}
       </button>
@@ -48,18 +50,18 @@ export function MobileNav({ departments, extraLinks, accountLinks, labels, icons
         onClose={() => document.documentElement.style.removeProperty("overflow")}
         // A click on the backdrop lands on the <dialog> itself; clicks inside land on its content.
         onClick={(event) => event.target === event.currentTarget && close()}
-        className="drawer-left m-0 h-dvh max-h-none w-[min(88vw,22rem)] max-w-none bg-canvas p-0 text-fg shadow-overlay backdrop:bg-scrim lg:hidden"
+        className="drawer-left m-0 h-dvh max-h-none w-[min(88vw,22rem)] max-w-none bg-raised p-0 text-ink shadow-overlay backdrop:bg-scrim lg:hidden"
       >
         <div className="flex h-full flex-col">
           <div className="flex h-14 shrink-0 items-center justify-between border-b border-line pr-2 pl-5">
-            <h2 id="mobile-menu-title" className="font-display text-xl">
+            <h2 id="mobile-menu-title" className="text-lg font-semibold">
               {labels.title}
             </h2>
             <button
               type="button"
               aria-label={labels.close}
               onClick={close}
-              className="flex size-11 items-center justify-center rounded-sm hover:bg-subtle"
+              className="flex size-11 items-center justify-center rounded-sm hover:bg-surface"
             >
               {icons.close}
             </button>
@@ -70,7 +72,7 @@ export function MobileNav({ departments, extraLinks, accountLinks, labels, icons
               <label htmlFor="mobile-search" className="sr-only">
                 {labels.searchLabel}
               </label>
-              <div className="flex items-center gap-2 rounded-sm border border-line-strong px-3 focus-within:border-fg">
+              <div className="flex items-center gap-2 rounded-sm border border-line-strong px-3 focus-within:border-ink">
                 <span className="text-muted">{icons.search}</span>
                 <input
                   id="mobile-search"
@@ -94,7 +96,7 @@ export function MobileNav({ departments, extraLinks, accountLinks, labels, icons
                       </summary>
                       <ul className="pb-3">
                         <li>
-                          <Link href={dept.href} onClick={close} className={`${row} min-h-11 text-accent`}>
+                          <Link href={dept.href} onClick={close} className={`${row} min-h-11 text-link`}>
                             {labels.shopAll.replace("{name}", dept.name.toLowerCase())}
                           </Link>
                         </li>
@@ -136,7 +138,7 @@ export function MobileNav({ departments, extraLinks, accountLinks, labels, icons
                 ))}
                 {extraLinks.map((link) => (
                   <li key={link.href} className="border-b border-line">
-                    <Link href={link.href} onClick={close} className={`${row} ${link.highlight ? "text-accent" : ""}`}>
+                    <Link href={link.href} onClick={close} className={`${row} ${link.highlight ? "text-sale" : ""}`}>
                       {link.label}
                     </Link>
                   </li>
@@ -147,13 +149,14 @@ export function MobileNav({ departments, extraLinks, accountLinks, labels, icons
             <ul className="mt-6">
               {accountLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} prefetch={false} onClick={close} className={`${row} justify-start text-muted hover:text-fg`}>
+                  <Link href={link.href} prefetch={false} onClick={close} className={`${row} justify-start text-muted hover:text-ink`}>
                     {link.icon}
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
+            {theme && <div className="mt-6 px-5 pb-8">{theme}</div>}
           </div>
         </div>
       </dialog>

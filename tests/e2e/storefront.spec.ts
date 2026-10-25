@@ -30,15 +30,23 @@ test.describe("storefront shell", () => {
     }
   });
 
-  test("dark mode follows the phone and the manual switch overrides it", async ({ page }) => {
+  test("dark mode follows the device and the theme switch overrides it", async ({ page, isMobile }) => {
     await page.emulateMedia({ colorScheme: "dark" });
     await page.goto("/");
     const background = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-    expect(await background()).toBe("rgb(20, 17, 15)"); // Ink 950
-    await page.getByRole("radio", { name: "Light" }).check({ force: true });
-    expect(await background()).toBe("rgb(248, 246, 242)"); // Ink 50
+    expect(await background()).toBe("rgb(15, 19, 24)"); // Graphite 950
+    if (isMobile) {
+      await page.getByRole("button", { name: "Open menu" }).click();
+      await page.getByRole("dialog", { name: "Menu" }).getByRole("radio", { name: "Light" }).check({ force: true });
+    } else {
+      await page.getByRole("button", { name: /^Colour theme/ }).click();
+      await page.getByRole("menuitemradio", { name: "Light" }).click();
+    }
+    expect(await background()).toBe("rgb(255, 255, 255)"); // Graphite 0
     await page.reload();
-    expect(await background()).toBe("rgb(248, 246, 242)");
+    expect(await background()).toBe("rgb(255, 255, 255)");
+    // No flash: the class is on <html> before the page paints.
+    expect(await page.evaluate(() => document.documentElement.className)).toContain("light");
   });
 
   test("phone menu opens as a modal, locks the page and closes with Escape", async ({ page, isMobile }) => {

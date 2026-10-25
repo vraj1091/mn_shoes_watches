@@ -38,9 +38,9 @@ export default async function AdminDashboard({ searchParams }: Props) {
           {checklist.map((item) => (
             <li key={item.id} className="flex gap-4 border-b border-line px-5 py-4 last:border-b-0">
               {item.done ? (
-                <CheckIcon size={22} className="mt-0.5 shrink-0 text-success" label="Done" />
+                <CheckIcon size={22} className="mt-0.5 shrink-0 text-stock" label="Done" />
               ) : (
-                <InfoIcon size={22} className="mt-0.5 shrink-0 text-accent" label="To do" />
+                <InfoIcon size={22} className="mt-0.5 shrink-0 text-link" label="To do" />
               )}
               <div>
                 <p className={`text-base font-medium ${item.done ? "text-muted line-through decoration-1" : ""}`}>{item.label}</p>

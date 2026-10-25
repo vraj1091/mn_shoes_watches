@@ -78,7 +78,7 @@ async function CategoryListing({ category, path, query }: { category: CategoryPa
         <header>
           <Breadcrumbs items={trail.map((node) => ({ name: node.name, href: `/${node.path}` }))} />
           <h1 className="mt-3 font-display text-4xl lg:text-5xl">{category.name}</h1>
-          {firstPage && category.intro && <p className="measure mt-4 text-base text-fg lg:text-lg">{category.intro}</p>}
+          {firstPage && category.intro && <p className="measure mt-4 text-base text-ink lg:text-lg">{category.intro}</p>}
           {children.length > 0 && (
             <nav aria-label={t("catalog.browse")} className="-mx-4 mt-6 overflow-x-auto px-4 sm:mx-0 sm:px-0">
               <ul className="flex gap-2 sm:flex-wrap">
@@ -86,7 +86,7 @@ async function CategoryListing({ category, path, query }: { category: CategoryPa
                   <li key={child.id} className="shrink-0">
                     <Link
                       href={`/${child.path}`}
-                      className="inline-flex min-h-11 items-center rounded-sm border border-line-strong px-4 text-sm text-fg hover:border-fg"
+                      className="inline-flex min-h-11 items-center rounded-sm border border-line-strong px-4 text-sm text-ink hover:border-ink"
                     >
                       {child.name}
                     </Link>
@@ -102,7 +102,7 @@ async function CategoryListing({ category, path, query }: { category: CategoryPa
           <p className="text-base">
             {t("catalog.emptyCategory", { name: parent?.name ?? category.name })}{" "}
             {parent && (
-              <Link href={`/${parent.path}`} className="text-accent underline underline-offset-4">
+              <Link href={`/${parent.path}`} className="text-link underline underline-offset-4">
                 {parent.name}
               </Link>
             )}

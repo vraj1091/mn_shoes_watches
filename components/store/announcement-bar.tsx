@@ -27,7 +27,7 @@ export function AnnouncementBar({ text, href, version, dismissLabel, closeIcon }
   }
 
   return (
-    <div className="relative bg-primary text-on-primary">
+    <div className="relative bg-announce text-on-announce">
       <p className="mx-auto max-w-screen-xl px-12 py-2 text-center text-sm">
         {href ? (
           <Link href={href} className="underline decoration-1 underline-offset-4 hover:decoration-2">

@@ -15,12 +15,12 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
           return (
             <li key={crumb.href} className="flex items-center gap-1">
               {last ? (
-                <span aria-current="page" className="text-fg">
+                <span aria-current="page" className="text-ink">
                   {crumb.name}
                 </span>
               ) : (
                 <>
-                  <Link href={crumb.href} className="inline-flex min-h-11 items-center hover:text-accent">
+                  <Link href={crumb.href} className="inline-flex min-h-11 items-center hover:text-link">
                     {crumb.name}
                   </Link>
                   <CaretRightIcon size={12} className="shrink-0" />

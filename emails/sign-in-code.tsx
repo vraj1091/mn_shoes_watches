@@ -1,4 +1,5 @@
 import { Body, Container, Head, Heading, Html, Preview, Section, Text } from "react-email";
+import { resolve } from "@/lib/design/tokens";
 
 type Props = {
   storeName: string;
@@ -7,11 +8,8 @@ type Props = {
   purpose: "customer" | "verify";
 };
 
-// Email clients ignore CSS variables, so the palette values are written out here.
-const ink900 = "#1F1A17";
-const ink500 = "#7A706A";
-const ink100 = "#F1EDE7";
-const ink50 = "#F8F6F2";
+// Email clients ignore CSS variables, so the light-mode token values are inlined.
+const { ink: ink900, muted: ink500, surface: ink100, canvas: ink50 } = resolve("light");
 
 export function SignInCodeEmail({ storeName, code, minutesValid, purpose }: Props) {
   const action = purpose === "customer" ? "sign in" : "confirm your email";

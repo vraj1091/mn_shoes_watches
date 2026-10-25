@@ -57,11 +57,7 @@
     "newsletterDone": "Thanks. You are on the list.",
     "newsletterInvalid": "Enter a valid email address.",
     "newsletterBusy": "Too many tries. Wait a minute and try again.",
-    "newsletterError": "We could not save that just now. Please try again.",
-    "theme": "Colour theme",
-    "themeSystem": "Auto",
-    "themeLight": "Light",
-    "themeDark": "Dark"
+    "newsletterError": "We could not save that just now. Please try again."
   },
   "home": {
     "title": "Men's shoes, watches and perfumes",
@@ -256,5 +252,11 @@
     "suggestions": "Suggestions",
     "noSuggestions": "No matches yet. Press Enter to search.",
     "submit": "Search"
+  },
+  "theme": {
+    "label": "Colour theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
   }
 }
