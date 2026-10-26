@@ -1,6 +1,8 @@
 import "server-only";
 import { prisma, DEFAULT_STORE_ID } from "@/lib/db/client";
 import { env } from "@/lib/env";
+import { hasDemoData } from "@/lib/demo/remove";
+import { razorpayKeys } from "@/lib/payments/razorpay";
 
 /** Seed values are written in [square brackets] or as zeros, so they are easy to spot and to detect. */
 export const isPlaceholder = (value: string | null | undefined) =>
@@ -13,10 +15,11 @@ export type ChecklistItem = { id: string; label: string; detail: string; done: b
  * an item ticks itself off once the owner fills it in.
  */
 export async function getSetupChecklist(staff: { twoFactorEnabled: boolean }): Promise<ChecklistItem[]> {
-  const [settings, location, taxClasses] = await Promise.all([
+  const [settings, location, taxClasses, demo] = await Promise.all([
     prisma.storeSettings.findUnique({ where: { storeId: DEFAULT_STORE_ID } }),
     prisma.storeLocation.findFirst({ where: { storeId: DEFAULT_STORE_ID, isPrimary: true } }),
     prisma.taxClass.findMany({ where: { storeId: DEFAULT_STORE_ID }, select: { verifiedAt: true } }),
+    hasDemoData(prisma),
   ]);
   const { SMTP_HOST, SMTP_USER, SMTP_PASSWORD } = env();
 
@@ -56,6 +59,18 @@ export async function getSetupChecklist(staff: { twoFactorEnabled: boolean }): P
       label: "Email sending (SMTP)",
       detail: "Needed for sign-in codes and order emails. Add the SMTP details from your hosting panel.",
       done: Boolean(SMTP_HOST && SMTP_USER && SMTP_PASSWORD),
+    },
+    {
+      id: "payments",
+      label: "Online payments (Razorpay)",
+      detail: "Add RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET. Until then checkout offers a demo payment that charges nothing.",
+      done: razorpayKeys() !== null,
+    },
+    {
+      id: "demo",
+      label: "Remove the demo data",
+      detail: "Demo products, brands, photos, orders and customers. Settings → Remove all demo data.",
+      done: !demo,
     },
   ];
 }

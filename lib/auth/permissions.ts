@@ -66,9 +66,15 @@ export function can(role: StaffRoleName, permission: Permission): boolean {
   return ROLE_PERMISSIONS[role].includes(permission);
 }
 
-/** Owner and Manager can move money and change settings, so they must use an authenticator app. */
+/**
+ * Owner and Manager can move money and change settings, so a live shop makes them use an
+ * authenticator app. Development builds skip it so the documented demo login works at once;
+ * ADMIN_REQUIRE_2FA=true or false overrides either default (DECISIONS.md 54).
+ */
 export function requiresTwoFactor(role: StaffRoleName): boolean {
-  return role === "OWNER" || role === "MANAGER";
+  const setting = process.env.ADMIN_REQUIRE_2FA;
+  const enforced = setting === "true" || (setting !== "false" && process.env.NODE_ENV === "production");
+  return enforced && (role === "OWNER" || role === "MANAGER");
 }
 
 export const ROLE_LABELS: Record<StaffRoleName, string> = {

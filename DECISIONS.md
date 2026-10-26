@@ -372,3 +372,49 @@ which is what GST place of supply uses.
 Auto-rotating carousels are hard to read and need a pause control (WCAG 2.2.2), so the hero is a swipeable row
 with arrows and dots. Next.js 16 keeps the previous page mounted but hidden (React Activity) for instant back
 navigation; tests therefore find form fields by role, which skips hidden elements, rather than by label.
+
+**54. Two-factor sign-in is required for owners and managers in production only.**
+They can refund payments and change settings, so on a live shop the admin holds them on My account until an
+authenticator app is set up. In development the default admin account works with a password alone, so the
+shop can be tried straight after `npm run seed`. `ADMIN_REQUIRE_2FA=true` or `false` overrides either default.
+
+**55. Admin saves expire exactly the caches they affect.**
+Every admin change is a server action that ends with `updateTag` for the data it touched (`lib/admin/refresh.ts`):
+a product save expires the catalogue index and that product's page, a coupon save the discounts, a settings save the
+settings, and so on. The next shop request reads the new data, so a change shows at once without a rebuild. The photo
+upload is a route handler (it streams files and reports per-file errors), where `updateTag` is not available; it
+uses `revalidateTag(tag, { expire: 0 })`, which has the same immediate effect.
+
+**56. Uploaded photos are re-encoded on the server.**
+`/api/admin/media` checks each file's bytes with sharp (not its name), turns it upright from its EXIF data, scales it
+to at most 1600 px and saves it as WebP under `DATA_DIR/uploads/YYYY/MM` with a random suffix, plus a 16 px blurred
+preview. `/media/…` serves those files with a one-year immutable cache, since a name is never reused. Uploading a
+real photo to a product that only had a generated placeholder removes the placeholder and clears
+`isPlaceholderPhoto`, so the admin's "Replace photo" warning goes away.
+
+**57. A product goes on sale only with a photo and a price, and is archived rather than deleted once sold.**
+Setting a product to Active is refused until it has at least one photo and one active size with a price. Deleting a
+product that appears on an order archives it instead, so orders, invoices and reviews keep pointing at it; a product
+never ordered is deleted with its sizes. Stock edits are written to the stock movement log with the staff member.
+
+**58. Order status changes follow a fixed path, and invoices are issued on request.**
+Staff can only move an order to the next sensible status (COD to confirm → Confirmed → Packed → Shipped → Out for
+delivery → Delivered, with Cancelled before shipping and Returned to shop after). Cancelling or a return to the shop
+puts stock back and takes the order out of the customer's total spent. Shipping asks for the courier and AWB.
+The GST tax invoice is created when staff press "Create tax invoice": it takes the next gapless number for the
+financial year (MN/2026-27/000001) from the same counter mechanism as order numbers, prints CGST + SGST for orders
+delivered in the shop's GST state and IGST otherwise, and lists delivery and the COD fee as 18% service lines.
+Demo orders use a separate DEMO/… series so removing them leaves no gap in the real one.
+
+**59. Admin forms keep what was saved on screen.**
+React resets a form after its action finishes, and a `<select>` then shows the value it was first rendered with,
+so a second save could quietly undo the first (a product set to Active showed Draft again). `AdminForm` submits
+from `onSubmit` inside a transition instead, which skips that reset; the `action` attribute stays for the no-JavaScript
+case. Each `Field` wraps its control in its `<label>`, so a label always names its own field even when two forms on
+one page share a field name.
+
+**60. Coupons offer only what checkout enforces.**
+The coupon form has percentage (with an optional cap), amount off and free delivery, a minimum order, a total usage
+limit and dates in Indian time (a coupon ending on a date works until 23:59:59 IST that day). Per-customer limits,
+first-order-only and prepaid-only exist in the database but checkout does not check them yet, so the admin does not
+offer them rather than promise something that would not happen.

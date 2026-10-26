@@ -1,5 +1,5 @@
 import { randomBytes } from "node:crypto";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { decryptSecret, encryptSecret, maskSecret, safeEqual, sha256Hex } from "@/lib/security/crypto";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { can, PERMISSIONS, requiresTwoFactor, STAFF_ROLES } from "@/lib/auth/permissions";
@@ -82,8 +82,29 @@ describe("staff permissions", () => {
     expect(can("CATALOGUE_EDITOR", "orders.refund")).toBe(false);
   });
 
-  it("requires two-factor for owner and manager only", () => {
-    expect(STAFF_ROLES.filter(requiresTwoFactor)).toEqual(["OWNER", "MANAGER"]);
+  describe("two-factor", () => {
+    afterEach(() => vi.unstubAllEnvs());
+
+    it("is required for owner and manager only, in production", () => {
+      vi.stubEnv("NODE_ENV", "production");
+      vi.stubEnv("ADMIN_REQUIRE_2FA", "");
+      expect(STAFF_ROLES.filter(requiresTwoFactor)).toEqual(["OWNER", "MANAGER"]);
+    });
+
+    it("is optional in development, so the demo admin works after npm run seed", () => {
+      vi.stubEnv("NODE_ENV", "development");
+      vi.stubEnv("ADMIN_REQUIRE_2FA", "");
+      expect(STAFF_ROLES.filter(requiresTwoFactor)).toEqual([]);
+    });
+
+    it("follows ADMIN_REQUIRE_2FA when it is set", () => {
+      vi.stubEnv("NODE_ENV", "development");
+      vi.stubEnv("ADMIN_REQUIRE_2FA", "true");
+      expect(STAFF_ROLES.filter(requiresTwoFactor)).toEqual(["OWNER", "MANAGER"]);
+      vi.stubEnv("NODE_ENV", "production");
+      vi.stubEnv("ADMIN_REQUIRE_2FA", "false");
+      expect(STAFF_ROLES.filter(requiresTwoFactor)).toEqual([]);
+    });
   });
 });
 

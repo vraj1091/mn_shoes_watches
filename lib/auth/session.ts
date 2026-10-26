@@ -1,5 +1,6 @@
 import "server-only";
 import { headers } from "next/headers";
+import { connection } from "next/server";
 import { redirect } from "next/navigation";
 import { getCustomerAuth } from "./customer";
 import { getStaffAuth } from "./staff";
@@ -12,9 +13,12 @@ import { can, isStaffRole, requiresTwoFactor, type Permission, type StaffRoleNam
  */
 
 // Read the request first: that is what defers the work to request time during `next build`,
-// before the auth instance (which needs the secrets) is created.
+// before the auth instance (which needs the secrets) is created. `connection()` also keeps the
+// session check out of prefetch prerenders, which have the request headers but treat the current
+// time (used for session expiry) as unstable.
 export async function getCustomerSession() {
   const requestHeaders = await headers();
+  await connection();
   return getCustomerAuth().api.getSession({ headers: requestHeaders });
 }
 
@@ -24,6 +28,7 @@ export type StaffSession = {
 
 export async function getStaffSession(): Promise<StaffSession | null> {
   const requestHeaders = await headers();
+  await connection();
   const session = await getStaffAuth().api.getSession({ headers: requestHeaders });
   if (!session) return null;
   const { id, name, email, role, isActive, twoFactorEnabled } = session.user;
