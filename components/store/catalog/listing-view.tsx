@@ -26,6 +26,8 @@ export function cardLabels(): CardLabels {
     moreSwatches: t("catalog.moreSwatches"),
     originalPrice: t("catalog.originalPrice"),
     rating: t("catalog.rating"),
+    wishlistAdd: t("catalog.wishlistAdd"),
+    wishlistRemove: t("catalog.wishlistRemove"),
   };
 }
 

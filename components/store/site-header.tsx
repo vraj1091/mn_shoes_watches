@@ -11,23 +11,31 @@ import { MobileNav } from "./mobile-nav";
 import { SearchBox } from "./search/search-box";
 import { searchLabels } from "./search/search-labels";
 import { ThemeControl, ThemeControlInline } from "@/components/theme/theme-control";
+import { BagButton } from "./shop/cart-drawer";
+import { cartCount } from "@/lib/cart/cart";
+import { readShopperHash } from "@/lib/shopper/token";
 
 const iconButton =
   "flex size-11 items-center justify-center rounded-sm text-ink transition-colors hover:bg-surface hover:text-link";
 
 export async function SiteHeader() {
-  const [settings, departments, cookieStore] = await Promise.all([
+  const [settings, departments, cookieStore, shopper] = await Promise.all([
     getStoreSettings(),
     getCategoryNavigation(),
     cookies(),
+    readShopperHash(),
   ]);
+  const bagCount = await cartCount(shopper);
 
   const showAnnouncement =
     settings.announcementEnabled &&
     Boolean(settings.announcementText) &&
     cookieStore.get(ANNOUNCEMENT_COOKIE)?.value !== String(settings.announcementVersion);
 
-  const extraLinks = [{ label: t("header.sale"), href: "/sale", highlight: true }];
+  const extraLinks = [
+    { label: t("header.brands"), href: "/brands" },
+    { label: t("header.sale"), href: "/sale", highlight: true },
+  ];
 
   return (
     <>
@@ -100,9 +108,7 @@ export async function SiteHeader() {
             <Link href="/wishlist" prefetch={false} aria-label={t("common.wishlist")} className={`${iconButton} max-lg:hidden`}>
               <HeartIcon size={22} />
             </Link>
-            <Link href="/cart" prefetch={false} aria-label={t("common.bag")} className={`${iconButton} -mr-2 lg:mr-0`}>
-              <BagIcon size={22} />
-            </Link>
+            <BagButton initialCount={bagCount} label={t("header.bagWithCount")} labelEmpty={t("header.bagEmpty")} icon={<BagIcon size={22} />} />
           </div>
         </div>
       </HeaderShell>

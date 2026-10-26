@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { ReactNode } from "react";
 import { formatPrice, percentOff } from "@/lib/format/money";
 import { fill } from "@/lib/format/template";
 import type { ProductCardData } from "@/lib/catalog/types";
+import { WishlistButton } from "@/components/store/shop/wishlist-button";
 
 export type CardLabels = {
   new: string;
@@ -14,6 +14,8 @@ export type CardLabels = {
   moreSwatches: string;
   originalPrice: string;
   rating: string;
+  wishlistAdd: string;
+  wishlistRemove: string;
 };
 
 const MAX_SWATCHES = 5;
@@ -27,18 +29,16 @@ export const CARD_SIZES = "(min-width: 1280px) 260px, (min-width: 768px) 30vw, 4
 /**
  * Product card for grids and rows. Has no server-only imports, so "Show more" and "Recently
  * viewed" can render the same card in the browser. The title link stretches over the whole card;
- * the wishlist button sits above it.
+ * the wishlist heart sits above it.
  */
 export function ProductCard({
   product,
   labels,
   eager = false,
-  wishlist,
 }: {
   product: ProductCardData;
   labels: CardLabels;
   eager?: boolean;
-  wishlist?: ReactNode;
 }) {
   const discount = percentOff(product.minPrice, product.compareAtPrice);
   const price = formatPrice(product.minPrice);
@@ -86,7 +86,9 @@ export function ProductCard({
             {badge}
           </span>
         )}
-        {wishlist && <div className="absolute top-1 right-1 z-10">{wishlist}</div>}
+        <div className="absolute top-0.5 right-0.5 z-10">
+          <WishlistButton productId={product.id} title={product.title} labels={{ add: labels.wishlistAdd, remove: labels.wishlistRemove }} />
+        </div>
       </div>
 
       {product.brand && <p className="mt-3 text-xs font-semibold tracking-wide text-muted uppercase">{product.brand}</p>}

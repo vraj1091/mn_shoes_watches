@@ -1,10 +1,11 @@
 import { t } from "@/lib/i18n";
 
+/** First thing a keyboard user reaches: jumps past the header. Visually hidden until focused. */
 export function SkipLink() {
   return (
     <a
       href="#main"
-      className="fixed top-2 left-2 z-[60] -translate-y-24 rounded-sm bg-primary px-4 py-3 text-sm font-medium text-on-primary transition-transform focus-visible:translate-y-0"
+      className="sr-only rounded-sm bg-primary px-4 py-3 text-sm font-medium text-on-primary focus-visible:not-sr-only focus-visible:fixed focus-visible:top-2 focus-visible:left-2 focus-visible:z-[60]"
     >
       {t("common.skipToContent")}
     </a>

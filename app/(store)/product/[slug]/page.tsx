@@ -3,23 +3,30 @@ import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { getCatalogIndex } from "@/lib/data/catalog-index";
 import { getProductBySlug, type ProductPageData } from "@/lib/data/catalog";
+import { getProductReviews } from "@/lib/data/reviews";
 import { getStoreSettings, type StoreSettings } from "@/lib/data/store";
 import { toCards } from "@/lib/catalog/cards";
 import { ancestors } from "@/lib/catalog/query";
 import { pickProducts, similarProducts } from "@/lib/catalog/related";
 import { initialSelection, isSizeOption, priceSummary } from "@/lib/catalog/variants";
+import { videoEmbedUrl } from "@/lib/catalog/video";
 import { formatPrice } from "@/lib/format/money";
 import { describe } from "@/lib/seo/listing";
 import { t } from "@/lib/i18n";
-import { CloseIcon, ReturnIcon, RulerIcon, ShieldIcon } from "@/components/icons";
+import { ArrowLeftIcon, ArrowRightIcon, CloseIcon, PlayIcon, ReturnIcon, RulerIcon, ShieldIcon } from "@/components/icons";
 import { Breadcrumbs } from "@/components/store/catalog/breadcrumbs";
 import { FaqList } from "@/components/store/catalog/faq-list";
 import { cardLabels } from "@/components/store/catalog/listing-view";
 import { ProductRow } from "@/components/store/catalog/product-row";
 import { BuyBox, type BuyBoxLabels } from "@/components/store/product/buy-box";
-import { PerfumeNotes, ProductGallery, SizeChartTable, SpecsTable, WatchFacts } from "@/components/store/product/product-details";
+import { Gallery } from "@/components/store/product/gallery";
+import { PinCheck } from "@/components/store/product/pin-check";
+import { PerfumeNotes, SizeChartTable, SpecsTable, WatchFacts } from "@/components/store/product/product-details";
 import { RecentlyViewed } from "@/components/store/product/recently-viewed";
+import { ReviewsSection, Stars } from "@/components/store/product/reviews";
 import { SizeGuide } from "@/components/store/product/size-guide";
+import { WishlistButton } from "@/components/store/shop/wishlist-button";
+import { wishlistLabels } from "@/components/store/shop/labels";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -42,8 +49,9 @@ async function load(params: Props["params"]) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = await load(params);
+  const name = product.brand ? `${product.brand.name} ${product.title}` : product.title;
   return {
-    title: product.metaTitle ?? product.title,
+    title: product.metaTitle ?? name,
     description: product.metaDescription ?? describe(product.summary ?? product.highlights.join(". ")),
     // ?variant= and tracking parameters all point at the one product URL.
     alternates: { canonical: `/product/${product.slug}` },
@@ -53,7 +61,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductPage({ params, searchParams }: Props) {
   const product = await load(params);
-  const [index, settings, query] = await Promise.all([getCatalogIndex(), getStoreSettings(), searchParams]);
+  const [index, settings, query, reviews] = await Promise.all([getCatalogIndex(), getStoreSettings(), searchParams, getProductReviews(product.id)]);
   const requested = typeof query.variant === "string" ? query.variant : null;
 
   const trail = product.primaryCategoryId ? ancestors(index.categories, product.primaryCategoryId) : [];
@@ -70,19 +78,77 @@ export default async function ProductPage({ params, searchParams }: Props) {
       <Breadcrumbs items={[...trail.map((node) => ({ name: node.name, href: `/${node.path}` })), { name: product.title, href: `/product/${product.slug}` }]} />
 
       <div className="mt-4 lg:grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-12">
-        <ProductGallery title={product.title} images={product.images} />
+        {product.images.length > 0 ? (
+          <Gallery
+            images={product.images}
+            videoEmbed={videoEmbedUrl(product.videoUrl)}
+            labels={{
+              viewer: t("product.galleryTitle", { title: product.title }),
+              open: t("product.galleryOpen"),
+              close: t("product.galleryClose"),
+              previous: t("product.galleryPrevious"),
+              next: t("product.galleryNext"),
+              thumb: t("product.galleryThumb"),
+              zoomHint: t("product.galleryZoomHint"),
+              video: t("product.video"),
+            }}
+            icons={{ close: <CloseIcon size={22} />, previous: <ArrowLeftIcon size={20} />, next: <ArrowRightIcon size={20} />, play: <PlayIcon size={22} /> }}
+          />
+        ) : (
+          <div aria-hidden className="photo-tile flex aspect-square items-end rounded-md p-6 lg:p-10">
+            <p className="text-2xl leading-tight font-semibold lg:text-4xl">{product.title}</p>
+          </div>
+        )}
 
         <div className="mt-6 lg:sticky lg:top-24 lg:mt-0 lg:self-start">
-          <h1 className="text-2xl leading-tight font-semibold tracking-tight lg:text-3xl">{product.title}</h1>
+          {product.brand && (
+            <Link href={`/brands/${product.brand.slug}`} className="text-sm font-semibold tracking-wide text-muted uppercase hover:text-link">
+              {product.brand.name}
+            </Link>
+          )}
+          <h1 className="mt-1 text-2xl leading-tight font-semibold tracking-tight lg:text-3xl">{product.title}</h1>
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
+            {product.ratingCount > 0 && (
+              <a href="#reviews-heading" className="flex items-center gap-2 text-sm text-muted hover:text-link">
+                <Stars rating={product.ratingAvg} />
+                <span className="price">
+                  {product.ratingAvg.toFixed(1)} · {product.ratingCount === 1 ? t("product.reviewsCountOne") : t("product.reviewsCount", { count: product.ratingCount })}
+                </span>
+              </a>
+            )}
+            {product.badges.map((badge) => (
+              <span key={badge} className="rounded-sm bg-badge px-2 py-0.5 text-xs font-semibold text-badge-ink">
+                {badge}
+              </span>
+            ))}
+          </div>
           {product.summary && <p className="mt-3 text-base text-muted">{product.summary}</p>}
 
           <BuyBox
+            title={product.title}
             options={product.options}
             variants={product.variants}
             initial={initialSelection(product.variants, product.options, requested)}
             lowStockThreshold={index.lowStockThreshold}
             emiFrom={EMI_FROM}
             labels={buyBoxLabels()}
+            wishlist={<WishlistButton productId={product.id} title={product.title} labels={wishlistLabels()} size="page" />}
+            delivery={
+              <PinCheck
+                labels={{
+                  title: t("product.pinTitle"),
+                  label: t("product.pinLabel"),
+                  check: t("product.pinCheck"),
+                  invalid: t("product.pinInvalid"),
+                  unserviceable: t("product.pinUnserviceable"),
+                  result: t("product.pinResult"),
+                  cod: t("product.pinCod"),
+                  noCod: t("product.pinNoCod"),
+                  free: t("product.pinFree"),
+                  busy: t("bag.busy"),
+                }}
+              />
+            }
             sizeGuide={
               sizeChart ? (
                 <SizeGuide
@@ -121,7 +187,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
             <h2 id="description-heading" className="text-xl font-semibold">
               {t("product.description")}
             </h2>
-            {/* Sanitised when saved in the admin (Phase 4). */}
+            {/* Sanitised when saved in the admin. */}
             <div className="rich-text mt-4" dangerouslySetInnerHTML={{ __html: product.descriptionHtml }} />
           </section>
         )}
@@ -149,11 +215,20 @@ export default async function ProductPage({ params, searchParams }: Props) {
         <FaqList title={t("product.faqTitle")} faqs={product.faqs} />
       </div>
 
+      <ReviewsSection data={reviews} />
+
       <ProductRow id="complete-the-look" title={t("product.completeTheLook")} products={look} />
       <ProductRow id="similar-products" title={t("product.similar")} products={similar} />
       {indexed && <RecentlyViewed current={toCards([indexed], index.lowStockThreshold)[0]!} title={t("product.recentlyViewed")} labels={cardLabels()} />}
     </div>
   );
+}
+
+/** "5-year warranty" when the months make whole years of two or more; otherwise months. */
+function warrantyLine(months: number) {
+  if (months === 12) return t("product.warrantyYear");
+  if (months >= 24 && months % 12 === 0) return t("product.warrantyYears", { years: months / 12 });
+  return t("product.warrantyMonths", { months });
 }
 
 /** Returns and warranty in two short lines beside the price, with the full policy one tap away. */
@@ -184,7 +259,7 @@ function ServiceFacts({ product, settings }: { product: ProductPageData; setting
       {product.warrantyMonths ? (
         <li className="flex gap-3">
           <ShieldIcon size={20} className="mt-0.5 shrink-0 text-muted" />
-          <p className="font-semibold">{t("product.warrantyMonths", { months: product.warrantyMonths })}</p>
+          <p className="font-semibold">{warrantyLine(product.warrantyMonths)}</p>
         </li>
       ) : null}
     </ul>
@@ -213,5 +288,13 @@ function buyBoxLabels(): BuyBoxLabels {
     notifyInvalid: t("product.notifyInvalid"),
     notifyBusy: t("product.notifyBusy"),
     notifyError: t("product.notifyError"),
+    addToBag: t("product.addToBag"),
+    adding: t("product.adding"),
+    buyNow: t("product.buyNow"),
+    chooseFirst: t("product.chooseFirst"),
+    added: t("bag.added"),
+    soldOutNow: t("bag.soldOut"),
+    limit: t("bag.limit"),
+    busy: t("bag.busy"),
   };
 }

@@ -10,6 +10,7 @@ import type { ProductCardData } from "@/lib/catalog/types";
 
 const scopeSchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("category"), path: z.string().max(255) }),
+  z.object({ kind: z.literal("brand"), slug: z.string().max(160) }),
   z.object({ kind: z.literal("collection"), slug: z.string().max(160) }),
   z.object({ kind: z.literal("landing"), path: z.string().max(255) }),
   z.object({ kind: z.literal("sale") }),

@@ -24,9 +24,13 @@ export const PRICE_BUCKETS: PriceRange[] = [
   { min: 25_000_00, max: null },
 ];
 
+/** A filter whose values are tested with a function: brand, and who a product is for. */
+export type OptionFacet = { kind: "options"; key: string; label: string; options: { slug: string; label: string; match: (product: IndexedProduct) => boolean }[] };
+
 export type FacetDef =
   | { kind: "attribute"; key: string; label: string; attribute: AttributeMeta }
-  | { kind: "category"; key: "category"; label: string; options: { slug: string; label: string; categoryIds: Set<string> }[] };
+  | { kind: "category"; key: "category"; label: string; options: { slug: string; label: string; categoryIds: Set<string> }[] }
+  | OptionFacet;
 
 export type ListingState = {
   selections: Record<string, string[]>;
@@ -91,6 +95,7 @@ export function parseListingState(params: SearchParams, facets: FacetDef[], defa
 
 /** Does a product match one facet's selected values? */
 function matchesFacet(product: IndexedProduct, facet: FacetDef, selected: string[]): boolean {
+  if (facet.kind === "options") return facet.options.some((option) => selected.includes(option.slug) && option.match(product));
   if (facet.kind === "category") {
     return facet.options.some(
       (option) => selected.includes(option.slug) && Object.keys(product.categoryPositions).some((id) => option.categoryIds.has(id)),
@@ -152,7 +157,7 @@ export function sortProducts(products: IndexedProduct[], sort: SortKey, relevanc
 }
 
 function facetValues(facet: FacetDef, scope: IndexedProduct[], selected: string[]): FacetValue[] {
-  if (facet.kind === "category") {
+  if (facet.kind === "options" || facet.kind === "category") {
     return facet.options
       .map((option) => ({
         slug: option.slug,
@@ -314,6 +319,35 @@ export function categoryFacets(categories: CategoryNode[], attributes: Attribute
     .map((id) => byId.get(id))
     .filter((attribute): attribute is AttributeMeta => Boolean(attribute?.isFilterable))
     .map((attribute) => ({ kind: "attribute", key: attribute.code, label: attribute.name, attribute }));
+}
+
+/** Brands present in a set of products, A to Z; none when only one brand is there. */
+export function brandFacet(products: IndexedProduct[], label: string): OptionFacet | null {
+  const brands = new Map<string, string>();
+  for (const product of products) if (product.brand) brands.set(product.brand.slug, product.brand.name);
+  if (brands.size < 2) return null;
+  return {
+    kind: "options",
+    key: "brand",
+    label,
+    options: [...brands.entries()]
+      .sort((a, b) => a[1].localeCompare(b[1]))
+      .map(([slug, name]) => ({ slug, label: name, match: (product: IndexedProduct) => product.brand?.slug === slug })),
+  };
+}
+
+/** Men / Women / Unisex, for watches and perfumes. */
+export function genderFacet(label: string, names: Record<"MEN" | "WOMEN" | "UNISEX", string>): OptionFacet {
+  return {
+    kind: "options",
+    key: "gender",
+    label,
+    options: (["MEN", "WOMEN", "UNISEX"] as const).map((gender) => ({
+      slug: gender.toLowerCase(),
+      label: names[gender],
+      match: (product: IndexedProduct) => product.gender === gender,
+    })),
+  };
 }
 
 /** A "Category" facet over the top-level departments, for search and sale pages. */

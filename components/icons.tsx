@@ -73,3 +73,4 @@ export const TruckIcon = icon(P.TruckIcon);
 export const ReturnIcon = icon(P.ArrowCounterClockwiseIcon);
 export const DropIcon = icon(P.DropIcon);
 export const StarIcon = icon(P.StarIcon);
+export const PlayIcon = icon(P.PlayIcon);

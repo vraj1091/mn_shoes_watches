@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCatalogIndex } from "@/lib/data/catalog-index";
 import { getCategoryByPath, getCollectionByLandingPath, type CategoryPage, type CollectionPage } from "@/lib/data/catalog";
-import { ancestors } from "@/lib/catalog/query";
+import { ancestors, descendantIds, productsInCategories } from "@/lib/catalog/query";
 import { resolveListing } from "@/lib/catalog/scope";
 import { describe, listingIndexing } from "@/lib/seo/listing";
 import { t } from "@/lib/i18n";
@@ -69,6 +69,17 @@ async function CategoryListing({ category, path, query }: { category: CategoryPa
   const parent = trail.at(-2);
   const children = listing.index.categories.filter((node) => node.parentId === category.id).sort((a, b) => a.position - b.position);
   const firstPage = listing.result.page === 1;
+  // Nothing filed here yet: point to sibling categories that have products, then the parent's siblings.
+  const hasProducts = (id: string) => productsInCategories(listing.index.products, descendantIds(listing.index.categories, id)).length > 0;
+  const related =
+    listing.scopeSize === 0
+      ? [
+          ...listing.index.categories.filter((node) => node.parentId === (parent?.id ?? null) && node.id !== category.id),
+          ...listing.index.categories.filter((node) => parent && node.parentId === parent.parentId && node.id !== parent.id),
+        ]
+          .filter((node) => hasProducts(node.id))
+          .slice(0, 6)
+      : [];
 
   return (
     <ListingView
@@ -99,14 +110,30 @@ async function CategoryListing({ category, path, query }: { category: CategoryPa
       }
       empty={
         listing.scopeSize === 0 ? (
-          <p className="text-base">
-            {t("catalog.emptyCategory", { name: parent?.name ?? category.name })}{" "}
-            {parent && (
-              <Link href={`/${parent.path}`} className="text-link underline underline-offset-4">
-                {parent.name}
-              </Link>
+          <div>
+            <p className="text-base">
+              {t("catalog.emptyCategory", { name: parent?.name ?? category.name })}{" "}
+              {parent && (
+                <Link href={`/${parent.path}`} className="text-link underline underline-offset-4">
+                  {parent.name}
+                </Link>
+              )}
+            </p>
+            {related.length > 0 && (
+              <nav aria-label={t("catalog.relatedCategories")} className="mt-6">
+                <p className="text-sm font-semibold">{t("catalog.relatedCategories")}</p>
+                <ul className="mt-3 flex flex-wrap gap-2">
+                  {related.map((node) => (
+                    <li key={node.id}>
+                      <Link href={`/${node.path}`} className="inline-flex min-h-11 items-center rounded-sm border border-line-strong px-4 text-sm hover:border-ink">
+                        {node.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
             )}
-          </p>
+          </div>
         ) : (
           <>
             <p className="text-base font-medium">{t("catalog.noResults")}</p>

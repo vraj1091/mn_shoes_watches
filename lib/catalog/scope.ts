@@ -5,7 +5,9 @@ import { searchProducts } from "@/lib/search/engine";
 import { t } from "@/lib/i18n";
 import { applyCollectionRules } from "./rules";
 import {
+  brandFacet,
   categoryFacets,
+  genderFacet,
   departmentFacet,
   descendantIds,
   parseListingState,
@@ -25,6 +27,7 @@ import type { CatalogIndex, IndexedProduct } from "./types";
 
 export type ScopeRef =
   | { kind: "category"; path: string }
+  | { kind: "brand"; slug: string }
   | { kind: "collection"; slug: string }
   | { kind: "landing"; path: string }
   | { kind: "sale" }
@@ -64,14 +67,29 @@ export async function resolveListing(ref: ScopeRef, params: SearchParams): Promi
   let relevance: ((product: IndexedProduct) => number) | undefined;
   let corrected: string | null | undefined;
   const departments = departmentFacet(index.categories, t("catalog.category"));
+  const gender = genderFacet(t("catalog.gender"), { MEN: t("catalog.genderMen"), WOMEN: t("catalog.genderWomen"), UNISEX: t("catalog.genderUnisex") });
+  const withBrands = (list: FacetDef[], scope: IndexedProduct[]) => {
+    const brands = brandFacet(scope, t("catalog.brand"));
+    return brands ? [...list, brands] : list;
+  };
 
   switch (ref.kind) {
     case "category": {
       const category = await getCategoryByPath(ref.path);
       if (!category) return null;
       ({ products, relevance } = categoryScope(index, category.id));
-      facets = categoryFacets(index.categories, index.attributes, category.id);
+      // Watches and perfumes are made for men, women or both, so they filter by that first.
+      const department = category.path.split("/")[0]!;
+      facets = withBrands([...(["watches", "perfumes"].includes(department) ? [gender] : []), ...categoryFacets(index.categories, index.attributes, category.id)], products);
       basePath = `/${category.path}`;
+      break;
+    }
+    case "brand": {
+      const brand = index.products.find((product) => product.brand?.slug === ref.slug)?.brand;
+      if (!brand) return null;
+      products = index.products.filter((product) => product.brand?.slug === ref.slug);
+      facets = [departments, gender];
+      basePath = `/brands/${ref.slug}`;
       break;
     }
     case "collection":
@@ -93,14 +111,14 @@ export async function resolveListing(ref: ScopeRef, params: SearchParams): Promi
       const department = categoryRule?.field === "category" && categoryRule.value.length === 1
         ? index.categories.find((category) => category.path === categoryRule.value[0])
         : undefined;
-      facets = department ? categoryFacets(index.categories, index.attributes, department.id) : [departments];
+      facets = withBrands(department ? categoryFacets(index.categories, index.attributes, department.id) : [departments], products);
       basePath = collection.landingPath ? `/${collection.landingPath}` : `/collections/${collection.slug}`;
       defaultSort = collection.defaultSort;
       break;
     }
     case "sale": {
       products = index.products.filter((product) => product.maxDiscountBp > 0);
-      facets = [departments];
+      facets = withBrands([departments], products);
       basePath = "/sale";
       defaultSort = "bestselling";
       break;
@@ -111,7 +129,7 @@ export async function resolveListing(ref: ScopeRef, params: SearchParams): Promi
       products = index.products.filter((product) => rank.has(product.id));
       relevance = (product) => rank.get(product.id) ?? LARGE;
       corrected = outcome.corrected;
-      facets = [departments];
+      facets = withBrands([departments], products);
       basePath = `/search?q=${encodeURIComponent(ref.q)}`;
       break;
     }

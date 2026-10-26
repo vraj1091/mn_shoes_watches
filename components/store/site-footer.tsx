@@ -92,6 +92,11 @@ export async function SiteFooter() {
               </li>
             ))}
             <li>
+              <Link href="/brands" className={link}>
+                {t("header.brands")}
+              </Link>
+            </li>
+            <li>
               <Link href="/sale" className={link}>
                 {t("header.sale")}
               </Link>
@@ -124,13 +129,16 @@ export async function SiteFooter() {
                 {t("footer.about")}
               </Link>
             </li>
-            {location && (
-              <li>
-                <Link href={`/stores/${location.slug}`} className={link}>
-                  {t("footer.stores")}
-                </Link>
-              </li>
-            )}
+            <li>
+              <Link href="/journal" className={link}>
+                {t("journal.title")}
+              </Link>
+            </li>
+            <li>
+              <Link href="/wishlist" prefetch={false} className={link}>
+                {t("wishlist.title")}
+              </Link>
+            </li>
           </ul>
         </nav>
 

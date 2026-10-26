@@ -22,6 +22,10 @@ type Registry = {
   /** Collection slug → its landing path, if it has one. */
   collections: Map<string, string | null>;
   products: Map<string, ProductRoute>;
+  /** Brands with at least one product on sale, published Journal posts and published pages. */
+  brands: Set<string>;
+  posts: Set<string>;
+  pages: Set<string>;
   /** What the 404 page shows: shop name, main categories, bestsellers. */
   notFound: NotFoundData;
 };
@@ -57,6 +61,14 @@ export function getRouteRegistry(): Registry | null {
          WHERE p."storeId" = 'main'`,
       )
       .all() as { slug: string; status: string; replacement: string | null }[];
+    const brands = db
+      .prepare(
+        `SELECT DISTINCT b."slug" AS slug FROM "Brand" b JOIN "Product" p ON p."brandId" = b."id"
+         WHERE b."storeId" = 'main' AND b."isActive" = 1 AND p."status" = 'ACTIVE'`,
+      )
+      .all() as { slug: string }[];
+    const posts = db.prepare(`SELECT "slug" FROM "Post" WHERE "storeId" = 'main' AND "status" = 'PUBLISHED'`).all() as { slug: string }[];
+    const pages = db.prepare(`SELECT "slug" FROM "Page" WHERE "storeId" = 'main' AND "status" = 'PUBLISHED'`).all() as { slug: string }[];
     const settings = db.prepare(`SELECT "storeName" FROM "StoreSettings" WHERE "storeId" = 'main'`).get() as { storeName: string } | undefined;
     const menu = db
       .prepare(
@@ -77,6 +89,9 @@ export function getRouteRegistry(): Registry | null {
       landingPaths: new Set(collections.flatMap((row) => (row.landingPath ? [row.landingPath] : []))),
       collections: new Map(collections.map((row) => [row.slug, row.landingPath])),
       products: new Map(products.map((row) => [row.slug, { status: row.status, replacement: row.replacement }])),
+      brands: new Set(brands.map((row) => row.slug)),
+      posts: new Set(posts.map((row) => row.slug)),
+      pages: new Set(pages.map((row) => row.slug)),
       notFound: {
         storeName: settings?.storeName ?? "MN Shoes & Watches",
         departments: menu
@@ -127,6 +142,7 @@ export const FIXED_SEGMENTS = new Set([
   "admin",
   "feeds",
   "sitemaps",
+  "brands",
 ]);
 
 /**
@@ -141,7 +157,7 @@ export type RouteDecision = { action: "pass" } | { action: "not-found" } | { act
 /** Pure decision for one pathname, given the registry. */
 export function decideRoute(
   pathname: string,
-  routes: Pick<Registry, "categories" | "landingPaths" | "collections" | "products">,
+  routes: Pick<Registry, "categories" | "landingPaths" | "collections" | "products"> & Partial<Pick<Registry, "brands" | "posts" | "pages">>,
 ): RouteDecision {
   const trimmed = pathname.replace(/\/+$/, "");
   const segments = trimmed.split("/").slice(1).map((segment) => {
@@ -167,6 +183,14 @@ export function decideRoute(
     if (collection === undefined) return { action: "not-found" };
     // One URL per page: a collection with a landing path lives only there.
     return collection ? { action: "redirect", location: `/${collection}` } : { action: "pass" };
+  }
+
+  // Detail pages under fixed sections exist only for known slugs.
+  const detail: Record<string, Set<string> | undefined> = { brands: routes.brands, journal: routes.posts, policies: routes.pages };
+  if (first in detail && segments.length >= 2) {
+    const known = detail[first];
+    if (!known) return { action: "pass" };
+    return segments.length === 2 && known.has(segments[1]!) ? { action: "pass" } : { action: "not-found" };
   }
 
   if (FIXED_SEGMENTS.has(first)) return { action: "pass" };

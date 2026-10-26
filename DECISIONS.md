@@ -344,3 +344,31 @@ for good, at the cost of a slower first compile after each start. Production bui
 free delivery above the threshold (₹1,999, after discount), the COD fee and GST, including 18% GST inside the
 delivery and COD charges. GST is taken out of GST-inclusive prices per line with the product's tax-class slab
 (`lib/commerce/gst.ts`). The demo orders are built with it, so their totals are exactly what checkout would charge.
+
+**50. Checkout is one page, for guests, and the server decides every number.**
+The browser sends only contact, address, payment method and an idempotency key. `lib/orders/place.ts` rebuilds
+the bag from the database, re-checks the coupon, delivery zone and COD rules, takes stock with a conditional update
+inside the order's transaction (so the last pair cannot be sold twice), numbers the order from the gapless counter
+(MN10001 onwards; demo orders use MND…), creates or reuses the customer record by email, and empties the bag. A
+repeated submit with the same key returns the order already placed. Payment: with `RAZORPAY_KEY_ID` and
+`RAZORPAY_KEY_SECRET` set, Razorpay Checkout opens and the order is confirmed only after the signature is verified on
+the server; without them, "Online payment (demo)" marks the order paid at once and says so on the page. Stock is
+taken when the order is placed for every method, so an abandoned Razorpay payment holds stock until staff cancel
+the order (which restocks it).
+
+**51. Bag and wishlist work without an account.**
+One random cookie token per browser identifies both; only its SHA-256 is stored. The header shows the bag count
+from the server; after that a small client store (useSyncExternalStore) holds the bag view returned by each server
+action, so the drawer, header and buy box agree. Wishlist hearts load the saved ids once per page view.
+
+**52. Delivery dates come from shipping zones and the PIN code.**
+The first digits of a PIN code give the postal circle and so the state (`lib/commerce/india.ts`); zones match by PIN
+prefix first (Kalol and Gandhinagar, next day), then state (Gujarat, 1–2 days), then the rest of India (3–6 days),
+with two extra days for the North-East, Jammu and Kashmir, Ladakh and the islands. Orders before 2 pm IST on a
+working day leave the same day; couriers do not deliver on Sundays. The address form still asks for the state,
+which is what GST place of supply uses.
+
+**53. Hero banners never move on their own.**
+Auto-rotating carousels are hard to read and need a pause control (WCAG 2.2.2), so the hero is a swipeable row
+with arrows and dots. Next.js 16 keeps the previous page mounted but hidden (React Activity) for instant back
+navigation; tests therefore find form fields by role, which skips hidden elements, rather than by label.
