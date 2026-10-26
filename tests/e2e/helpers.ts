@@ -1,9 +1,33 @@
 import { createHmac } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
+import { expect, type Locator, type Page } from "@playwright/test";
 import config from "./e2e-config.json" with { type: "json" };
 
 export const OWNER = config.owner;
+/** The e2e server's address, for pages opened outside the test fixtures (e.g. in beforeAll). */
+export const BASE_URL = `http://localhost:${config.port}`;
+/** A Catalogue editor (no two-factor needed), created by tests/e2e/setup/create-editor.ts. */
+export const EDITOR = config.editor;
+
+/** Signs a staff member in with email and password and waits for the dashboard. */
+export async function signInStaff(page: Page, staff: { email: string; password: string } = EDITOR) {
+  await page.goto("/admin/sign-in");
+  await page.getByLabel("Email").fill(staff.email);
+  await page.getByLabel("Password").fill(staff.password);
+  await page.getByRole("button", { name: "Sign in" }).click();
+  await expect(page).toHaveURL(/\/admin$/);
+}
+
+/**
+ * Picks a size, colour or theme the way a shopper does, by clicking its visible label (the radio
+ * itself is visually hidden). Playwright waits for the label to stop moving, e.g. after the page
+ * scrolls to the size picker.
+ */
+export async function chooseRadio(page: Page, name: string, scope: Page | Locator = page) {
+  await scope.locator("label").filter({ has: page.getByRole("radio", { name, exact: true }) }).click();
+  await expect(page.getByRole("radio", { name, exact: true }).first()).toBeChecked();
+}
 
 /** Latest 6-digit code emailed to `to`, read from the outbox the e2e server writes to. */
 export async function latestEmailCode(to: string, after: number, timeoutMs = 10_000): Promise<string> {

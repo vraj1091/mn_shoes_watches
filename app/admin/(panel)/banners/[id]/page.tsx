@@ -44,7 +44,7 @@ export default async function BannerPage({ params }: Props) {
         </ButtonLink>
       }
     >
-      <div className="grid gap-6">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
         <Card>
           <AdminForm action={saveBanner.bind(null, banner.id)}>
             <BannerFields

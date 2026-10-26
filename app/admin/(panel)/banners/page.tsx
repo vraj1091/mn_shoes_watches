@@ -52,7 +52,7 @@ export default async function BannersPage({ searchParams }: Props) {
       {banners.length === 0 ? (
         <EmptyState>No banners. The home page starts with the categories until you add one.</EmptyState>
       ) : (
-        <ol className="grid gap-3">
+        <ol className="grid grid-cols-[minmax(0,1fr)] gap-3">
           {banners.map((banner, index) => {
             const state = bannerState(banner);
             const image = banner.desktopImage;

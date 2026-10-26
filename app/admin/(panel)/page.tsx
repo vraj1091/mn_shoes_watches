@@ -42,7 +42,7 @@ export default async function AdminDashboard({ searchParams }: Props) {
         <StatTile label="Low stock" value={String(dashboard.lowStock.length)} note={`At or below ${dashboard.lowStockThreshold} units`} />
       </div>
 
-      <div className="mt-6 grid items-start gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+      <div className="mt-6 grid grid-cols-[minmax(0,1fr)] items-start gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <Card>
           <SalesChart days={dashboard.series} title="Sales per day, last 30 days" />
         </Card>

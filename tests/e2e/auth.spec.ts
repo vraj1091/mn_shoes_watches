@@ -75,7 +75,7 @@ test.describe.serial("staff sign-in with two-factor", () => {
     await page.getByLabel("6-digit code").fill(totp(secret));
     await page.getByRole("button", { name: "Turn on two-factor" }).click();
     await expect(page.getByText("Two-factor sign-in is on.")).toBeVisible();
-    await expect(page.getByRole("listitem").filter({ hasText: /^[A-Za-z0-9-]{10,}$/ })).toHaveCount(10);
+    await expect(page.getByRole("main").getByRole("listitem").filter({ hasText: /^[A-Za-z0-9-]{10,}$/ })).toHaveCount(10);
 
     await page.getByRole("button", { name: "I have saved them" }).click();
     await expect(page).toHaveURL(/\/admin$/);

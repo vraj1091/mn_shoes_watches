@@ -55,7 +55,7 @@ export default async function CouponPage({ params, searchParams }: Props) {
           <FormAlert tone="success">Coupon added. Shoppers can use it from the start date.</FormAlert>
         </div>
       )}
-      <div className="grid gap-6">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
         <Card>
           <AdminForm action={saveCoupon.bind(null, coupon.id)}>
             <CouponFields coupon={couponDefaults(coupon)} />

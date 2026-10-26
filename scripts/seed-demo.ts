@@ -10,7 +10,7 @@
  *
  * Every record it creates has isDemo = true. Running it again first removes the previous demo
  * records (and the old "sample" products), never touching anything else. If DummyJSON cannot be
- * reached, the copy saved in prisma/demo/dummyjson.json is used.
+ * reached (or DEMO_OFFLINE=1 is set), the copy saved in prisma/demo/dummyjson.json is used.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { randomBytes } from "node:crypto";
@@ -54,6 +54,8 @@ type DummyItem = { id: number; title: string; price: number; discountPercentage:
 type DummyData = Record<DummyCategory, DummyItem[]>;
 
 async function loadDummyJson(): Promise<DummyData> {
+  // DEMO_OFFLINE=1 (used by the end-to-end tests) skips the network for repeatable data.
+  if (process.env.DEMO_OFFLINE === "1" && existsSync(DUMMY_CACHE)) return JSON.parse(readFileSync(DUMMY_CACHE, "utf8")) as DummyData;
   try {
     const data = {} as DummyData;
     for (const category of DUMMY_CATEGORIES) {

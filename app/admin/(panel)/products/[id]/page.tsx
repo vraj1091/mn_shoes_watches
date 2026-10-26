@@ -132,7 +132,7 @@ export default async function EditProductPage({ params, searchParams }: Props) {
         </div>
       )}
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] content-start gap-6">
           <Card title="Photos" actions={<span className="text-xs text-muted">Drag or use the arrows to reorder</span>}>
             {manage ? (
@@ -144,7 +144,7 @@ export default async function EditProductPage({ params, searchParams }: Props) {
 
           <Card title={product.variants.length > 1 || sizeOption ? "Sizes, prices and stock" : "Price and stock"}>
             <AdminForm action={updateVariants.bind(null, product.id)} submitLabel="Save prices and stock">
-              <div className="-mx-5 overflow-x-auto">
+              <div className="relative -mx-5 overflow-x-auto">
                 <table className="w-full min-w-[28rem] border-collapse text-sm">
                   <caption className="sr-only">Sizes and options</caption>
                   <thead>

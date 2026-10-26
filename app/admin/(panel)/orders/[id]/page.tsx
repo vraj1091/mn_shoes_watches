@@ -78,7 +78,7 @@ export default async function AdminOrderPage({ params }: Props) {
       }
       wide
     >
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] content-start gap-6">
           <Card title={`${order.items.length} ${order.items.length === 1 ? "item" : "items"}`}>
             <ul className="divide-y divide-line">

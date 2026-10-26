@@ -64,7 +64,7 @@ export default async function CustomerPage({ params }: Props) {
         <StatTile label="Customer since" value={formatDate(customer.firstOrderAt ?? customer.createdAt)} />
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+      <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <section aria-labelledby="orders-heading" className="min-w-0">
           <h2 id="orders-heading" className="mb-3 text-lg font-semibold">
             Orders

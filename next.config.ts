@@ -19,6 +19,12 @@ const nextConfig: NextConfig = {
   cacheHandlers:
     process.env.NODE_ENV === "production" ? { default: path.resolve("cache-handler.mjs") } : undefined,
   serverExternalPackages: ["better-sqlite3", "@node-rs/argon2"],
+  // sharp (photo uploads and next/image) loads libvips as a separate shared library (.dll on
+  // Windows, .so on Linux) that file tracing cannot see, so the standalone build would fall back to
+  // sharp's WebAssembly build and fail. Ship the library files with every route (DECISIONS.md 61).
+  outputFileTracingIncludes: {
+    "/**": ["./node_modules/@img/sharp-*/lib/**/*"],
+  },
   // Product photos: demo photos in public/demo and uploads under /media. Sources are about
   // 1,000 px, so the largest sizes are left out; WebP only, because AVIF encoding is slow on
   // shared hosting CPUs. Resized copies are kept 31 days: a changed photo gets a new file name.

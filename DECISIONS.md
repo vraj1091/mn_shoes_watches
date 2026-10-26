@@ -418,3 +418,21 @@ The coupon form has percentage (with an optional cap), amount off and free deliv
 limit and dates in Indian time (a coupon ending on a date works until 23:59:59 IST that day). Per-customer limits,
 first-order-only and prepaid-only exist in the database but checkout does not check them yet, so the admin does not
 offer them rather than promise something that would not happen.
+
+**61. The standalone build ships sharp's libvips library files.**
+sharp loads libvips as a separate shared library (`libvips-42.dll` and `libvips-cpp-*.dll` on Windows, `.so` files on
+Linux) at run time, which Next.js file tracing cannot see. Without them the standalone server fell back to sharp's
+WebAssembly build, which needs a package that is not installed, so photo uploads failed in production while working in
+development. `outputFileTracingIncludes` adds `node_modules/@img/sharp-*/lib/**` to every route, and the `/media` file
+route no longer imports the upload code, so serving a photo never loads sharp.
+
+**62. Wide admin tables scroll inside their box on phones.**
+The admin's grids give their single phone column `minmax(0, 1fr)` (an implicit grid column grows to its widest content),
+and every scrolling table wrapper is `position: relative`: the visually hidden labels and captions inside tables are
+absolutely positioned, and without a positioned ancestor they escaped the scroll box and made the whole page scroll
+sideways. An end-to-end test checks the admin pages at 390 px.
+
+**63. The coupon field is not a form.**
+It appears in the bag and inside the checkout form, and forms cannot be nested: the browser drops the inner form while
+parsing (a hydration error) and Enter in the coupon field would have submitted the order. The field is an input and a
+button; Enter applies the code. An end-to-end test applies a coupon with Enter at checkout.

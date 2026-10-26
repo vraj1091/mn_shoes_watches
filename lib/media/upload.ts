@@ -4,7 +4,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
 import { prisma, DEFAULT_STORE_ID } from "@/lib/db/client";
-import { dataPath } from "@/lib/db/paths";
+import { uploadPath } from "./storage";
 import { slugify } from "@/lib/catalog/listing";
 import { hex } from "@/lib/design/tokens";
 
@@ -13,11 +13,6 @@ const MAX_EDGE = 1600;
 const ACCEPTED = new Set(["jpeg", "png", "webp", "avif", "gif", "heif", "tiff"]);
 
 export class UploadError extends Error {}
-
-/** Where an uploaded file lives on disk; keys never contain "..", so this stays inside uploads/. */
-export function uploadPath(key: string): string {
-  return dataPath("uploads", ...key.split("/"));
-}
 
 /**
  * Stores one uploaded photo: checks it really is an image (from its bytes, not its name), turns it

@@ -67,7 +67,7 @@ export default async function CategoryPage({ params }: Props) {
         </div>
       }
     >
-      <div className="grid gap-6">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
         <Card title="Category">
           <AdminForm action={updateCategory.bind(null, category.id)}>
             <div className="grid gap-5">

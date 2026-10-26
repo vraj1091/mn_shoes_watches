@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useTransition, type FormEvent } from "react";
+import { useRef, useState, useTransition } from "react";
 import { applyCoupon, updateCartItem } from "@/lib/actions/shop";
 import type { CartView } from "@/lib/cart/cart";
 import { formatPrice } from "@/lib/format/money";
@@ -195,9 +195,12 @@ export function CouponField({ cart, labels, onChange }: { cart: CartView; labels
   const [pending, startTransition] = useTransition();
   const coupon = cart.coupon;
 
-  function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const code = String(new FormData(event.currentTarget).get("code") ?? "").trim();
+  const input = useRef<HTMLInputElement>(null);
+
+  // Not a <form>: the field also sits inside the checkout form, and forms cannot be nested (the
+  // browser drops the inner one, and Enter would place the order). Enter applies the code instead.
+  function apply() {
+    const code = input.current?.value.trim() ?? "";
     if (!code) return;
     startTransition(async () => {
       const result = await applyCoupon(code);
@@ -251,21 +254,27 @@ export function CouponField({ cart, labels, onChange }: { cart: CartView; labels
   }
 
   return (
-    <form onSubmit={submit} className="text-sm">
+    <div className="text-sm">
       <label htmlFor="coupon-code" className="mb-1.5 block font-medium">
         {labels.couponLabel}
       </label>
       <div className="flex gap-2">
         <input
+          ref={input}
           id="coupon-code"
           name="code"
+          onKeyDown={(event) => {
+            if (event.key !== "Enter") return;
+            event.preventDefault();
+            apply();
+          }}
           autoComplete="off"
           autoCapitalize="characters"
           maxLength={32}
           className="block min-h-11 w-full rounded-sm border border-line-strong bg-canvas px-3 text-base uppercase placeholder:normal-case"
           aria-describedby={message ? "coupon-message" : undefined}
         />
-        <button type="submit" disabled={pending} className="min-h-11 shrink-0 rounded-sm border border-line px-4 font-medium hover:border-line-strong hover:bg-surface">
+        <button type="button" onClick={apply} disabled={pending} className="min-h-11 shrink-0 rounded-sm border border-line px-4 font-medium hover:border-line-strong hover:bg-surface">
           {labels.couponApply}
         </button>
       </div>
@@ -274,6 +283,6 @@ export function CouponField({ cart, labels, onChange }: { cart: CartView; labels
           {message.text}
         </p>
       )}
-    </form>
+    </div>
   );
 }

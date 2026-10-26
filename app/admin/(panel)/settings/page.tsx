@@ -74,7 +74,7 @@ export default async function SettingsPage({ searchParams }: Props) {
         </div>
       )}
 
-      <div className="grid gap-8">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-8">
         <section id="store" className="scroll-mt-6">
           <Card title="Store details">
             <AdminForm action={saveStoreDetails}>
@@ -166,7 +166,7 @@ export default async function SettingsPage({ searchParams }: Props) {
               </div>
 
               <h3 className="mt-8 mb-2 text-sm font-semibold">Delivery charges by area</h3>
-              <div className="-mx-5 overflow-x-auto">
+              <div className="relative -mx-5 overflow-x-auto">
                 <table className="w-full min-w-[36rem] border-collapse text-sm">
                   <caption className="sr-only">Delivery charges and days by area</caption>
                   <thead>

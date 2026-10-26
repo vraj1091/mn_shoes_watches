@@ -20,7 +20,7 @@ export function Card({ title, actions, children, className = "" }: { title?: str
 
 export function Table({ children, caption }: { children: ReactNode; caption?: string }) {
   return (
-    <div className="overflow-x-auto rounded-md border border-line bg-raised">
+    <div className="relative overflow-x-auto rounded-md border border-line bg-raised">
       <table className="w-full min-w-[40rem] border-collapse text-sm">
         {caption && <caption className="sr-only">{caption}</caption>}
         {children}

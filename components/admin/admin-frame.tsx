@@ -100,7 +100,9 @@ export async function AdminFrame({ children }: { children: ReactNode }) {
             )}
           </div>
         )}
-        {children}
+        <main id="main" tabIndex={-1} className="outline-none">
+          {children}
+        </main>
       </div>
     </div>
   );

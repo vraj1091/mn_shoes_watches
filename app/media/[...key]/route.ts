@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { uploadPath } from "@/lib/media/upload";
+import { uploadPath } from "@/lib/media/storage";
 
 const TYPES: Record<string, string> = {
   webp: "image/webp",

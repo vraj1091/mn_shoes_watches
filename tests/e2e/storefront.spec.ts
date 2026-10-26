@@ -1,10 +1,12 @@
 import { expect, test } from "@playwright/test";
+import { chooseRadio } from "./helpers";
 
 test.describe("storefront shell", () => {
   test("home renders header, departments and footer from the database", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("html")).toHaveAttribute("lang", "en-IN");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Men's shoes, watches and perfumes");
+    // The first hero banner (demo data) is the page heading.
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Automatic watches that wind themselves");
     const departments = page.getByRole("region", { name: "Shop by category" }).getByRole("link");
     await expect(departments).toHaveCount(4);
     await expect(departments.first()).toHaveAttribute("href", "/mens-shoes");
@@ -37,7 +39,7 @@ test.describe("storefront shell", () => {
     expect(await background()).toBe("rgb(15, 19, 24)"); // Graphite 950
     if (isMobile) {
       await page.getByRole("button", { name: "Open menu" }).click();
-      await page.getByRole("dialog", { name: "Menu" }).getByRole("radio", { name: "Light" }).check({ force: true });
+      await chooseRadio(page, "Light", page.getByRole("dialog", { name: "Menu" }));
     } else {
       await page.getByRole("button", { name: /^Colour theme/ }).click();
       await page.getByRole("menuitemradio", { name: "Light" }).click();

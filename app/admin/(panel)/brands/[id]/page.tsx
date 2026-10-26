@@ -59,7 +59,7 @@ export default async function BrandPage({ params, searchParams }: Props) {
           <FormAlert tone="success">Brand added. Its page appears once a product of this brand is on sale.</FormAlert>
         </div>
       )}
-      <div className="grid gap-6">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
         <Card title="Brand">
           <AdminForm action={saveBrand.bind(null, brand.id)}>
             <BrandFields brand={brand} />

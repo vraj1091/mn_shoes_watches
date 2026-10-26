@@ -24,7 +24,8 @@
     "db:reset": "prisma migrate reset --force",
     "tokens": "tsx scripts/build-tokens.ts",
     "check:contrast": "tsx scripts/check-contrast.ts",
-    "seed": "prisma migrate deploy && prisma generate && tsx scripts/seed-demo.ts"
+    "seed": "prisma migrate deploy && prisma generate && tsx scripts/seed-demo.ts",
+    "screenshots": "node scripts/screenshots.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.2",

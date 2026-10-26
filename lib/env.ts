@@ -7,7 +7,7 @@ const base64Key = z
 
 const schema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-  APP_URL: z.url().default("http://localhost:3000"),
+  APP_URL: z.url().default("http://localhost:3001"), // npm run dev's port
   BETTER_AUTH_SECRET: z.string().min(32, "must be at least 32 characters"),
   APP_ENCRYPTION_KEY: base64Key,
   GOOGLE_CLIENT_ID: z.string().min(1).optional(),
