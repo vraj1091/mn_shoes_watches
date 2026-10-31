@@ -2,6 +2,7 @@
 
 import { useActionState, useState, useTransition, type ReactNode } from "react";
 import { buttonClasses } from "@/components/ui/button";
+import { useToast } from "./toast";
 
 export type FormState = { status: "idle" | "saved" | "error"; message?: string; errors?: string[] };
 export const IDLE: FormState = { status: "idle" };
@@ -21,7 +22,15 @@ export function AdminForm({
   submitLabel?: string;
   className?: string;
 }) {
-  const [state, formAction, pending] = useActionState(action, IDLE);
+  const toast = useToast();
+  // The toast is raised as the answer arrives, not from an effect: a save can change the page so
+  // this form is gone in the same render (a cancelled order has no next status), and its message
+  // must still show. Errors stay next to the fields they are about.
+  const [state, formAction, pending] = useActionState(async (previous: FormState, formData: FormData) => {
+    const next = await action(previous, formData);
+    if (next.status === "saved") toast?.(next.message ?? "Saved.");
+    return next;
+  }, IDLE);
   const [, startTransition] = useTransition();
   return (
     <form
@@ -42,7 +51,7 @@ export function AdminForm({
           {pending ? "Saving…" : submitLabel}
         </button>
         <div aria-live="polite" className="text-sm">
-          {state.status === "saved" && <span className="font-medium text-stock">{state.message ?? "Saved."}</span>}
+          {state.status === "saved" && !toast && <span className="font-medium text-stock">{state.message ?? "Saved."}</span>}
           {state.status === "error" && (
             <div role="alert" className="text-sale">
               <p className="font-medium">{state.message ?? "Please fix the following:"}</p>
@@ -84,6 +93,7 @@ export function ConfirmButton({
   const [typed, setTyped] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const toast = useToast();
 
   if (!asking) {
     return (
@@ -117,7 +127,10 @@ export function ConfirmButton({
               const result = await action();
               setAsking(false);
               setTyped("");
-              if (result?.message) setMessage(result.message);
+              if (result?.message) {
+                if (toast) toast(result.message, result.ok ? "success" : "error");
+                else setMessage(result.message);
+              }
             })
           }
           className={buttonClasses("danger", "sm")}

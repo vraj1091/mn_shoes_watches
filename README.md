@@ -37,8 +37,35 @@ the first `npm run seed` (the older `SEED_OWNER_EMAIL` / `SEED_OWNER_PASSWORD` n
 password under Admin → My account. A production seed refuses to run without your own `ADMIN_EMAIL` and
 `ADMIN_PASSWORD`, and refuses the default password.
 
+If you are not sure which account exists, the staff sign-in page lists the owner email(s) in development.
+
 In production, owners and managers must also set up an authenticator app (two-factor sign-in) before the admin
 opens. `ADMIN_REQUIRE_2FA=false` turns that off; `true` turns it on in development too.
+
+**Locked out?** "Forgot your password?" on the staff sign-in emails a link to set a new one. If that is not enough
+(lost phone and backup codes, switched-off account, too many attempts), run on the server:
+
+```bash
+npm run admin:recover -- owner@example.com                        # removes two-factor, switches the account on, signs it out everywhere
+npm run admin:recover -- owner@example.com --password "new-long-password"   # and sets a new password (12+ characters)
+```
+
+The command clears the staff sign-in attempt counters too, and the Activity page records that it was used.
+
+### Staff and roles
+
+The owner invites people at Admin → **Staff**: name, email and role. They get an email with a link (valid 3 days) to
+choose their own password; nobody else ever knows it. The owner can change a role, send a new link, reset someone's
+two-factor after a lost phone, or switch an account off (that signs them out at once).
+
+| Role | Can |
+|---|---|
+| Owner | Everything: settings, staff accounts, the activity log, removing demo data |
+| Manager | Products, categories, brands, photos, orders, coupons, home banners, customers. No settings, no staff |
+| Staff | View and update orders (status, courier and AWB, notes, tax invoice); view products and stock. Deletes nothing, no settings |
+
+Nobody can change their own role or switch themselves off, and the last owner can never be demoted or switched off.
+Admin → **Activity** shows every change made in the admin: who, what, when, and the before/after values.
 
 Without SMTP settings, development saves every email (sign-in codes, order confirmations) as an HTML file in
 `data/outbox`. Without Razorpay keys, checkout offers cash on delivery and a clearly labelled demo online payment
@@ -90,8 +117,10 @@ An amber notice across the admin reminds you while demo data is still there.
 - **Categories** (tree, order, intro, subcategories), **Brands**, **Coupons**, **Customers** (orders, notes),
   **Home banners** (photo upload or a product photo, dates, order) and **Settings** (store details, address,
   delivery charges and COD, returns, announcement bar, invoices, demo data).
+- **Staff** (invite, roles, switch off, reset two-factor) and **Activity** (the change log), for owners.
 
-Every save shows in the shop on the next page load.
+Every save shows in the shop on the next page load, with a confirmation in the corner of the admin. What each role
+sees is in [Staff and roles](#staff-and-roles).
 
 ## Scripts
 
@@ -111,6 +140,7 @@ Every save shows in the shop on the next page load.
 | `npm run db:migrate` | Apply migrations, regenerate the client |
 | `npm run db:migrate:dev` | Create a migration after a schema change |
 | `npm run db:seed` | Store structure and owner account only, no demo data |
+| `npm run admin:recover -- <email> [--password "<new>"]` | Get a locked-out staff account back in (see [Admin login](#admin-login)) |
 | `npm run db:reset` | Delete and recreate the local database |
 
 ## Colours and themes

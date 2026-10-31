@@ -63,23 +63,27 @@ describe("staff permissions", () => {
     expect(PERMISSIONS.every((permission) => can("OWNER", permission))).toBe(true);
   });
 
-  it("keeps API keys and staff management with the owner only", () => {
+  it("keeps settings, payments, staff, demo removal and the activity log with the owner", () => {
     for (const role of STAFF_ROLES.filter((role) => role !== "OWNER")) {
-      expect(can(role, "settings.secrets")).toBe(false);
-      expect(can(role, "staff.manage")).toBe(false);
+      for (const permission of ["settings.manage", "settings.payments", "staff.manage", "demo.remove", "activity.view"] as const) {
+        expect(can(role, permission), `${role} ${permission}`).toBe(false);
+      }
     }
   });
 
-  it("does not let order staff refund or edit the catalogue", () => {
-    expect(can("ORDER_STAFF", "orders.manage")).toBe(true);
-    expect(can("ORDER_STAFF", "orders.refund")).toBe(false);
-    expect(can("ORDER_STAFF", "catalogue.manage")).toBe(false);
+  it("lets a manager run the catalogue, orders, coupons, banners and customers", () => {
+    for (const permission of ["catalogue.manage", "orders.manage", "orders.refund", "discounts.manage", "content.manage", "customers.manage", "media.manage"] as const) {
+      expect(can("MANAGER", permission), permission).toBe(true);
+    }
   });
 
-  it("does not let catalogue editors see customers or money", () => {
-    expect(can("CATALOGUE_EDITOR", "catalogue.manage")).toBe(true);
-    expect(can("CATALOGUE_EDITOR", "customers.view")).toBe(false);
-    expect(can("CATALOGUE_EDITOR", "orders.refund")).toBe(false);
+  it("lets staff view and update orders and see products and stock, and nothing more", () => {
+    const allowed = PERMISSIONS.filter((permission) => can("STAFF", permission));
+    expect(allowed.sort()).toEqual(["catalogue.view", "dashboard.view", "inventory.view", "orders.manage", "orders.view"]);
+    // No deletions: deleting anything needs catalogue, coupon, banner or settings rights.
+    for (const permission of ["catalogue.manage", "discounts.manage", "content.manage", "orders.refund", "customers.view"] as const) {
+      expect(can("STAFF", permission), permission).toBe(false);
+    }
   });
 
   describe("two-factor", () => {

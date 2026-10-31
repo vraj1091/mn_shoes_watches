@@ -6,9 +6,14 @@
     "name": "Test Owner",
     "password": "e2e-owner-password-1"
   },
-  "editor": {
-    "email": "editor@e2e.test",
-    "name": "Test Editor",
-    "password": "e2e-editor-password-1"
+  "manager": {
+    "email": "manager@e2e.test",
+    "name": "Test Manager",
+    "password": "e2e-manager-password-1"
+  },
+  "staff": {
+    "email": "staff@e2e.test",
+    "name": "Test Staff",
+    "password": "e2e-staff-password-1"
   }
 }

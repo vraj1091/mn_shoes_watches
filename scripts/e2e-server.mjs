@@ -36,7 +36,7 @@ const env = {
 execSync("npx prisma migrate deploy", { env, stdio: "inherit" });
 // The demo catalogue, orders and content, from the saved DummyJSON copy so every run is the same.
 execSync("npx tsx scripts/seed-demo.ts", { env: { ...env, DEMO_OFFLINE: "1" }, stdio: "inherit" });
-execSync("npx tsx tests/e2e/setup/create-editor.ts", { env, stdio: "inherit" });
+execSync("npx tsx tests/e2e/setup/create-staff.ts", { env, stdio: "inherit" });
 execSync("node scripts/prepare-standalone.mjs", { env, stdio: "inherit" });
 
 const server = spawn(process.execPath, [".next/standalone/server.js"], { env, stdio: "inherit" });

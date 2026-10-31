@@ -8,6 +8,8 @@ import { hasDemoData } from "@/lib/demo/remove";
 import {
   HomeIcon,
   ImageIcon,
+  ActivityIcon,
+  StaffIcon,
   PackageIcon,
   ReceiptIcon,
   SettingsIcon,
@@ -21,6 +23,7 @@ import {
 import { AdminNavLink } from "./admin-nav-link";
 import { StaffSignOutButton } from "./staff-sign-out-button";
 import { ThemeControl } from "@/components/theme/theme-control";
+import { ToastProvider } from "./toast";
 
 type NavItem = { href: string; label: string; icon: ReactNode; permission?: Permission };
 
@@ -33,6 +36,8 @@ const NAV: NavItem[] = [
   { href: "/admin/coupons", label: "Coupons", icon: <TicketIcon size={20} />, permission: "discounts.manage" },
   { href: "/admin/customers", label: "Customers", icon: <UsersIcon size={20} />, permission: "customers.view" },
   { href: "/admin/banners", label: "Home banners", icon: <ImageIcon size={20} />, permission: "content.manage" },
+  { href: "/admin/staff", label: "Staff", icon: <StaffIcon size={20} />, permission: "staff.manage" },
+  { href: "/admin/activity", label: "Activity", icon: <ActivityIcon size={20} />, permission: "activity.view" },
   { href: "/admin/settings", label: "Settings", icon: <SettingsIcon size={20} />, permission: "settings.manage" },
   { href: "/admin/account", label: "My account", icon: <ShieldIcon size={20} /> },
 ];
@@ -93,7 +98,7 @@ export async function AdminFrame({ children }: { children: ReactNode }) {
           <div role="note" className="border-b border-line bg-badge print:hidden px-4 py-2.5 text-sm text-badge-ink sm:px-6 lg:px-10">
             <strong>Demo data is live.</strong> Products, brands, photos and orders marked as demo (including real brand names such as
             Rolex and Chanel) are for trying the shop only.{" "}
-            {can(user.role, "settings.manage") && (
+            {can(user.role, "demo.remove") && (
               <Link href="/admin/settings#demo-data" className="font-semibold underline underline-offset-2">
                 Remove it in Settings before going live.
               </Link>
@@ -101,7 +106,7 @@ export async function AdminFrame({ children }: { children: ReactNode }) {
           </div>
         )}
         <main id="main" tabIndex={-1} className="outline-none">
-          {children}
+          <ToastProvider>{children}</ToastProvider>
         </main>
       </div>
     </div>

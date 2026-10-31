@@ -29,13 +29,30 @@ const COMMON_PASSWORDS = new Set([
   "baseball", "superman", "trustno1", "monkey123", "dragon123", "123qweasd", "1q2w3e4r", "zaq12wsx",
 ]);
 
+/** Words that stay guessable with numbers or symbols around them: "Password@2026", "india1234". */
+const COMMON_WORDS = new Set([
+  "password", "passw0rd", "qwerty", "qwertyuiop", "asdfgh", "asdfghjkl", "admin", "welcome", "iloveyou", "letmein",
+  "india", "bharat", "sairam", "krishna", "omsairam", "jaishriram", "jaihind", "ganesh", "mumbai", "gujarat",
+  "kalol", "shoes", "watches", "mnshoes", "computer", "sunshine", "princess", "football", "cricket", "baseball",
+  "superman", "monkey", "dragon", "abcd", "abc",
+]);
+
 export type PasswordProblem = "TOO_SHORT" | "TOO_LONG" | "TOO_COMMON" | "CONTAINS_EMAIL";
 
 export function passwordProblem(password: string, { email = "" }: { email?: string } = {}): PasswordProblem | null {
   if (password.length < CUSTOMER_PASSWORD_MIN) return "TOO_SHORT";
   if (password.length > CUSTOMER_PASSWORD_MAX) return "TOO_LONG";
   const lower = password.toLowerCase();
-  if (COMMON_PASSWORDS.has(lower) || /^(.)\1+$/.test(password) || /^(0123456789|1234567890|9876543210)/.test(password)) return "TOO_COMMON";
+  const core = lower.replace(/^[^a-z]+|[^a-z]+$/g, "");
+  if (
+    COMMON_PASSWORDS.has(lower) ||
+    COMMON_WORDS.has(core) ||
+    /^\d+$/.test(password) ||
+    /^(.)\1+$/.test(password) ||
+    /^(0123456789|1234567890|9876543210)/.test(password)
+  ) {
+    return "TOO_COMMON";
+  }
   const local = email.split("@")[0]?.toLowerCase() ?? "";
   if (local.length >= 4 && lower.includes(local)) return "CONTAINS_EMAIL";
   return null;

@@ -15,6 +15,16 @@ describe("customer passwords", () => {
     }
   });
 
+  it("refuses a common word padded with numbers or symbols, and all-digit passwords", () => {
+    for (const weak of ["password1234", "Password@2026", "Admin@123456", "2026india!!", "Welcome#2026", "98765432101"]) {
+      expect(passwordProblem(weak), weak).toBe("TOO_COMMON");
+    }
+    // A common word inside a longer phrase is fine.
+    for (const fine of ["india gate at dusk", "password-manager-pick-7Qx", "kalol leather 9"]) {
+      expect(passwordProblem(fine), fine).toBeNull();
+    }
+  });
+
   it("refuses a password that contains the email's name part", () => {
     expect(passwordProblem("priya.shah2026", { email: "priya.shah@example.com" })).toBe("CONTAINS_EMAIL");
     // Very short name parts are too common to block.

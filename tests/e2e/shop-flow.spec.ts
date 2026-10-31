@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { chooseRadio, signInStaff } from "./helpers";
+import { chooseRadio, signInStaff, STAFF } from "./helpers";
 
 /*
  * The whole purchase, as a shopper does it, then the shop's side: browse a department, filter by
@@ -70,7 +70,7 @@ test("a shopper buys with a coupon and cash on delivery, and the order reaches t
   // The shop sees it in the admin straight away.
   const staff = await browser.newContext({ viewport: isMobile ? { width: 390, height: 844 } : { width: 1280, height: 900 } });
   const admin = await staff.newPage();
-  await signInStaff(admin);
+  await signInStaff(admin, STAFF);
   await admin.goto(`/admin/orders?q=${number}`);
   await admin.getByRole("link", { name: number }).click();
   await expect(admin.getByRole("heading", { level: 1 })).toHaveText(`Order ${number}`);

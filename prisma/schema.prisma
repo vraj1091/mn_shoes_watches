@@ -187,7 +187,7 @@ model StaffUser {
   email            String    @unique // Better Auth looks users up and updates them by email alone
   emailVerified    Boolean   @default(false)
   image            String?
-  role             StaffRole @default(ORDER_STAFF)
+  role             StaffRole @default(STAFF)
   isActive         Boolean   @default(true)
   twoFactorEnabled Boolean   @default(false) // Owner and Manager cannot open the admin until this is on
   lastLoginAt      DateTime?
@@ -2108,11 +2108,12 @@ model WebVital {
 // Enums
 // ─────────────────────────────────────────────────────────────────────────────
 
+/// Owner: everything. Manager: catalogue, orders, coupons, banners, customers; no settings or staff.
+/// Staff: view and update orders, view products and stock (lib/auth/permissions.ts, DECISIONS.md 68).
 enum StaffRole {
   OWNER
   MANAGER
-  CATALOGUE_EDITOR
-  ORDER_STAFF
+  STAFF
 }
 
 enum IntegrationProvider {

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { requireStaff } from "@/lib/auth/session";
+import { can } from "@/lib/auth/permissions";
+import { createInvoice } from "@/lib/actions/admin/orders";
 import { prisma, DEFAULT_STORE_ID } from "@/lib/db/client";
 import type { InvoiceLine } from "@/lib/commerce/invoice";
 import { stateName } from "@/lib/commerce/india";
@@ -11,6 +13,9 @@ import { rupeesInWords } from "@/lib/format/words";
 import { ArrowLeftIcon } from "@/components/icons";
 import { ButtonLink } from "@/components/ui/button";
 import { PrintButton } from "@/components/admin/print-button";
+import { AdminPage } from "@/components/admin/admin-frame";
+import { ConfirmButton } from "@/components/admin/forms";
+import { EmptyState } from "@/components/admin/ui";
 
 export const metadata: Metadata = { title: "Tax invoice" };
 
@@ -20,7 +25,7 @@ const cell = "border border-line px-2 py-1.5 align-top";
 const num = `${cell} text-right tabular-nums`;
 
 export default async function InvoicePage({ params }: Props) {
-  await requireStaff("orders.view");
+  const { user } = await requireStaff("orders.view");
   const { id } = await params;
   const [invoice, settings, location] = await Promise.all([
     prisma.invoice.findFirst({
@@ -30,7 +35,39 @@ export default async function InvoicePage({ params }: Props) {
     prisma.storeSettings.findUniqueOrThrow({ where: { storeId: DEFAULT_STORE_ID } }),
     prisma.storeLocation.findFirst({ where: { storeId: DEFAULT_STORE_ID, isActive: true }, orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }] }),
   ]);
-  if (!invoice) notFound();
+  if (!invoice) {
+    // An order without an invoice yet: say so, and offer to issue it, instead of a 404.
+    const order = await prisma.order.findFirst({ where: { id, storeId: DEFAULT_STORE_ID }, select: { id: true, number: true, status: true } });
+    if (!order) notFound();
+    const invoiceable = order.status !== "PENDING_PAYMENT" && order.status !== "CANCELLED";
+    return (
+      <AdminPage
+        title={`Order ${order.number}`}
+        actions={
+          <ButtonLink href={`/admin/orders/${order.id}`} variant="ghost" size="sm">
+            <ArrowLeftIcon size={16} />
+            Back to the order
+          </ButtonLink>
+        }
+      >
+        <EmptyState>
+          No tax invoice yet.{" "}
+          {invoiceable ? "Issue it when the order is ready to ship; its number comes next in this year’s series." : "Only confirmed orders get a tax invoice."}
+        </EmptyState>
+        {invoiceable && can(user.role, "orders.manage") && (
+          <div className="mt-6">
+            <ConfirmButton
+              action={createInvoice.bind(null, order.id)}
+              label="Create tax invoice"
+              confirmLabel="Create invoice"
+              question="This takes the next invoice number for the financial year. Invoice numbers cannot be reused."
+              variant="secondary"
+            />
+          </div>
+        )}
+      </AdminPage>
+    );
+  }
 
   const lines = invoice.lines as InvoiceLine[];
   const intraState = invoice.igstTotal === 0;

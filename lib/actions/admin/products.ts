@@ -6,11 +6,12 @@ import { z } from "zod";
 import { Prisma } from "@/lib/generated/prisma/client";
 import { prisma, DEFAULT_STORE_ID } from "@/lib/db/client";
 import { requireStaff } from "@/lib/auth/session";
+import { audit, diff } from "@/lib/admin/audit";
 import { refreshStorefront } from "@/lib/admin/refresh";
 import { attributesForCategory } from "@/lib/admin/products";
 import { buildSearchText, listingFields, slugify } from "@/lib/catalog/listing";
 import { videoEmbedUrl } from "@/lib/catalog/video";
-import { parseRupees } from "@/lib/format/money";
+import { formatPriceExact, parseRupees } from "@/lib/format/money";
 import type { FormState } from "@/components/admin/forms";
 
 /*
@@ -118,7 +119,7 @@ const createSchema = z.object({
 });
 
 export async function createProduct(_state: FormState, formData: FormData): Promise<FormState> {
-  await requireStaff("catalogue.manage");
+  const { user } = await requireStaff("catalogue.manage");
   const parsed = createSchema.safeParse({
     title: text(formData, "title"),
     primaryCategoryId: text(formData, "primaryCategoryId"),
@@ -182,6 +183,7 @@ export async function createProduct(_state: FormState, formData: FormData): Prom
     return created;
   });
   await rebuildListing(product.id);
+  await audit(user.id, "product.create", { type: "product", id: product.id }, `Added product “${input.title}” as a draft.`);
   redirect(`/admin/products/${product.id}?created=1`);
 }
 
@@ -212,7 +214,7 @@ const detailsSchema = z.object({
 });
 
 export async function updateProductDetails(id: string, _state: FormState, formData: FormData): Promise<FormState> {
-  await requireStaff("catalogue.manage");
+  const { user } = await requireStaff("catalogue.manage");
   const existing = await findProduct(id);
   if (!existing) return { status: "error", message: "This product no longer exists." };
   const parsed = detailsSchema.safeParse({
@@ -264,6 +266,25 @@ export async function updateProductDetails(id: string, _state: FormState, formDa
 
   const description = descriptionFrom(input.description);
   const keep = new Set(validCategories.map((category) => category.id));
+  const before = await prisma.product.findUniqueOrThrow({ where: { id } });
+  const tracked = {
+    title: input.title,
+    slug,
+    status: input.status,
+    brandId: optionalId(input.brandId),
+    primaryCategoryId: input.primaryCategoryId,
+    gender: input.gender || null,
+    summary: input.summary || null,
+    descriptionHtml: description.html,
+    highlights: lines(input.highlights).slice(0, 8),
+    specs,
+    care: input.care || null,
+    warranty: input.warranty || null,
+    warrantyMonths: input.warrantyMonths ? Number(input.warrantyMonths) : null,
+    badges: input.badges,
+    videoUrl: input.videoUrl || null,
+    isFeatured: input.isFeatured,
+  };
   await prisma.$transaction(async (tx) => {
     await tx.categoryProduct.deleteMany({ where: { productId: id, categoryId: { notIn: [...keep] } } });
     for (const categoryId of keep) {
@@ -272,29 +293,19 @@ export async function updateProductDetails(id: string, _state: FormState, formDa
     await tx.product.update({
       where: { id },
       data: {
-        title: input.title,
-        slug,
-        status: input.status,
+        ...tracked,
         publishedAt: input.status === "ACTIVE" && existing.status !== "ACTIVE" ? new Date() : undefined,
-        brandId: optionalId(input.brandId),
-        primaryCategoryId: input.primaryCategoryId,
-        gender: input.gender || null,
-        summary: input.summary || null,
         description: description.json ?? Prisma.DbNull,
-        descriptionHtml: description.html,
-        highlights: lines(input.highlights).slice(0, 8),
-        specs,
-        care: input.care || null,
-        warranty: input.warranty || null,
-        warrantyMonths: input.warrantyMonths ? Number(input.warrantyMonths) : null,
-        badges: input.badges,
-        videoUrl: input.videoUrl || null,
-        isFeatured: input.isFeatured,
         contentUpdatedAt: new Date(),
       },
     });
   });
   await rebuildListing(id);
+  const changes = diff(before, tracked);
+  // The description can be long; the log notes that it changed, not the whole text twice.
+  if (changes.descriptionHtml) changes.descriptionHtml = ["(previous text)", "(new text)"];
+  const verb = existing.status === input.status ? "Changed" : input.status === "ACTIVE" ? "Put on sale" : input.status === "ARCHIVED" ? "Archived" : "Moved to draft";
+  await audit(user.id, "product.update", { type: "product", id }, `${verb} “${input.title}”.`, changes);
   refreshProduct(existing.slug, slug);
   if (input.primaryCategoryId !== existing.primaryCategoryId) refreshStorefront("categories");
   return { status: "saved", message: input.status === "ACTIVE" ? "Saved. The product is on sale." : "Saved." };
@@ -303,7 +314,7 @@ export async function updateProductDetails(id: string, _state: FormState, formDa
 // ─── Filters (attributes) ──────────────────────────────────────────────────────
 
 export async function updateProductAttributes(id: string, _state: FormState, formData: FormData): Promise<FormState> {
-  await requireStaff("catalogue.manage");
+  const { user } = await requireStaff("catalogue.manage");
   const product = await findProduct(id);
   if (!product) return { status: "error", message: "This product no longer exists." };
   const [attributes, options] = await Promise.all([
@@ -335,6 +346,7 @@ export async function updateProductAttributes(id: string, _state: FormState, for
     prisma.productAttributeValue.createMany({ data: rows }),
   ]);
   await rebuildListing(id);
+  await audit(user.id, "product.filters", { type: "product", id }, `Changed the filters of “${product.title}”.`);
   refreshProduct(product.slug);
   return { status: "saved", message: "Filters saved." };
 }
@@ -348,6 +360,8 @@ export async function updateVariants(id: string, _state: FormState, formData: Fo
   const variants = await prisma.productVariant.findMany({ where: { productId: id }, orderBy: { position: "asc" } });
   const errors: string[] = [];
   const updates: { id: string; data: Prisma.ProductVariantUpdateInput; stockDelta: number; balance: number }[] = [];
+  const changes: Record<string, [unknown, unknown]> = {};
+  const rupees = (paise: number | null) => (paise === null ? null : formatPriceExact(paise));
   for (const variant of variants) {
     const label = variant.title === "Default" ? "This product" : variant.title;
     const price = parseRupees(text(formData, `price-${variant.id}`));
@@ -365,6 +379,9 @@ export async function updateVariants(id: string, _state: FormState, formData: Fo
     }
     if (price !== null && Number.isInteger(stock)) {
       updates.push({ id: variant.id, data: { price, compareAtPrice: compareAt, stockOnHand: stock, sku, isActive }, stockDelta: stock - variant.stockOnHand, balance: stock });
+      const was = { price: rupees(variant.price), "original price": rupees(variant.compareAtPrice), stock: variant.stockOnHand, SKU: variant.sku, "on sale": variant.isActive };
+      const now = { price: rupees(price), "original price": rupees(compareAt), stock, SKU: sku, "on sale": isActive };
+      for (const [key, pair] of Object.entries(diff(was, now))) changes[`${label} ${key}`] = pair;
     }
   }
   if (errors.length) return { status: "error", message: "Please fix the following:", errors };
@@ -382,13 +399,14 @@ export async function updateVariants(id: string, _state: FormState, formData: Fo
     }
   });
   await rebuildListing(id);
+  if (Object.keys(changes).length) await audit(user.id, "product.variants", { type: "product", id }, `Changed prices or stock of “${product.title}”.`, changes);
   refreshProduct(product.slug);
   return { status: "saved", message: "Prices and stock saved." };
 }
 
 /** Adds UK sizes to a sized product, copying the price of the existing sizes. */
 export async function addSizes(id: string, _state: FormState, formData: FormData): Promise<FormState> {
-  await requireStaff("catalogue.manage");
+  const { user } = await requireStaff("catalogue.manage");
   const product = await findProduct(id);
   if (!product) return { status: "error", message: "This product no longer exists." };
   const option = await prisma.productOption.findFirst({ where: { productId: id, attribute: { code: "size_uk" } }, include: { attribute: { include: { values: true } } } });
@@ -423,21 +441,26 @@ export async function addSizes(id: string, _state: FormState, formData: FormData
   all.sort((a, b) => (a.options[0]?.value.sortKey ?? 0) - (b.options[0]?.value.sortKey ?? 0));
   await prisma.$transaction(all.map((variant, index) => prisma.productVariant.update({ where: { id: variant.id }, data: { position: index } })));
   await rebuildListing(id);
+  const added = chosen.map((value) => value.value).join(", ");
+  await audit(user.id, "product.sizes", { type: "product", id }, `Added ${added} to “${product.title}” with ${stock} in stock each.`);
   refreshProduct(product.slug);
-  return { status: "saved", message: `Added ${chosen.map((value) => value.value).join(", ")}.` };
+  return { status: "saved", message: `Added ${added}.` };
 }
 
 // ─── Search engines ────────────────────────────────────────────────────────────
 
 export async function updateProductSeo(id: string, _state: FormState, formData: FormData): Promise<FormState> {
-  await requireStaff("catalogue.manage");
+  const { user } = await requireStaff("catalogue.manage");
   const product = await findProduct(id);
   if (!product) return { status: "error", message: "This product no longer exists." };
   const metaTitle = text(formData, "metaTitle");
   const metaDescription = text(formData, "metaDescription");
   if (metaTitle.length > 70) return { status: "error", message: "Keep the page title to 70 characters or fewer; Google cuts longer ones." };
   if (metaDescription.length > 170) return { status: "error", message: "Keep the description to 170 characters or fewer." };
-  await prisma.product.update({ where: { id }, data: { metaTitle: metaTitle || null, metaDescription: metaDescription || null, noindex: formData.get("noindex") === "on" } });
+  const before = await prisma.product.findUniqueOrThrow({ where: { id }, select: { metaTitle: true, metaDescription: true, noindex: true } });
+  const data = { metaTitle: metaTitle || null, metaDescription: metaDescription || null, noindex: formData.get("noindex") === "on" };
+  await prisma.product.update({ where: { id }, data });
+  await audit(user.id, "product.seo", { type: "product", id }, `Changed the search engine text of “${product.title}”.`, diff(before, data));
   refreshProduct(product.slug);
   return { status: "saved", message: "Saved." };
 }
@@ -447,31 +470,33 @@ export async function updateProductSeo(id: string, _state: FormState, formData: 
 const idList = z.array(z.string().min(1)).max(60);
 
 export async function reorderProductMedia(id: string, orderedIds: string[]) {
-  await requireStaff("catalogue.manage");
+  const { user } = await requireStaff("catalogue.manage");
   const product = await findProduct(id);
   const ids = idList.safeParse(orderedIds);
   if (!product || !ids.success) return { ok: false };
   const owned = await prisma.productMedia.findMany({ where: { productId: id, id: { in: ids.data } }, select: { id: true } });
   if (owned.length !== ids.data.length) return { ok: false };
   await prisma.$transaction(ids.data.map((entryId, position) => prisma.productMedia.update({ where: { id: entryId }, data: { position } })));
+  await audit(user.id, "product.photos", { type: "product", id }, `Reordered the photos of “${product.title}”.`);
   refreshProduct(product.slug);
   return { ok: true };
 }
 
 export async function updateMediaAlt(id: string, productMediaId: string, alt: string) {
-  await requireStaff("catalogue.manage");
+  const { user } = await requireStaff("catalogue.manage");
   const product = await findProduct(id);
   const entry = await prisma.productMedia.findFirst({ where: { id: productMediaId, productId: id }, select: { mediaId: true } });
   const value = alt.trim().slice(0, 200);
   if (!product || !entry) return { ok: false, message: "This photo is no longer on the product." };
   if (value.length < 3) return { ok: false, message: "Describe the photo in a few words, for shoppers using screen readers." };
   await prisma.media.update({ where: { id: entry.mediaId }, data: { alt: value } });
+  await audit(user.id, "product.photos", { type: "product", id }, `Changed a photo description on “${product.title}”.`);
   refreshProduct(product.slug);
   return { ok: true, message: "Saved." };
 }
 
 export async function removeProductMedia(id: string, productMediaId: string) {
-  await requireStaff("catalogue.manage");
+  const { user } = await requireStaff("catalogue.manage");
   const product = await findProduct(id);
   const entry = await prisma.productMedia.findFirst({ where: { id: productMediaId, productId: id } });
   if (!product || !entry) return { ok: false, message: "This photo is no longer on the product." };
@@ -479,6 +504,7 @@ export async function removeProductMedia(id: string, productMediaId: string) {
   if (product.status === "ACTIVE" && remaining <= 1) return { ok: false, message: "A product on sale needs at least one photo. Upload another first." };
   await prisma.productMedia.delete({ where: { id: entry.id } });
   // The file itself stays in the library; other products or banners may use it.
+  await audit(user.id, "product.photos", { type: "product", id }, `Removed a photo from “${product.title}”.`);
   refreshProduct(product.slug);
   return { ok: true };
 }
@@ -487,7 +513,7 @@ export async function removeProductMedia(id: string, productMediaId: string) {
 
 /** Copies a product as a draft with new SKUs and no stock, then opens the copy. */
 export async function duplicateProduct(id: string) {
-  await requireStaff("catalogue.manage");
+  const { user } = await requireStaff("catalogue.manage");
   const source = await prisma.product.findFirst({
     where: { id, storeId: DEFAULT_STORE_ID },
     include: { categories: true, media: true, options: true, attributeValues: true, variants: { include: { options: true } } },
@@ -554,6 +580,7 @@ export async function duplicateProduct(id: string) {
     return created;
   });
   await rebuildListing(copy.id);
+  await audit(user.id, "product.create", { type: "product", id: copy.id }, `Copied “${source.title}” as a new draft.`);
   redirect(`/admin/products/${copy.id}?duplicated=1`);
 }
 
@@ -562,14 +589,16 @@ export async function duplicateProduct(id: string) {
  * orders, invoices and reviews keep pointing at it.
  */
 export async function deleteProduct(id: string) {
-  await requireStaff("catalogue.manage");
-  const product = await prisma.product.findFirst({ where: { id, storeId: DEFAULT_STORE_ID }, select: { id: true, slug: true, _count: { select: { orderItems: true } } } });
+  const { user } = await requireStaff("catalogue.manage");
+  const product = await prisma.product.findFirst({ where: { id, storeId: DEFAULT_STORE_ID }, select: { id: true, slug: true, title: true, _count: { select: { orderItems: true } } } });
   if (!product) redirect("/admin/products");
   if (product._count.orderItems > 0) {
     await prisma.product.update({ where: { id }, data: { status: "ARCHIVED" } });
+    await audit(user.id, "product.archive", { type: "product", id }, `Archived “${product.title}” (it has orders, so it is kept).`);
   } else {
     // Variants, photos links, cart and wishlist entries and reviews go with it (cascade).
     await prisma.product.delete({ where: { id } });
+    await audit(user.id, "product.delete", { type: "product", id }, `Deleted “${product.title}”.`);
   }
   refreshProduct(product.slug);
   redirect(`/admin/products?${product._count.orderItems > 0 ? "archived" : "deleted"}=1`);

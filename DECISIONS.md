@@ -483,3 +483,55 @@ bucket. Once customers had passwords, their sign-ins used up the strict staff li
 staff could not sign in; the end-to-end tests found it. Both instances now use a custom rate-limit storage on the same
 table that prefixes the key with `customer:` or `staff:` (`lib/security/rate-limit.ts`). The shop's own limits
 were already namespaced (`login:`, `code-send:`, `newsletter:` and so on).
+
+**68. Three staff roles: Owner, Manager, Staff.**
+The five roles of the first build (Owner, Manager, Catalogue editor, Order staff, Viewer) are now the three the owner
+asked for. Every page, server action and route asks one table, `lib/auth/permissions.ts`, through `requireStaff`;
+the menu hides what a role cannot open, but the server check is the protection (the end-to-end tests open the
+addresses directly and post to the upload endpoint without the page).
+- *Owner*: everything, and the only role with settings, staff accounts, the activity log and removing demo data.
+  Payment keys (Razorpay) live in the server's `.env`, not in the admin, so only whoever runs the server changes
+  them; the `settings.payments` permission is reserved for the owner if a payments screen is added.
+- *Manager*: products, categories, brands, photos, orders, coupons, banners and customers (with notes). No settings
+  and no staff.
+- *Staff*: views and moves orders on (status, courier and AWB, notes, tax invoice); sees products and stock read-only.
+  Deletes nothing, changes no settings.
+The migration turns existing Catalogue editors and Order staff into Staff, the safe side: an owner promotes anyone who
+needs more. Two-factor stays required for Owner and Manager in production (decision 54).
+
+**69. An activity log records every admin change.**
+`lib/admin/audit.ts` writes one `AuditLog` row after each successful change: who, what (a sentence such as "Changed
+coupon WELCOME10"), which record, when, from which IP and browser, and before/after values for the fields that
+changed. Settings, coupons, brands, categories, product details, prices and stock log their field changes; money is
+shown in rupees on the page. Long text (descriptions) is logged as "changed", not copied twice. A form saved without
+edits logs nothing. Password changes, invites, role changes, switching accounts off and the recovery command are
+logged too; secrets never are. Owners read it at Admin → Activity, filtered by person and area. It is kept for as long
+as the shop runs: a small shop writes a few hundred rows a month, which SQLite holds without effort.
+
+**70. Staff choose their own passwords, and the shop can always get back in.**
+The owner invites staff by email with a role. The invite is a one-time link valid for 3 days to `/admin/set-password`;
+a staff member who forgot their password gets the same kind of link, valid 1 hour, from "Forgot your password?" on the
+staff sign-in. Links are stored the way Better Auth's `/reset-password` endpoint expects, so that endpoint sets the
+password (12 characters at least, common ones refused), creates the login for a new invite and signs the person out
+elsewhere. The app sends these emails itself and waits for them (decision 65); a failed invite says so and offers
+"Send invite again". The forgot-password reply is the same whether or not the email is a staff account.
+Guard rails so the shop cannot lock itself out: nobody changes their own role or switches themselves off, and the last
+owner who can sign in can be neither demoted nor switched off. Switching an account off ends its sessions at once and
+voids its links; its next sign-in says the account is off. An owner can reset another person's two-factor (lost phone).
+If the owner is locked out (lost phone and backup codes, forgotten password), `npm run admin:recover -- <email>
+[--password "<new>"]` on the server removes two-factor, switches the account on, ends its sessions, clears the staff
+sign-in counters and optionally sets a password, and logs that it did. Access to the server is the proof of ownership.
+In development the staff sign-in page lists the owner accounts and points to that command.
+
+**71. Admin feedback: toasts for saves, inline messages for problems.**
+A successful save shows a short toast in the corner (it fades after 5 seconds); errors stay next to the fields they
+are about. Where there is no toast area (the staff sign-in pages), forms answer inline. Loading shows a skeleton inside
+the admin frame, a failed page shows "This page did not load" with a reference and Try again, and an unknown admin
+address or deleted record gets the admin's own 404 instead of the shop's. Because the skeleton streams first, a
+role redirect on a forbidden page now happens in the browser a moment after the response starts, instead of as a 307;
+the signed-out redirect still comes from `proxy.ts` with a real 307. An order without a tax invoice shows "No tax
+invoice yet" with the option to issue it, instead of a 404.
+Two fixes found while testing every admin feature: order status changes, order notes and customer notes did not
+refresh the page they were made on (it kept the old status and notes until reloaded), so those actions now call
+`refresh()`; and the toast is raised as the server's answer arrives rather than from an effect, because a save can
+remove its own form (a cancelled order has no next status) and the confirmation must still show.

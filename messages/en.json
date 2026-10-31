@@ -221,6 +221,8 @@
     "wrongCredentials": "Email or password is not right.",
     "tooMany": "Too many attempts. Wait 15 minutes and try again.",
     "genericError": "Something went wrong. Please try again.",
+    "accountOff": "This account is switched off. Ask the shop owner to switch it back on.",
+    "forgotPassword": "Forgot your password?",
     "twoFactorTitle": "Enter your code",
     "twoFactorIntro": "Open your authenticator app and type the 6-digit code for MN Shoes & Watches.",
     "code": "6-digit code",

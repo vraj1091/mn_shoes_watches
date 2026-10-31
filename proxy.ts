@@ -11,7 +11,7 @@ import { notFoundHtml } from "@/lib/routing/not-found-html";
  * - unknown categories, products and files get a real 404, archived products a 301 to their replacement.
  */
 
-const ADMIN_PUBLIC = new Set(["/admin/sign-in", "/admin/two-factor"]);
+const ADMIN_PUBLIC = new Set(["/admin/sign-in", "/admin/two-factor", "/admin/forgot-password", "/admin/set-password"]);
 const ACCOUNT_PUBLIC = new Set(["/account/sign-in", "/account/sign-up", "/account/forgot-password"]);
 
 // The same headers next.config.ts adds to pages; this response does not pass through Next's router.

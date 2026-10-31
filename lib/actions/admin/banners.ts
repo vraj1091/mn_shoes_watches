@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { prisma, DEFAULT_STORE_ID } from "@/lib/db/client";
 import { requireStaff } from "@/lib/auth/session";
+import { audit } from "@/lib/admin/audit";
 import { refreshStorefront } from "@/lib/admin/refresh";
 import type { FormState } from "@/components/admin/forms";
 
@@ -29,7 +30,7 @@ const bannerSchema = z
   });
 
 export async function saveBanner(id: string | null, _state: FormState, formData: FormData): Promise<FormState> {
-  await requireStaff("content.manage");
+  const { user } = await requireStaff("content.manage");
   const parsed = bannerSchema.safeParse({
     title: text(formData, "title"),
     subtitle: text(formData, "subtitle"),
@@ -58,30 +59,35 @@ export async function saveBanner(id: string | null, _state: FormState, formData:
     const existing = await prisma.banner.findFirst({ where: { id, storeId: DEFAULT_STORE_ID }, select: { id: true } });
     if (!existing) return { status: "error", message: "This banner no longer exists." };
     await prisma.banner.update({ where: { id }, data });
+    await audit(user.id, "banner.update", { type: "banner", id }, `Changed home banner “${data.title}”${data.isActive ? "" : " (switched off)"}.`);
     refreshStorefront("banners");
     return { status: "saved", message: "Saved. The home page shows it now." };
   }
   const last = await prisma.banner.aggregate({ where: { storeId: DEFAULT_STORE_ID, placement: "HOME_HERO" }, _max: { position: true } });
-  await prisma.banner.create({ data: { storeId: DEFAULT_STORE_ID, placement: "HOME_HERO", position: (last._max.position ?? -1) + 1, ...data } });
+  const created = await prisma.banner.create({ data: { storeId: DEFAULT_STORE_ID, placement: "HOME_HERO", position: (last._max.position ?? -1) + 1, ...data } });
+  await audit(user.id, "banner.create", { type: "banner", id: created.id }, `Added home banner “${data.title}”.`);
   refreshStorefront("banners");
   redirect("/admin/banners?created=1");
 }
 
 export async function moveBanner(id: string, direction: -1 | 1) {
-  await requireStaff("content.manage");
+  const { user } = await requireStaff("content.manage");
   const banners = await prisma.banner.findMany({ where: { storeId: DEFAULT_STORE_ID, placement: "HOME_HERO" }, orderBy: [{ position: "asc" }, { createdAt: "asc" }], select: { id: true } });
   const index = banners.findIndex((banner) => banner.id === id);
   const target = index + direction;
   if (index < 0 || target < 0 || target >= banners.length) return { ok: false };
   [banners[index], banners[target]] = [banners[target]!, banners[index]!];
   await prisma.$transaction(banners.map((banner, position) => prisma.banner.update({ where: { id: banner.id }, data: { position } })));
+  await audit(user.id, "banner.reorder", { type: "banner", id }, `Moved a home banner ${direction < 0 ? "up" : "down"}.`);
   refreshStorefront("banners");
   return { ok: true };
 }
 
 export async function deleteBanner(id: string) {
-  await requireStaff("content.manage");
+  const { user } = await requireStaff("content.manage");
+  const banner = await prisma.banner.findFirst({ where: { id, storeId: DEFAULT_STORE_ID }, select: { title: true } });
   await prisma.banner.deleteMany({ where: { id, storeId: DEFAULT_STORE_ID } });
+  if (banner) await audit(user.id, "banner.delete", { type: "banner", id }, `Deleted home banner “${banner.title}”.`);
   refreshStorefront("banners");
   redirect("/admin/banners?deleted=1");
 }

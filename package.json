@@ -25,7 +25,8 @@
     "tokens": "tsx scripts/build-tokens.ts",
     "check:contrast": "tsx scripts/check-contrast.ts",
     "seed": "prisma migrate deploy && prisma generate && tsx scripts/seed-demo.ts",
-    "screenshots": "node scripts/screenshots.mjs"
+    "screenshots": "node scripts/screenshots.mjs",
+    "admin:recover": "tsx scripts/admin-recover.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.2",

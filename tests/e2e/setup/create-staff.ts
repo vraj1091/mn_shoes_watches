@@ -1,7 +1,8 @@
 /*
- * Test-only: adds a Catalogue editor account to the end-to-end database. That role may view orders
- * and manage products but never needs two-factor, so the shop-flow tests can use the admin without
- * depending on the owner's two-factor set-up in auth.spec.ts. Run by scripts/e2e-server.mjs.
+ * Test-only: adds a Manager and a Staff account to the end-to-end database, next to the seeded
+ * owner, so each role's access can be tested. The Manager has to set up two-factor at first
+ * sign-in, as in production; tests/e2e/helpers.ts does that once and remembers the secret.
+ * Run by scripts/e2e-server.mjs.
  */
 import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -10,11 +11,11 @@ import { PrismaClient } from "../../../lib/generated/prisma/client";
 import { databaseUrl } from "../../../lib/db/paths";
 import { hashPassword } from "../../../lib/auth/password";
 
-const config = JSON.parse(readFileSync("tests/e2e/e2e-config.json", "utf8")) as { editor: { email: string; name: string; password: string } };
+type Account = { email: string; name: string; password: string };
+const config = JSON.parse(readFileSync("tests/e2e/e2e-config.json", "utf8")) as { manager: Account; staff: Account };
 const prisma = new PrismaClient({ adapter: new PrismaBetterSqlite3({ url: databaseUrl() }) });
 
-async function main() {
-  const { email, name, password } = config.editor;
+async function create({ email, name, password }: Account, role: "MANAGER" | "STAFF") {
   if (await prisma.staffUser.findUnique({ where: { email } })) return;
   const id = randomUUID();
   await prisma.staffUser.create({
@@ -24,11 +25,16 @@ async function main() {
       name,
       email,
       emailVerified: true,
-      role: "CATALOGUE_EDITOR",
+      role,
       accounts: { create: { id: randomUUID(), accountId: id, providerId: "credential", password: await hashPassword(password) } },
     },
   });
-  console.info(`Created catalogue editor ${email} for the end-to-end tests.`);
+  console.info(`Created ${role.toLowerCase()} ${email} for the end-to-end tests.`);
+}
+
+async function main() {
+  await create(config.manager, "MANAGER");
+  await create(config.staff, "STAFF");
 }
 
 main()

@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { latestEmailCode, OWNER, totp } from "./helpers";
+import { BASE_URL, latestEmailCode, latestStaffLink, OWNER, saveTotpSecret, signInStaff, totp } from "./helpers";
 
 test.describe("customer sign-in with an emailed code", () => {
   test("signs in, shows the account, signs out", async ({ page }, testInfo) => {
@@ -75,6 +75,7 @@ test.describe.serial("staff sign-in with two-factor", () => {
     await expect(page.getByRole("img", { name: "QR code for your authenticator app" })).toBeVisible();
     secret = (await page.locator(".select-all").innerText()).trim();
     expect(secret).toMatch(/^[A-Z2-7]{16,}$/);
+    saveTotpSecret(OWNER.email, secret);
 
     await page.getByLabel("6-digit code").fill(totp(secret));
     await page.getByRole("button", { name: "Turn on two-factor" }).click();
@@ -101,5 +102,64 @@ test.describe.serial("staff sign-in with two-factor", () => {
     await page.getByRole("button", { name: "Continue" }).click();
     await expect(page).toHaveURL(/\/admin$/);
     await expect(page.getByRole("heading", { name: "Hello, Test" })).toBeVisible();
+  });
+
+  test("the owner invites staff, who choose their own password; switching them off ends their session", async ({ page, browser }) => {
+    const helper = { name: "Invited Helper", email: `helper-${Date.now()}@e2e.test`, password: "helper-password-123" };
+    await signInStaff(page, OWNER);
+    await page.goto("/admin/staff");
+    const main = page.getByRole("main");
+    const sentAt = Date.now();
+    await main.getByLabel("Name").fill(helper.name);
+    await main.getByLabel("Email").fill(helper.email);
+    await main.getByRole("combobox", { name: /^Role(?! for)/ }).selectOption("STAFF");
+    await page.getByRole("button", { name: "Send invite", exact: true }).click();
+    await expect(main.getByText(`Invite sent to ${helper.email}`)).toBeVisible();
+    const row = main.getByRole("row").filter({ hasText: helper.email });
+    await expect(row).toContainText("Invite not accepted");
+
+    // The invited person opens the emailed link in their own browser and chooses a password.
+    const theirs = await browser.newContext({ baseURL: BASE_URL });
+    const invited = await theirs.newPage();
+    await invited.goto(await latestStaffLink(helper.email, sentAt));
+    await expect(invited.getByRole("heading", { name: `Welcome, ${helper.name}` })).toBeVisible();
+    await invited.getByLabel("New password", { exact: true }).fill("short");
+    await invited.getByLabel("New password again").fill("short");
+    await invited.getByRole("button", { name: "Set password" }).click();
+    await expect(invited.getByRole("main").getByRole("alert")).toContainText("at least 12 characters");
+    await invited.getByLabel("New password", { exact: true }).fill(helper.password);
+    await invited.getByLabel("New password again").fill(helper.password);
+    await invited.getByRole("button", { name: "Set password" }).click();
+    await expect(invited.getByText("Your password is set.")).toBeVisible();
+
+    // The link works once.
+    await invited.reload();
+    await expect(invited.getByRole("heading", { name: "This link no longer works" })).toBeVisible();
+
+    await signInStaff(invited, helper);
+    const nav = invited.getByRole("navigation", { name: "Admin" });
+    await expect(nav.getByRole("link", { name: "Orders" })).toBeVisible();
+    await expect(nav.getByRole("link", { name: "Settings" })).toHaveCount(0);
+
+    // The owner switches the account off: the open session ends and signing in is refused.
+    await page.reload();
+    await row.getByRole("button", { name: "Switch off" }).click();
+    await row.getByRole("button", { name: "Switch off" }).click();
+    await expect(page.getByRole("status").filter({ hasText: `${helper.name} is signed out and can no longer sign in.` })).toBeVisible();
+    await expect(row).toContainText("Switched off");
+
+    await invited.goto("/admin/orders");
+    await expect(invited).toHaveURL(/\/admin\/sign-in$/);
+    await invited.getByLabel("Email").fill(helper.email);
+    await invited.getByLabel("Password").fill(helper.password);
+    await invited.getByRole("button", { name: "Sign in" }).click();
+    await expect(invited.getByRole("main").getByRole("alert")).toHaveText("This account is switched off. Ask the shop owner to switch it back on.");
+    await theirs.close();
+
+    // Every step is in the activity log.
+    await page.goto("/admin/activity");
+    await expect(main).toContainText(`Invited ${helper.name} (${helper.email}) as Staff.`);
+    await expect(main).toContainText(`${helper.name} set a new password from an emailed link.`);
+    await expect(main).toContainText(`Switched off ${helper.name}’s account.`);
   });
 });

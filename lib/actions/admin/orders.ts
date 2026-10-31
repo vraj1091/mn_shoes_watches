@@ -1,9 +1,11 @@
 "use server";
 
+import { refresh } from "next/cache";
 import { z } from "zod";
 import { prisma, DEFAULT_STORE_ID } from "@/lib/db/client";
 import { requireStaff } from "@/lib/auth/session";
 import { NEXT_STATUSES, RESTOCKS, STATUS_LABELS, type OrderStatusName } from "@/lib/admin/order-status";
+import { audit } from "@/lib/admin/audit";
 import { refreshStorefront } from "@/lib/admin/refresh";
 import { refreshListingFields } from "@/lib/orders/place";
 import { issueInvoice } from "@/lib/admin/invoice";
@@ -137,10 +139,17 @@ export async function changeOrderStatus(orderId: string, _state: FormState, form
     }
   });
 
+  await audit(
+    user.id,
+    "order.status",
+    { type: "order", id: order.id },
+    `Order ${order.number}: ${STATUS_LABELS[current]} → ${STATUS_LABELS[next]}${RESTOCKS.includes(next) ? " (stock put back)" : ""}.`,
+  );
   if (RESTOCKS.includes(next)) {
     await refreshListingFields(order.items.flatMap((item) => (item.productId ? [item.productId] : [])));
     refreshStorefront("products");
   }
+  refresh(); // the order page shows the new status, timeline and next steps
   return { status: "saved", message: `Marked as ${STATUS_LABELS[next].toLowerCase()}.` };
 }
 
@@ -149,17 +158,20 @@ export async function addOrderNote(orderId: string, _state: FormState, formData:
   const { user } = await requireStaff("orders.manage");
   const note = String(formData.get("note") ?? "").trim();
   if (note.length < 2 || note.length > 1000) return { status: "error", message: "Write a note of 2 to 1,000 characters." };
-  const order = await prisma.order.findFirst({ where: { id: orderId, storeId: DEFAULT_STORE_ID }, select: { id: true } });
+  const order = await prisma.order.findFirst({ where: { id: orderId, storeId: DEFAULT_STORE_ID }, select: { id: true, number: true } });
   if (!order) return { status: "error", message: "This order no longer exists." };
   await prisma.orderEvent.create({ data: { storeId: DEFAULT_STORE_ID, orderId, type: "note", message: note, actor: "STAFF", staffId: user.id, isInternal: true } });
+  await audit(user.id, "order.note", { type: "order", id: orderId }, `Added an internal note on order ${order.number}.`);
+  refresh();
   return { status: "saved", message: "Note added." };
 }
 
 /** Issues the GST tax invoice (once) and opens it. */
 export async function createInvoice(orderId: string) {
-  await requireStaff("orders.manage");
-  const order = await prisma.order.findFirst({ where: { id: orderId, storeId: DEFAULT_STORE_ID }, select: { status: true } });
+  const { user } = await requireStaff("orders.manage");
+  const order = await prisma.order.findFirst({ where: { id: orderId, storeId: DEFAULT_STORE_ID }, select: { status: true, number: true, _count: { select: { invoices: { where: { type: "TAX_INVOICE" } } } } } });
   if (!order || order.status === "PENDING_PAYMENT" || order.status === "CANCELLED") return { ok: false, message: "Only confirmed orders get a tax invoice." };
-  await issueInvoice(orderId);
+  const invoice = await issueInvoice(orderId);
+  if (order._count.invoices === 0) await audit(user.id, "invoice.create", { type: "order", id: orderId }, `Issued tax invoice ${invoice.number} for order ${order.number}.`);
   redirect(`/admin/orders/${orderId}/invoice`);
 }

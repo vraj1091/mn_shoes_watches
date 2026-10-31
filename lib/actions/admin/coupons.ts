@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { prisma, DEFAULT_STORE_ID } from "@/lib/db/client";
 import { requireStaff } from "@/lib/auth/session";
+import { audit, diff } from "@/lib/admin/audit";
 import { refreshStorefront } from "@/lib/admin/refresh";
 import { parseRupees } from "@/lib/format/money";
 import type { FormState } from "@/components/admin/forms";
@@ -66,7 +67,7 @@ function valueFor(type: "PERCENT" | "FLAT" | "FREE_SHIPPING", raw: string): numb
 }
 
 export async function saveCoupon(id: string | null, _state: FormState, formData: FormData): Promise<FormState> {
-  await requireStaff("discounts.manage");
+  const { user } = await requireStaff("discounts.manage");
   const parsed = couponSchema.safeParse({
     code: text(formData, "code"),
     title: text(formData, "title"),
@@ -105,28 +106,32 @@ export async function saveCoupon(id: string | null, _state: FormState, formData:
     scope: "ALL" as const,
   };
   if (id) {
-    const existing = await prisma.discount.findFirst({ where: { id, storeId: DEFAULT_STORE_ID }, select: { id: true } });
+    const existing = await prisma.discount.findFirst({ where: { id, storeId: DEFAULT_STORE_ID } });
     if (!existing) return { status: "error", message: "This coupon no longer exists." };
     await prisma.discount.update({ where: { id }, data });
+    await audit(user.id, "coupon.update", { type: "coupon", id }, `Changed coupon ${data.code}.`, diff(existing, data));
     refreshStorefront("discounts");
     return { status: "saved", message: "Saved. Checkout uses the new rules from now on." };
   }
   const created = await prisma.discount.create({ data: { storeId: DEFAULT_STORE_ID, ...data } });
+  await audit(user.id, "coupon.create", { type: "coupon", id: created.id }, `Added coupon ${data.code}.`);
   refreshStorefront("discounts");
   redirect(`/admin/coupons/${created.id}?created=1`);
 }
 
 /** Deletes a coupon nobody has used; a used one is switched off so past orders still show it. */
 export async function deleteCoupon(id: string) {
-  await requireStaff("discounts.manage");
-  const coupon = await prisma.discount.findFirst({ where: { id, storeId: DEFAULT_STORE_ID }, select: { usageCount: true, _count: { select: { redemptions: true } } } });
+  const { user } = await requireStaff("discounts.manage");
+  const coupon = await prisma.discount.findFirst({ where: { id, storeId: DEFAULT_STORE_ID }, select: { code: true, usageCount: true, _count: { select: { redemptions: true } } } });
   if (!coupon) redirect("/admin/coupons");
   if (coupon.usageCount > 0 || coupon._count.redemptions > 0) {
     await prisma.discount.update({ where: { id }, data: { isActive: false } });
+    await audit(user.id, "coupon.disable", { type: "coupon", id }, `Switched off coupon ${coupon.code} (already used, so kept for past orders).`);
     refreshStorefront("discounts");
     redirect("/admin/coupons?disabled=1");
   }
   await prisma.discount.delete({ where: { id } });
+  await audit(user.id, "coupon.delete", { type: "coupon", id }, `Deleted coupon ${coupon.code}.`);
   refreshStorefront("discounts");
   redirect("/admin/coupons?deleted=1");
 }

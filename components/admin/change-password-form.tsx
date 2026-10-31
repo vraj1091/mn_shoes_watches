@@ -27,7 +27,15 @@ export function ChangePasswordForm({ minLength }: { minLength: number }) {
     const { error } = await staffAuthClient.changePassword({ currentPassword, newPassword, revokeOtherSessions: true });
     setBusy(false);
     if (error) {
-      setMessage({ tone: "error", text: error.status === 400 ? "Your current password is not right." : "Could not change the password. Please try again." });
+      setMessage({
+        tone: "error",
+        text:
+          error.code === "PASSWORD_TOO_COMMON"
+            ? "That password is too common. Choose one that is harder to guess."
+            : error.status === 400
+              ? "Your current password is not right."
+              : "Could not change the password. Please try again.",
+      });
       return;
     }
     formElement.reset();

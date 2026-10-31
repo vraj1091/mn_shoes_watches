@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { prisma, DEFAULT_STORE_ID } from "@/lib/db/client";
 import { requireStaff } from "@/lib/auth/session";
+import { audit, diff } from "@/lib/admin/audit";
 import { refreshStorefront } from "@/lib/admin/refresh";
 import { ALL_TAGS } from "@/lib/cache/tags";
 import { isValidPin, stateName } from "@/lib/commerce/india";
@@ -44,8 +45,15 @@ const rupeesOrEmpty = (label: string) =>
 const wholeNumber = (label: string, min: number, max: number) =>
   z.coerce.number({ message: `${label} must be a number.` }).int(`${label} must be a whole number.`).min(min, `${label} must be at least ${min}.`).max(max, `${label} can be at most ${max}.`);
 
-async function settingsUpdate(data: Parameters<typeof prisma.storeSettings.update>[0]["data"], userId: string) {
+type SettingsData = Parameters<typeof prisma.storeSettings.update>[0]["data"];
+
+/** Saves part of the settings and logs which fields changed (before/after) under `section`. */
+async function settingsUpdate(section: string, data: SettingsData, userId: string) {
+  const before = await prisma.storeSettings.findUniqueOrThrow({ where: { storeId: DEFAULT_STORE_ID } });
   await prisma.storeSettings.update({ where: { storeId: DEFAULT_STORE_ID }, data: { ...data, updatedById: userId } });
+  // Only plain values are compared; `{ increment: 1 }` and the like are bookkeeping.
+  const plain = Object.fromEntries(Object.entries(data).filter(([, value]) => value === null || typeof value !== "object" || value instanceof Date));
+  await audit(userId, "settings.update", { type: "settings", id: section }, `Changed ${section} settings.`, diff(before, plain));
 }
 
 // ─── Store details ─────────────────────────────────────────────────────────────
@@ -76,7 +84,7 @@ export async function saveStoreDetails(_state: FormState, formData: FormData): P
   if (!parsed.success) return failed(parsed.error);
   const { gstin, ...rest } = parsed.data;
   if (gstin && gstin.slice(0, 2) !== rest.gstStateCode) return { status: "error", message: `A GSTIN starting with ${gstin.slice(0, 2)} belongs to another state than the one chosen.` };
-  await settingsUpdate({ ...rest, gstin: gstin || null }, user.id);
+  await settingsUpdate("store details", { ...rest, gstin: gstin || null }, user.id);
   refreshStorefront("settings");
   return { status: "saved", message: "Saved." };
 }
@@ -95,7 +103,7 @@ const addressSchema = z.object({
 });
 
 export async function saveShopAddress(_state: FormState, formData: FormData): Promise<FormState> {
-  await requireStaff("settings.manage");
+  const { user } = await requireStaff("settings.manage");
   const parsed = addressSchema.safeParse({
     line1: text(formData, "line1"),
     line2: text(formData, "line2"),
@@ -109,9 +117,11 @@ export async function saveShopAddress(_state: FormState, formData: FormData): Pr
   if (!parsed.success) return failed(parsed.error);
   const { line2, landmark, mapUrl, ...rest } = parsed.data;
   const data = { ...rest, line2: line2 || null, landmark: landmark || null, mapUrl: mapUrl || null, state: stateName(rest.stateCode)!, contentUpdatedAt: new Date() };
-  const location = await prisma.storeLocation.findFirst({ where: { storeId: DEFAULT_STORE_ID }, orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }], select: { id: true } });
+  const location = await prisma.storeLocation.findFirst({ where: { storeId: DEFAULT_STORE_ID }, orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }] });
   if (location) await prisma.storeLocation.update({ where: { id: location.id }, data });
   else await prisma.storeLocation.create({ data: { storeId: DEFAULT_STORE_ID, name: "Main shop", slug: "main", isPrimary: true, openingHours: [], ...data } });
+  const changes = location ? diff(location, { ...data, contentUpdatedAt: location.contentUpdatedAt }) : undefined;
+  await audit(user.id, "settings.update", { type: "settings", id: "shop address" }, "Changed the shop address.", changes);
   refreshStorefront("locations", "settings");
   return { status: "saved", message: "Saved. The contact page, footer and invoices use the new address." };
 }
@@ -160,13 +170,18 @@ export async function saveDelivery(_state: FormState, formData: FormData): Promi
   });
   if (errors.length) return { status: "error", message: "Please fix the following:", errors };
 
+  const before = await prisma.storeSettings.findUniqueOrThrow({ where: { storeId: DEFAULT_STORE_ID } });
+  const settings = { ...input, codFee: input.codFee ?? 0 };
   await prisma.$transaction([
-    prisma.storeSettings.update({
-      where: { storeId: DEFAULT_STORE_ID },
-      data: { ...input, codFee: input.codFee ?? 0, updatedById: user.id },
-    }),
+    prisma.storeSettings.update({ where: { storeId: DEFAULT_STORE_ID }, data: { ...settings, updatedById: user.id } }),
     ...updates.map((update) => prisma.shippingRate.update({ where: { id: update.id }, data: update.data })),
   ]);
+  const changes = diff(before, settings);
+  for (const rate of rates) {
+    const update = updates.find((entry) => entry.id === rate.id)!;
+    for (const [key, pair] of Object.entries(diff(rate, update.data))) changes[`${rate.zone.name} ${key}`] = pair;
+  }
+  await audit(user.id, "settings.update", { type: "settings", id: "delivery" }, "Changed delivery and cash on delivery settings.", changes);
   refreshStorefront("settings", "shipping");
   return { status: "saved", message: "Saved. Bags and checkout use the new charges now." };
 }
@@ -184,7 +199,7 @@ export async function saveReturns(_state: FormState, formData: FormData): Promis
       lowStockThreshold: text(formData, "lowStockThreshold"),
     });
   if (!parsed.success) return failed(parsed.error);
-  await settingsUpdate(parsed.data, user.id);
+  await settingsUpdate("returns and stock", parsed.data, user.id);
   refreshStorefront("settings", "products");
   return { status: "saved", message: "Saved." };
 }
@@ -202,6 +217,7 @@ export async function saveAnnouncement(_state: FormState, formData: FormData): P
   if (parsed.data.announcementEnabled && !parsed.data.announcementText) return { status: "error", message: "Write the announcement, or switch the bar off." };
   const current = await prisma.storeSettings.findUniqueOrThrow({ where: { storeId: DEFAULT_STORE_ID }, select: { announcementText: true } });
   await settingsUpdate(
+    "announcement",
     {
       ...parsed.data,
       announcementText: parsed.data.announcementText || null,
@@ -221,7 +237,7 @@ export async function saveInvoiceSettings(_state: FormState, formData: FormData)
   const footer = text(formData, "invoiceFooter");
   if (!/^[A-Z0-9]{1,8}$/.test(prefix)) return { status: "error", message: "The invoice prefix needs 1 to 8 letters or numbers." };
   if (footer.length > 300) return { status: "error", message: "Keep the invoice footer under 300 characters." };
-  await settingsUpdate({ invoicePrefix: prefix, invoiceFooter: footer || null }, user.id);
+  await settingsUpdate("invoice", { invoicePrefix: prefix, invoiceFooter: footer || null }, user.id);
   return { status: "saved", message: "Saved. New invoices use these." };
 }
 
@@ -229,10 +245,11 @@ export async function saveInvoiceSettings(_state: FormState, formData: FormData)
 
 /** Settings → Remove all demo data. Real orders, categories, pages and settings stay. */
 export async function removeAllDemoData() {
-  await requireStaff("settings.manage");
+  const { user } = await requireStaff("demo.remove");
   const removed = await removeDemoData(prisma, DEFAULT_STORE_ID);
   for (const tag of ALL_TAGS) updateTag(tag);
   // The demo section disappears once the data is gone, so the result is shown at the top instead.
   const summary = [`${removed.products} products`, `${removed.orders} orders`, `${removed.customers} customers`, `${removed.brands} brands`].join(", ");
+  await audit(user.id, "demo.remove", { type: "settings", id: "demo data" }, `Removed all demo data: ${summary}.`);
   redirect(`/admin/settings?demoRemoved=${encodeURIComponent(summary)}`);
 }

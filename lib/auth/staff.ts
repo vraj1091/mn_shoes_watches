@@ -1,11 +1,14 @@
 import "server-only";
 import { betterAuth } from "better-auth";
+import { APIError, createAuthMiddleware } from "better-auth/api";
 import { prefixedAuthRateLimit } from "@/lib/security/rate-limit";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { twoFactor } from "better-auth/plugins/two-factor";
 import { prisma } from "@/lib/db/client";
 import { env } from "@/lib/env";
+import { audit } from "@/lib/admin/audit";
+import { passwordProblem } from "./customer-rules";
 import { hashPassword, verifyPassword, MIN_PASSWORD_LENGTH } from "./password";
 
 /**
@@ -43,6 +46,23 @@ function createStaffAuth() {
       minPasswordLength: MIN_PASSWORD_LENGTH,
       maxPasswordLength: 128,
       password: { hash: hashPassword, verify: verifyPassword },
+      // Staff set their password only through an emailed one-time link (lib/admin/staff.ts):
+      // the invite or a reset. Setting it signs them out everywhere else.
+      revokeSessionsOnPasswordReset: true,
+      async onPasswordReset({ user }) {
+        // Opening the emailed link proves the address.
+        await prisma.staffUser.update({ where: { id: user.id }, data: { emailVerified: true } });
+        await audit(user.id, "staff.password", { type: "staff", id: user.id }, `${user.name} set a new password from an emailed link.`);
+      },
+    },
+    hooks: {
+      before: createAuthMiddleware(async (ctx) => {
+        if (ctx.path !== "/reset-password" && ctx.path !== "/change-password") return;
+        const password: unknown = ctx.body?.newPassword;
+        if (typeof password === "string" && password.length >= MIN_PASSWORD_LENGTH && passwordProblem(password) === "TOO_COMMON") {
+          throw new APIError("BAD_REQUEST", { code: "PASSWORD_TOO_COMMON", message: "That password is too common. Choose one that is harder to guess." });
+        }
+      }),
     },
     rateLimit: {
       enabled: true,
@@ -53,6 +73,7 @@ function createStaffAuth() {
         "/sign-in/email": { window: 15 * 60, max: 10 },
         "/two-factor/verify-totp": { window: 15 * 60, max: 10 },
         "/two-factor/verify-backup-code": { window: 15 * 60, max: 5 },
+        "/reset-password": { window: 15 * 60, max: 10 },
       },
     },
     advanced: {

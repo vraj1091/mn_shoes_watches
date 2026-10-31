@@ -1,5 +1,6 @@
 import { revalidateTag } from "next/cache";
 import { getStaffSession } from "@/lib/auth/session";
+import { audit } from "@/lib/admin/audit";
 import { can } from "@/lib/auth/permissions";
 import { prisma, DEFAULT_STORE_ID } from "@/lib/db/client";
 import { tags } from "@/lib/cache/tags";
@@ -67,6 +68,15 @@ export async function POST(request: Request) {
     // Route handlers cannot use updateTag; expiring with expire: 0 has the same effect.
     revalidateTag(tags.products, { expire: 0 });
     revalidateTag(tags.product(product.slug), { expire: 0 });
+  }
+  if (uploaded.length > 0) {
+    const count = uploaded.length === 1 ? "a photo" : `${uploaded.length} photos`;
+    await audit(
+      session.user.id,
+      product ? "product.photos" : "media.upload",
+      product ? { type: "product", id: product.id } : { type: "media", id: uploaded[0]!.id },
+      product ? `Uploaded ${count} to “${product.title}”.` : `Uploaded ${count} to the photo library.`,
+    );
   }
 
   return Response.json({ uploaded, errors }, { status: uploaded.length === 0 ? 400 : 200 });
