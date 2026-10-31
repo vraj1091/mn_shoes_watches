@@ -12,6 +12,7 @@ import { notFoundHtml } from "@/lib/routing/not-found-html";
  */
 
 const ADMIN_PUBLIC = new Set(["/admin/sign-in", "/admin/two-factor"]);
+const ACCOUNT_PUBLIC = new Set(["/account/sign-in", "/account/sign-up", "/account/forgot-password"]);
 
 // The same headers next.config.ts adds to pages; this response does not pass through Next's router.
 const NOT_FOUND_HEADERS = {
@@ -32,7 +33,7 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (pathname.startsWith("/account") && pathname !== "/account/sign-in") {
+  if (pathname.startsWith("/account") && !ACCOUNT_PUBLIC.has(pathname)) {
     if (!getSessionCookie(request, { cookiePrefix: "mn" })) {
       const signIn = new URL("/account/sign-in", request.url);
       signIn.searchParams.set("next", `${pathname}${search}`);

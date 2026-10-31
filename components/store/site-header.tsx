@@ -13,18 +13,24 @@ import { searchLabels } from "./search/search-labels";
 import { ThemeControl, ThemeControlInline } from "@/components/theme/theme-control";
 import { BagButton } from "./shop/cart-drawer";
 import { cartCount } from "@/lib/cart/cart";
+import { getCustomerSession } from "@/lib/auth/session";
 import { readShopperHash } from "@/lib/shopper/token";
 
 const iconButton =
   "flex size-11 items-center justify-center rounded-sm text-ink transition-colors hover:bg-surface hover:text-link";
 
 export async function SiteHeader() {
-  const [settings, departments, cookieStore, shopper] = await Promise.all([
+  // The header reads cookies on every request, so the signed-in state is never cached.
+  const [settings, departments, cookieStore, shopper, session] = await Promise.all([
     getStoreSettings(),
     getCategoryNavigation(),
     cookies(),
     readShopperHash(),
+    getCustomerSession(),
   ]);
+  const account = session
+    ? { label: t("common.yourAccount"), href: "/account" }
+    : { label: t("common.signIn"), href: "/account/sign-in" };
   const bagCount = await cartCount(shopper);
 
   const showAnnouncement =
@@ -54,7 +60,7 @@ export async function SiteHeader() {
             departments={departments}
             extraLinks={extraLinks}
             accountLinks={[
-              { label: t("common.account"), href: "/account", icon: <UserIcon size={20} /> },
+              { label: account.label, href: account.href, icon: <UserIcon size={20} /> },
               { label: t("common.wishlist"), href: "/wishlist", icon: <HeartIcon size={20} /> },
             ]}
             labels={{
@@ -102,8 +108,9 @@ export async function SiteHeader() {
             <div className="max-lg:hidden">
               <ThemeControl />
             </div>
-            <Link href="/account" prefetch={false} aria-label={t("common.account")} className={`${iconButton} max-lg:hidden`}>
+            <Link href={account.href} prefetch={false} aria-label={account.label} className={`${iconButton} relative max-lg:hidden`}>
               <UserIcon size={22} />
+              {session && <span aria-hidden className="absolute right-2 bottom-2 size-2 rounded-full bg-stock ring-2 ring-canvas" />}
             </Link>
             <Link href="/wishlist" prefetch={false} aria-label={t("common.wishlist")} className={`${iconButton} max-lg:hidden`}>
               <HeartIcon size={22} />

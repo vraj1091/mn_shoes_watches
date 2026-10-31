@@ -436,3 +436,50 @@ sideways. An end-to-end test checks the admin pages at 390 px.
 It appears in the bag and inside the checkout form, and forms cannot be nested: the browser drops the inner form while
 parsing (a hydration error) and Enter in the coupon field would have submitted the order. The field is an input and a
 button; Enter applies the code. An end-to-end test applies a coupon with Enter at checkout.
+
+## Accounts, admin roles and the Bone/Espresso/Oxblood redesign (brief of 1 Nov 2026)
+
+**64. Customer accounts use email and password, and the password is saved only after the emailed code is checked.**
+The owner asked for sign-up with name, email, mobile and password, email verification, and forgot/reset password.
+This replaces the passwordless design of decision 2 for customers (staff were already on passwords). Signing in
+with only an emailed code, Google or an SMS code still works, and guest checkout stays the default.
+Better Auth's own sign-up saves the account and password first and verifies the email afterwards. That lets anyone
+pre-register someone else's email with a password of their choosing; if the real owner later confirms the address,
+that password still works. So Better Auth's sign-up endpoint is switched off (`disableSignUp`), and the shop's
+sign-up is two server actions (`lib/actions/account.ts`): the first checks the form and emails a code, the second
+checks the code through Better Auth and saves the account, the Argon2id password hash, name and +91 mobile in the
+same request. Nothing is stored for an email nobody has proved. Because a guest checkout already created a customer
+record, the second step reuses that record, so a guest who signs up later finds their earlier orders in the account.
+Rules for passwords (8 to 128 characters, not a common password, not the email's name part), names and Indian
+mobiles live in `lib/auth/customer-rules.ts`, shared by the forms and the server and covered by unit tests.
+Password reset is an emailed code plus the new password (Better Auth's email OTP reset), followed by signing in; it
+also gives a guest or a code-only customer their first password. Sessions last 30 days; with "Keep me signed in"
+off, the session cookie ends when the browser closes.
+
+**65. The app sends account codes itself and waits for the email.**
+Better Auth runs its email callbacks as background tasks and swallows their errors, so a failed send still answered
+"code sent" and the shopper waited for an email that never came. The shop's forms now ask a server action for a code:
+it creates the code with Better Auth's server-only `createVerificationOTP`, replaces any earlier code for the same
+email and purpose, sends the email and waits. A failure says "We could not send the email just now" and lifts the
+one-minute wait. Codes are 6 digits, valid 10 minutes, 5 tries. One code per email per minute and kind of code
+(sign-in and sign-up share one kind; resets have their own), checked on the server and counted down on screen;
+15 code requests per minute per IP. Password sign-in also allows 10 tries per email per 15 minutes, on top of the
+generous per-IP limits of decision 26. The cost: a reset request for an unknown email returns without sending, so it
+is slightly faster than one for a known email. The reply text is identical, and reliability of real emails matters
+more for a small shop than that timing difference. Without SMTP settings, development writes every email to
+`DATA_DIR/outbox` and prints the file path in the terminal (decision 33).
+
+**66. Checkout knows the signed-in customer.**
+A signed-in shopper's order belongs to their account whatever email they type, and checkout fills in their name,
+email, mobile and last delivery address. Guests see "Have an account? Sign in to fill in your details". The account
+page lists the customer's orders (unpaid online orders excepted) with status and a link to the order page. The header
+shows "Sign in" or "Your account" (with a small dot); it already reads cookies on every request, so the signed-in
+state is never cached (decision 23).
+
+**67. Customer and staff rate limits are counted separately.**
+Customers and staff are two Better Auth instances (decision 2) that share the `RateLimit` table. Better Auth keys a
+limit by IP and path, and the path is relative to each instance's base, so both counted `/sign-in/email` in one
+bucket. Once customers had passwords, their sign-ins used up the strict staff limit (10 per 15 minutes) and the shop's
+staff could not sign in; the end-to-end tests found it. Both instances now use a custom rate-limit storage on the same
+table that prefixes the key with `customer:` or `staff:` (`lib/security/rate-limit.ts`). The shop's own limits
+were already namespaced (`login:`, `code-send:`, `newsletter:` and so on).

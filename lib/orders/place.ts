@@ -55,7 +55,11 @@ class StockError extends Error {
 
 const orderNumber = (value: number) => `MN${10000 + value}`;
 
-export async function placeOrder(tokenHash: string, raw: CheckoutInput): Promise<PlaceOrderResult> {
+/**
+ * `customerId` is the signed-in customer, if any: their order belongs to their account whatever
+ * email they type. A guest's order goes to the customer record with that email (DECISIONS.md 4).
+ */
+export async function placeOrder(tokenHash: string, raw: CheckoutInput, customerId?: string | null): Promise<PlaceOrderResult> {
   const parsed = checkoutSchema.safeParse(raw);
   if (!parsed.success) return { ok: false, error: "INVALID", fields: [...new Set(parsed.error.issues.map((issue) => String(issue.path[0] ?? issue.message)))] };
   const input = parsed.data;
@@ -124,7 +128,9 @@ export async function placeOrder(tokenHash: string, raw: CheckoutInput): Promise
       });
       const number = orderNumber(counter.nextValue - 1);
 
-      const existing = await tx.customer.findUnique({ where: { email: input.email.toLowerCase() } });
+      const existing =
+        (customerId ? await tx.customer.findUnique({ where: { id: customerId } }) : null) ??
+        (await tx.customer.findUnique({ where: { email: input.email.toLowerCase() } }));
       const customer =
         existing ??
         (await tx.customer.create({ data: { storeId: DEFAULT_STORE_ID, name: input.name, email: input.email.toLowerCase(), phone: input.phone } }));

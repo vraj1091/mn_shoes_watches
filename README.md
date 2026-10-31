@@ -44,6 +44,17 @@ Without SMTP settings, development saves every email (sign-in codes, order confi
 `data/outbox`. Without Razorpay keys, checkout offers cash on delivery and a clearly labelled demo online payment
 that charges nothing.
 
+### Customer accounts
+
+Shoppers can check out as guests or create an account at `/account/sign-up`: name, email, Indian mobile and a
+password (at least 8 characters; common passwords are refused). A 6-digit code is emailed, and the account is saved only
+once the code is entered. Sign-in is by password (with "Keep me signed in"), or by an emailed code; "Forgot password?"
+sends a code to set a new one. A guest who ordered before and then signs up finds those orders in their account.
+Signed-in shoppers get their details and last address filled in at checkout.
+
+Without SMTP settings, development saves each email in `data/outbox` and prints the file path in the terminal, so the
+codes can be read there.
+
 ## Demo data
 
 `npm run seed` fills the shop so every page and feature can be tried:

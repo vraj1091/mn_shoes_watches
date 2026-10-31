@@ -1,5 +1,6 @@
 import "server-only";
 import { betterAuth } from "better-auth";
+import { prefixedAuthRateLimit } from "@/lib/security/rate-limit";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { twoFactor } from "better-auth/plugins/two-factor";
@@ -45,8 +46,7 @@ function createStaffAuth() {
     },
     rateLimit: {
       enabled: true,
-      storage: "database",
-      modelName: "rateLimit",
+      customStorage: prefixedAuthRateLimit("staff"),
       window: 60,
       max: 60,
       customRules: {

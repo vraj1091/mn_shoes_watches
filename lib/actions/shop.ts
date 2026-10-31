@@ -17,6 +17,7 @@ import { normaliseIndianMobile } from "@/lib/format/phone";
 import { sendEmail } from "@/lib/messaging/email";
 import { orderConfirmationEmail } from "@/lib/messaging/order-email";
 import { confirmRazorpayPayment, placeOrder, type CheckoutInput, type PlaceOrderResult } from "@/lib/orders/place";
+import { getCustomerSession } from "@/lib/auth/session";
 import { clientIp } from "@/lib/security/request";
 import { rateLimit } from "@/lib/security/rate-limit";
 import { ensureShopperHash, readShopperHash } from "@/lib/shopper/token";
@@ -119,7 +120,8 @@ export async function submitOrder(input: CheckoutInput): Promise<PlaceOrderResul
   if (await limited("checkout", 10)) return { ok: false, error: "BUSY" };
   const hash = await readShopperHash();
   if (!hash) return { ok: false, error: "EMPTY" };
-  const result = await placeOrder(hash, input);
+  const session = await getCustomerSession();
+  const result = await placeOrder(hash, input, session?.user.id ?? null);
   if (result.ok) {
     // Stock and "only N left" changed; listings show it on the next request.
     updateTag(tags.products);

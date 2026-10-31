@@ -335,7 +335,7 @@ model CustomerAccount {
   accessTokenExpiresAt  DateTime?
   refreshTokenExpiresAt DateTime?
   scope                 String?
-  password              String? // unused for customers; kept for Better Auth compatibility
+  password              String? // Argon2id hash on the "credential" account; set only after the email is confirmed
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 

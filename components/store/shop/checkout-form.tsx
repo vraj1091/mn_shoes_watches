@@ -22,8 +22,12 @@ export type CheckoutLabels = Record<
   string
 >;
 
+/** A signed-in shopper's details and last delivery address, filled in for them. */
+export type CheckoutPrefill = Partial<Record<"email" | "phone" | "name" | "line1" | "line2" | "landmark" | "city" | "stateCode" | "pinCode", string>>;
+
 type Props = {
   initial: CartView;
+  prefill?: CheckoutPrefill;
   labels: CheckoutLabels;
   bag: BagLabels;
   states: { code: string; name: string }[];
@@ -76,7 +80,7 @@ const FIELD_MESSAGES: Record<string, keyof CheckoutLabels> = {
  * One-page guest checkout. The server recalculates every price, discount and stock level when the
  * order is placed (lib/orders/place.ts); this form only collects who, where and how to pay.
  */
-export function CheckoutForm({ initial, labels, bag, states, cod, razorpay, lockIcon }: Props) {
+export function CheckoutForm({ initial, prefill = {}, labels, bag, states, cod, razorpay, lockIcon }: Props) {
   const router = useRouter();
   const [view, setView] = useState(initial);
   const [method, setMethod] = useState<"PREPAID" | "COD">("PREPAID");
@@ -85,7 +89,7 @@ export function CheckoutForm({ initial, labels, bag, states, cod, razorpay, lock
   const [delivery, setDelivery] = useState<DeliveryCheck | null>(null);
   const [pending, startTransition] = useTransition();
   const idempotencyKey = useRef<string | null>(null);
-  const [stateCode, setStateCode] = useState("");
+  const [stateCode, setStateCode] = useState(prefill.stateCode ?? "");
 
   const codAllowed = cod.enabled && (cod.max === null || view.totals.grandTotal <= cod.max) && (delivery?.ok ? delivery.cod : true);
 
@@ -193,6 +197,7 @@ export function CheckoutForm({ initial, labels, bag, states, cod, razorpay, lock
         name={name}
         aria-invalid={errors[name] ? true : undefined}
         aria-describedby={errors[name] ? `checkout-${name}-error` : hint ? `checkout-${name}-hint` : undefined}
+        defaultValue={prefill[name as keyof CheckoutPrefill]}
         {...props}
         className={inputClasses}
       />

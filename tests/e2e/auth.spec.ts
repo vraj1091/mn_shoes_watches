@@ -7,17 +7,20 @@ test.describe("customer sign-in with an emailed code", () => {
     await page.goto("/account");
     await expect(page).toHaveURL(/\/account\/sign-in\?next=%2Faccount|\/account\/sign-in\?next=\/account/);
 
+    // The page opens on email and password; codes are one click away.
+    await page.getByRole("button", { name: "Email me a code instead" }).click();
     const sentAt = Date.now();
-    await page.getByRole("main").getByLabel("Email address").fill(email);
+    await page.getByRole("main").getByRole("textbox", { name: "Email address" }).fill(email);
     await page.getByRole("button", { name: "Send code" }).click();
-    await expect(page.getByRole("status")).toContainText(email);
+    await expect(page.getByRole("heading", { name: "Check your email" })).toBeVisible();
+    await expect(page.getByRole("main").getByRole("status").first()).toContainText(email);
 
-    await page.getByLabel("6-digit code").fill("000000");
-    await page.getByRole("button", { name: "Sign in" }).click();
-    await expect(page.getByRole("main").getByRole("alert")).toContainText("not right");
+    await page.getByRole("textbox", { name: "6-digit code" }).fill("000000");
+    await page.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect(page.locator("#account-code-error")).toContainText("not right");
 
-    await page.getByLabel("6-digit code").fill(await latestEmailCode(email, sentAt));
-    await page.getByRole("button", { name: "Sign in" }).click();
+    await page.getByRole("textbox", { name: "6-digit code" }).fill(await latestEmailCode(email, sentAt));
+    await page.getByRole("button", { name: "Sign in", exact: true }).click();
     await expect(page).toHaveURL(/\/account$/);
     await expect(page.getByText(`Signed in as ${email}`)).toBeVisible();
 
@@ -29,9 +32,10 @@ test.describe("customer sign-in with an emailed code", () => {
 
   test("rejects an invalid email before sending anything", async ({ page }) => {
     await page.goto("/account/sign-in");
-    await page.getByRole("main").getByLabel("Email address").fill("not-an-email");
+    await page.getByRole("button", { name: "Email me a code instead" }).click();
+    await page.getByRole("main").getByRole("textbox", { name: "Email address" }).fill("not-an-email");
     await page.getByRole("button", { name: "Send code" }).click();
-    await expect(page.getByRole("main").getByRole("alert")).toHaveText("Enter a valid email address.");
+    await expect(page.locator("#code-email-error")).toHaveText("Enter a valid email address.");
   });
 });
 

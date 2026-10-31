@@ -31,3 +31,18 @@ export async function rateLimit(key: string, { windowSeconds, max }: { windowSec
     retryAfterSeconds: ok ? 0 : Math.ceil((windowStart + windowMs - now) / 1000),
   };
 }
+
+/**
+ * Better Auth rate-limit storage on the same table, with a prefix per auth instance. Customers and
+ * staff are separate Better Auth instances whose keys are "<ip>|<path>" with the path relative to
+ * their own base, so both counted "/sign-in/email" in one bucket: customer sign-ins used up the
+ * strict staff limit and locked staff out (DECISIONS.md 67).
+ */
+export function prefixedAuthRateLimit(prefix: "customer" | "staff") {
+  return {
+    async consume(key: string, rule: { window: number; max: number }) {
+      const result = await rateLimit(`${prefix}:${key}`, { windowSeconds: rule.window, max: rule.max });
+      return { allowed: result.ok, retryAfter: result.ok ? null : result.retryAfterSeconds };
+    },
+  };
+}
