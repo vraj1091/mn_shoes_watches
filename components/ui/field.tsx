@@ -1,7 +1,7 @@
 import type { ComponentProps, ReactNode } from "react";
 
 export const inputClasses =
-  "block w-full min-h-11 rounded-sm border border-line-strong bg-canvas px-3 text-base text-ink placeholder:text-muted transition-colors duration-150 hover:border-muted focus-visible:border-ink focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-link aria-invalid:border-sale disabled:opacity-60";
+  "block w-full min-h-11 rounded-sm border border-line-strong bg-surface px-3 text-base text-ink placeholder:text-muted transition-colors duration-150 hover:border-muted focus-visible:border-ink focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-link aria-invalid:border-error disabled:opacity-60";
 
 export function Label({ className = "", ...props }: ComponentProps<"label">) {
   return <label className={`mb-1.5 block text-sm font-medium text-ink ${className}`} {...props} />;
@@ -23,7 +23,7 @@ export function Hint({ id, children }: { id?: string; children: ReactNode }) {
 export function FieldError({ id, children }: { id?: string; children?: ReactNode }) {
   if (!children) return null;
   return (
-    <p id={id} role="alert" className="mt-1.5 text-sm font-medium text-sale">
+    <p id={id} role="alert" className="mt-1.5 text-sm font-medium text-error">
       {children}
     </p>
   );
@@ -32,8 +32,8 @@ export function FieldError({ id, children }: { id?: string; children?: ReactNode
 export function FormAlert({ tone = "error", children }: { tone?: "error" | "success" | "info"; children?: ReactNode }) {
   if (!children) return null;
   const tones = {
-    error: "border-sale/40 text-sale",
-    success: "border-stock/40 bg-surface text-stock",
+    error: "border-error/40 text-error",
+    success: "border-success/40 bg-surface text-success",
     info: "border-line bg-surface text-ink",
   } as const;
   return (

@@ -18,7 +18,7 @@ export function SizeGuide({ label, title, closeLabel, closeIcon, icon, children 
         type="button"
         aria-haspopup="dialog"
         onClick={() => dialog.current?.showModal()}
-        className="inline-flex min-h-11 items-center gap-1.5 text-sm text-link underline underline-offset-4 hover:no-underline"
+        className="inline-flex min-h-11 items-center gap-1.5 text-sm text-link hover:text-accent underline underline-offset-4 hover:no-underline"
       >
         {icon}
         {label}

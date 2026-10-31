@@ -40,7 +40,7 @@ export default async function ContactPage() {
             </ul>
           )}
           {location.mapUrl && (
-            <a href={location.mapUrl} target="_blank" rel="noopener noreferrer" className="mt-3 inline-block text-sm text-link underline underline-offset-4">
+            <a href={location.mapUrl} target="_blank" rel="noopener noreferrer" className="mt-3 inline-block text-sm text-link hover:text-accent underline underline-offset-4">
               {t("contact.directions")}
             </a>
           )}

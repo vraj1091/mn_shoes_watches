@@ -17,7 +17,7 @@ import { getCustomerSession } from "@/lib/auth/session";
 import { readShopperHash } from "@/lib/shopper/token";
 
 const iconButton =
-  "flex size-11 items-center justify-center rounded-sm text-ink transition-colors hover:bg-surface hover:text-link";
+  "flex size-11 items-center justify-center rounded-sm text-ink transition-colors hover:bg-surface hover:text-accent";
 
 export async function SiteHeader() {
   // The header reads cookies on every request, so the signed-in state is never cached.
@@ -55,7 +55,7 @@ export async function SiteHeader() {
         />
       )}
       <HeaderShell>
-        <div className="mx-auto flex h-14 max-w-screen-xl items-center gap-2 px-4 transition-[height] duration-200 ease-out sm:px-6 lg:h-18 lg:gap-6 lg:px-8 lg:group-data-scrolled/header:h-15">
+        <div className="mx-auto flex h-14 max-w-screen-xl items-center gap-2 px-4 transition-[height] duration-200 ease-out sm:px-6 xl:h-18 xl:gap-6 xl:px-8 xl:group-data-scrolled/header:h-15">
           <MobileNav
             departments={departments}
             extraLinks={extraLinks}
@@ -82,12 +82,12 @@ export async function SiteHeader() {
 
           <Link
             href="/"
-            className="mr-auto flex min-h-11 items-center font-display text-lg leading-none tracking-tight whitespace-nowrap max-lg:absolute max-lg:left-1/2 max-lg:-translate-x-1/2 lg:mr-0 lg:text-2xl"
+            className="mr-auto flex min-h-11 items-center font-display text-lg leading-none tracking-tight whitespace-nowrap max-xl:absolute max-xl:left-1/2 max-xl:-translate-x-1/2 xl:mr-0 xl:text-2xl"
           >
             {settings.storeName}
           </Link>
 
-          <div className="hidden flex-1 justify-center lg:flex">
+          <div className="hidden flex-1 justify-center xl:flex">
             <DesktopNav
               departments={departments}
               extraLinks={extraLinks}
@@ -97,7 +97,7 @@ export async function SiteHeader() {
             />
           </div>
 
-          <div className="ml-auto flex items-center lg:ml-0">
+          <div className="ml-auto flex items-center xl:ml-0">
             <div className="mr-2 hidden w-64 2xl:block">
               <SearchBox labels={searchLabels()} size="header" icon={<SearchIcon size={18} />} />
             </div>
@@ -105,14 +105,14 @@ export async function SiteHeader() {
               <SearchIcon size={22} />
             </Link>
             {/* On phones the choice lives in the menu drawer, so the header icons never crowd the logo. */}
-            <div className="max-lg:hidden">
+            <div className="max-xl:hidden">
               <ThemeControl />
             </div>
-            <Link href={account.href} prefetch={false} aria-label={account.label} className={`${iconButton} relative max-lg:hidden`}>
+            <Link href={account.href} prefetch={false} aria-label={account.label} className={`${iconButton} relative max-xl:hidden`}>
               <UserIcon size={22} />
-              {session && <span aria-hidden className="absolute right-2 bottom-2 size-2 rounded-full bg-stock ring-2 ring-canvas" />}
+              {session && <span aria-hidden className="absolute right-2 bottom-2 size-2 rounded-full bg-success ring-2 ring-canvas" />}
             </Link>
-            <Link href="/wishlist" prefetch={false} aria-label={t("common.wishlist")} className={`${iconButton} max-lg:hidden`}>
+            <Link href="/wishlist" prefetch={false} aria-label={t("common.wishlist")} className={`${iconButton} max-xl:hidden`}>
               <HeartIcon size={22} />
             </Link>
             <BagButton initialCount={bagCount} label={t("header.bagWithCount")} labelEmpty={t("header.bagEmpty")} icon={<BagIcon size={22} />} />

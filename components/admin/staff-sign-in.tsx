@@ -55,7 +55,7 @@ export function StaffSignIn({ labels }: { labels: Labels }) {
       <div>
         <div className="flex items-baseline justify-between gap-4">
           <Label htmlFor="password">{labels.password}</Label>
-          <Link href="/admin/forgot-password" className="text-sm text-link underline-offset-4 hover:underline">
+          <Link href="/admin/forgot-password" className="text-sm text-link hover:text-accent underline-offset-4 hover:underline">
             {labels.forgotPassword}
           </Link>
         </div>

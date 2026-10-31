@@ -535,3 +535,43 @@ Two fixes found while testing every admin feature: order status changes, order n
 refresh the page they were made on (it kept the old status and notes until reloaded), so those actions now call
 `refresh()`; and the toast is raised as the server's answer arrives rather than from an effect, because a save can
 remove its own form (a cancelled order has no next status) and the confirmation must still show.
+
+**72. Bone, Espresso, Oxblood (60-30-10) replaces Graphite, Navy and Brass (supersedes 44's palette).**
+The owner gave exact values, all used as given in `lib/design/tokens.ts`. Bone `#F5F1EA` page, Paper `#FBF9F5` cards
+(`raised`), Linen `#EDE7DD` bands, inputs and photo tiles (`surface`; the brief's "surface-alt"), espresso text,
+walnut secondary text, oxblood for the one filled button per view, sale prices, badges and active states; the warm
+dark theme likewise. Where the brief and "everything passes AA in both themes" could not both hold, AA won and the
+brief's colours kept their roles:
+- *Status in dark mode.* Success `#2F6B4F`, warning `#9A6A12` and error `#B42318` are 2.3–3.9:1 on the dark
+  backgrounds, so dark mode uses lighter tints of the same hues (`#74B592`, `#D9A84F`, `#F08F7C`, error leaning
+  orange so it never reads as oxblood). Light mode uses the exact values.
+- *Warning text.* `#9A6A12` is 3.8–4.5:1 on Bone and Linen: fine for an icon, not for words. Low stock, demo data and
+  placeholder notices show an amber icon with espresso words.
+- *Oxblood text in dark mode* (`#D2676D`) is 4.3:1 on the dark Linen band, so sale prices sit on the page or a card,
+  never on a band (the contrast table only allows those pairs, and an on-page audit of every text run found none).
+- *The espresso frame.* Header, footer and admin sidebar are Espresso (the brief's "header, footer background"), via
+  a `.chrome` class that redefines the semantic tokens inside it; menus and drawers that open from it carry
+  `chrome-exit`. Oxblood text is 4.3:1 on espresso, so in the frame oxblood only underlines ("Sale", link hovers)
+  and marks the current admin page; the words stay bone.
+- *Button edge.* The dark oxblood fill is 2.3:1 against the dark page. A button is identified by its label, so the
+  old "button edge" pair was dropped rather than the brief's colour.
+One oxblood fill per view: other buttons are espresso outline (`secondary`) or text buttons. Admin forms are outline
+unless marked as the page's main action; "Buy now" and "Notify me" are outline beside oxblood "Add to bag"; a chosen
+size is an oxblood outline; the newsletter button sits in bone on the espresso footer; the floating WhatsApp button is
+espresso. Links are espresso, underlined, oxblood on hover. Product photos sit on Linen (light) or `#201B18` (dark);
+the demo photos are cut-outs, so photos are multiplied into the tile in light mode only, and the blur previews and
+placeholder drawings are transparent so either tile shows through. No pure black or white anywhere (a unit test checks).
+
+**73. Readable headings, and no text over photos (owner's report, 1 Nov 2026).**
+The owner found headings hard to read and the "Watches for him / her" tiles unreadable on a phone.
+- *Headings.* Bodoni Moda chooses its optical size from the font size, so every heading used its poster cut:
+  hairline strokes and loose letter spacing. The headings now pin its text cut (`"opsz" 11`, set once on the
+  `font-display` token) at weight 500: the same Bodoni letters with strokes that hold up on a phone screen.
+- *Collection tiles.* The photo filled the tile and the heading was drawn across it. Words and photo now sit in two
+  columns, in full espresso rather than the walnut used for small captions on photos.
+- *Header at 1024–1279 px.* Logo, six menu items and five icons need about 1,160 px, so every page scrolled sideways
+  on small laptops and landscape tablets. The full menu bar now starts at 1280 px; narrower screens use the menu
+  button, which fits whatever categories the owner adds.
+A layout check (scratch script, run before each report) loads 26 pages at 390, 768, 1024 and 1440 px and fails on
+text over a photo, sideways scrolling, clipped text or text under 12 px; a second check measures every visible text
+run against its real background in both themes.

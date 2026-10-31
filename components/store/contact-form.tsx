@@ -11,7 +11,7 @@ export function ContactForm({ labels }: { labels: ContactLabels }) {
   const [state, action, pending] = useActionState<ContactState, FormData>(sendContactMessage, { status: "idle" });
   if (state.status === "done") {
     return (
-      <p role="status" className="rounded-md border border-line bg-surface px-5 py-4 text-base text-stock">
+      <p role="status" className="rounded-md border border-line bg-surface px-5 py-4 text-base text-success">
         {labels.done}
       </p>
     );
@@ -41,7 +41,7 @@ export function ContactForm({ labels }: { labels: ContactLabels }) {
         <textarea id="contact-message" name="message" rows={5} required maxLength={2000} className={`${inputClasses} py-2`} />
       </div>
       {error && (
-        <p role="alert" className="text-sm font-medium text-sale">
+        <p role="alert" className="text-sm font-medium text-error">
           {error}
         </p>
       )}

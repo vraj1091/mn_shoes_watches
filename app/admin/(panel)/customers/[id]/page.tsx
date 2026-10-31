@@ -46,7 +46,7 @@ export default async function CustomerPage({ params }: Props) {
         <span className="flex flex-wrap items-center gap-2">
           <span className="break-all">{customer.email}</span>
           {phone && <span>· {formatIndianMobile(phone)}</span>}
-          {customer.isDemo && <StatusBadge tone="badge">Demo customer</StatusBadge>}
+          {customer.isDemo && <StatusBadge tone="warning">Demo customer</StatusBadge>}
         </span>
       }
       actions={
@@ -85,7 +85,7 @@ export default async function CustomerPage({ params }: Props) {
                 {customer.orders.map((order) => (
                   <tr key={order.id}>
                     <td className={td}>
-                      <Link href={`/admin/orders/${order.id}`} className="font-semibold text-link underline-offset-4 hover:underline">
+                      <Link href={`/admin/orders/${order.id}`} className="font-semibold text-link hover:text-accent underline-offset-4 hover:underline">
                         {order.number}
                       </Link>
                       <span className="block text-xs text-muted">

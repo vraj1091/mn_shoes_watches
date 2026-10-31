@@ -70,7 +70,7 @@ export default async function BannersPage({ searchParams }: Props) {
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <Link href={`/admin/banners/${banner.id}`} className="font-medium hover:text-link">
+                  <Link href={`/admin/banners/${banner.id}`} className="font-medium hover:text-accent">
                     {banner.title}
                   </Link>
                   {banner.subtitle && <p className="truncate text-sm text-muted">{banner.subtitle}</p>}

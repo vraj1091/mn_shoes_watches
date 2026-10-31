@@ -13,7 +13,7 @@ import { videoEmbedUrl } from "@/lib/catalog/video";
 import { formatPrice } from "@/lib/format/money";
 import { describe } from "@/lib/seo/listing";
 import { t } from "@/lib/i18n";
-import { ArrowLeftIcon, ArrowRightIcon, CloseIcon, PlayIcon, ReturnIcon, RulerIcon, ShieldIcon } from "@/components/icons";
+import { ArrowLeftIcon, ArrowRightIcon, CheckIcon, CloseIcon, PlayIcon, ReturnIcon, RulerIcon, ShieldIcon, WarningIcon } from "@/components/icons";
 import { Breadcrumbs } from "@/components/store/catalog/breadcrumbs";
 import { FaqList } from "@/components/store/catalog/faq-list";
 import { cardLabels } from "@/components/store/catalog/listing-view";
@@ -102,14 +102,14 @@ export default async function ProductPage({ params, searchParams }: Props) {
 
         <div className="mt-6 lg:sticky lg:top-24 lg:mt-0 lg:self-start">
           {product.brand && (
-            <Link href={`/brands/${product.brand.slug}`} className="text-sm font-semibold tracking-wide text-muted uppercase hover:text-link">
+            <Link href={`/brands/${product.brand.slug}`} className="text-sm font-semibold tracking-wide text-muted uppercase hover:text-accent">
               {product.brand.name}
             </Link>
           )}
           <h1 className="mt-1 text-2xl leading-tight font-semibold tracking-tight lg:text-3xl">{product.title}</h1>
           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
             {product.ratingCount > 0 && (
-              <a href="#reviews-heading" className="flex items-center gap-2 text-sm text-muted hover:text-link">
+              <a href="#reviews-heading" className="flex items-center gap-2 text-sm text-muted hover:text-accent">
                 <Stars rating={product.ratingAvg} />
                 <span className="price">
                   {product.ratingAvg.toFixed(1)} · {product.ratingCount === 1 ? t("product.reviewsCountOne") : t("product.reviewsCount", { count: product.ratingCount })}
@@ -132,6 +132,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
             lowStockThreshold={index.lowStockThreshold}
             emiFrom={EMI_FROM}
             labels={buyBoxLabels()}
+            stockIcons={{ inStock: <CheckIcon size={18} />, low: <WarningIcon size={18} /> }}
             wishlist={<WishlistButton productId={product.id} title={product.title} labels={wishlistLabels()} size="page" />}
             delivery={
               <PinCheck
@@ -251,7 +252,7 @@ function ServiceFacts({ product, settings }: { product: ProductPageData; setting
         <div>
           <p className="font-semibold">{t("product.returnsTitle")}</p>
           <p className="text-muted">{returns.length > 0 ? returns.join(" ") : t("product.returnsNone")}</p>
-          <Link href="/policies/returns-and-exchanges" className="inline-flex min-h-11 items-center text-link underline underline-offset-4 hover:no-underline">
+          <Link href="/policies/returns-and-exchanges" className="inline-flex min-h-11 items-center text-link hover:text-accent underline underline-offset-4 hover:no-underline">
             {t("product.returnsPolicy")}
           </Link>
         </div>

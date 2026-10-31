@@ -102,7 +102,7 @@ export function StaffControls({
         </button>
       )}
       {active ? (
-        <button type="button" disabled={pending} onClick={() => setConfirming("off")} className={buttonClasses("secondary", "sm", "text-sale")}>
+        <button type="button" disabled={pending} onClick={() => setConfirming("off")} className={buttonClasses("secondary", "sm", "text-error")}>
           Switch off
         </button>
       ) : (

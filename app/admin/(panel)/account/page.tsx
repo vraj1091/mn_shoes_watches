@@ -34,7 +34,7 @@ export default async function AdminAccountPage() {
         <div className="mt-4">
           {user.twoFactorEnabled ? (
             <p className="flex items-center gap-2 text-base">
-              <CheckIcon size={20} className="text-stock" />
+              <CheckIcon size={20} className="text-success" />
               On. Each sign-in asks for a code from your authenticator app.
             </p>
           ) : (

@@ -15,7 +15,7 @@ export default async function NewBannerPage() {
   return (
     <AdminPage title="Add banner" intro="New banners go last; reorder them on the banners page.">
       <Card>
-        <AdminForm action={saveBanner.bind(null, null)} submitLabel="Add banner">
+        <AdminForm action={saveBanner.bind(null, null)} submitLabel="Add banner" primary>
           <BannerFields banner={{ title: "", subtitle: "", ctaLabel: "", ctaHref: "", image: null, startsAt: "", endsAt: "", isActive: true }} library={library} />
         </AdminForm>
       </Card>

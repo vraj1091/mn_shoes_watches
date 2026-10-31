@@ -27,7 +27,7 @@ export default async function SetStaffPasswordPage({ searchParams }: Props) {
           <FormAlert>Links to set a password work once, for a limited time. This one has expired, was already used, or a newer link was sent.</FormAlert>
         </div>
         <p className="mt-6 text-sm">
-          <Link href="/admin/forgot-password" className="inline-flex min-h-11 items-center text-link underline underline-offset-4">
+          <Link href="/admin/forgot-password" className="inline-flex min-h-11 items-center text-link hover:text-accent underline underline-offset-4">
             Email me a new link
           </Link>
         </p>

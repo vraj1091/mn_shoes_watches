@@ -13,7 +13,7 @@ export function PostCard({ post, headingLevel = 2 }: { post: PostSummary; headin
         {post.cover && <Image src={post.cover.url} alt="" fill sizes="(min-width: 1024px) 380px, (min-width: 640px) 46vw, 92vw" className="object-contain p-[8%]" />}
       </div>
       <Heading className="mt-4 font-display text-2xl leading-tight">
-        <Link href={`/journal/${post.slug}`} className="after:absolute after:inset-0 group-hover:text-link">
+        <Link href={`/journal/${post.slug}`} className="after:absolute after:inset-0 group-hover:text-accent">
           {post.title}
         </Link>
       </Heading>

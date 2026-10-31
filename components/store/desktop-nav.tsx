@@ -62,7 +62,7 @@ export function DesktopNav({ departments, extraLinks, label, shopAllTemplate, ca
     <nav
       ref={navRef}
       aria-label={label}
-      className="hidden lg:block"
+      className="hidden xl:block"
       onPointerLeave={(event) => event.pointerType === "mouse" && hoverOpen(null)}
       onBlur={(event) => {
         if (!navRef.current?.contains(event.relatedTarget as Node)) setOpenId(null);
@@ -89,7 +89,7 @@ export function DesktopNav({ departments, extraLinks, label, shopAllTemplate, ca
                 aria-expanded={open}
                 aria-controls={panelId}
                 onClick={() => setOpenId(open ? null : dept.id)}
-                className="group flex min-h-11 items-center gap-1 rounded-sm px-3 text-[0.9375rem] font-medium whitespace-nowrap text-ink transition-colors hover:text-link aria-expanded:text-link"
+                className="group flex min-h-11 items-center gap-1 rounded-sm px-3 text-[0.9375rem] font-medium whitespace-nowrap text-ink decoration-accent decoration-2 underline-offset-8 hover:underline aria-expanded:underline"
               >
                 {dept.name}
                 <span className="transition-transform duration-200 ease-out group-aria-expanded:rotate-180">{caret}</span>
@@ -97,7 +97,7 @@ export function DesktopNav({ departments, extraLinks, label, shopAllTemplate, ca
               <div
                 id={panelId}
                 hidden={!open}
-                className="absolute inset-x-0 top-full z-50 border-y border-line bg-raised shadow-overlay"
+                className="chrome-exit absolute inset-x-0 top-full z-50 border-y border-line bg-raised shadow-overlay"
               >
                 <div className="mx-auto grid max-w-screen-xl grid-cols-[minmax(0,14rem)_1fr] gap-10 px-8 py-8">
                   <div className="border-r border-line pr-8">
@@ -105,7 +105,7 @@ export function DesktopNav({ departments, extraLinks, label, shopAllTemplate, ca
                     <Link
                       href={dept.href}
                       onClick={() => setOpenId(null)}
-                      className="mt-2 inline-block text-sm text-link underline decoration-1 underline-offset-4 hover:decoration-2"
+                      className="mt-2 inline-block text-sm text-link hover:text-accent underline decoration-1 underline-offset-4 hover:decoration-2"
                     >
                       {shopAllTemplate.replace("{name}", dept.name.toLowerCase())}
                     </Link>
@@ -116,7 +116,7 @@ export function DesktopNav({ departments, extraLinks, label, shopAllTemplate, ca
                         <Link
                           href={group.href}
                           onClick={() => setOpenId(null)}
-                          className="text-sm font-semibold text-ink hover:text-link"
+                          className="text-sm font-semibold text-ink hover:text-accent"
                         >
                           {group.name}
                         </Link>
@@ -127,7 +127,7 @@ export function DesktopNav({ departments, extraLinks, label, shopAllTemplate, ca
                                 <Link
                                   href={leaf.href}
                                   onClick={() => setOpenId(null)}
-                                  className="block py-0.5 text-sm text-muted hover:text-link"
+                                  className="block py-0.5 text-sm text-muted hover:text-accent"
                                 >
                                   {leaf.name}
                                 </Link>
@@ -147,8 +147,9 @@ export function DesktopNav({ departments, extraLinks, label, shopAllTemplate, ca
           <li key={link.href}>
             <Link
               href={link.href}
-              className={`flex min-h-11 items-center rounded-sm px-3 text-[0.9375rem] font-medium whitespace-nowrap transition-colors hover:text-link ${
-                link.highlight ? "text-sale" : "text-ink"
+              // In the espresso header oxblood marks with an underline; the words stay bone (DECISIONS.md 72).
+              className={`flex min-h-11 items-center rounded-sm px-3 text-[0.9375rem] font-medium whitespace-nowrap text-ink decoration-accent decoration-2 underline-offset-8 hover:underline ${
+                link.highlight ? "underline" : ""
               }`}
             >
               {link.label}

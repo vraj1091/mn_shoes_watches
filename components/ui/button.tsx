@@ -1,6 +1,10 @@
 import Link from "next/link";
 import type { ComponentProps } from "react";
 
+/**
+ * primary: the one oxblood button per view (Add to bag, Place order, the page's main action).
+ * secondary: espresso outline, for every other button. ghost and link: text buttons.
+ */
 type Variant = "primary" | "secondary" | "ghost" | "danger" | "link";
 type Size = "md" | "sm";
 
@@ -9,10 +13,10 @@ const base =
 
 const variants: Record<Variant, string> = {
   primary: "bg-primary text-on-primary hover:bg-primary-hover",
-  secondary: "border border-line bg-transparent text-ink hover:border-line-strong hover:bg-surface",
+  secondary: "border border-ink bg-transparent text-ink hover:bg-surface",
   ghost: "bg-transparent text-ink hover:bg-surface",
-  danger: "bg-sale text-canvas hover:opacity-90",
-  link: "text-link underline decoration-1 underline-offset-4 hover:decoration-2",
+  danger: "bg-error text-on-error hover:opacity-90",
+  link: "text-link hover:text-accent underline decoration-1 underline-offset-4 hover:decoration-2",
 };
 
 // md keeps the 44 × 44 px touch target; sm is for dense admin tables only.

@@ -20,7 +20,7 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
                 </span>
               ) : (
                 <>
-                  <Link href={crumb.href} className="inline-flex min-h-11 items-center hover:text-link">
+                  <Link href={crumb.href} className="inline-flex min-h-11 items-center hover:text-accent">
                     {crumb.name}
                   </Link>
                   <CaretRightIcon size={12} className="shrink-0" />

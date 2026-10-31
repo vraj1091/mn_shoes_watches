@@ -45,7 +45,7 @@ export default async function JournalPostPage({ params }: Props) {
           <ul className="mt-3 space-y-2">
             {more.map((entry) => (
               <li key={entry.slug}>
-                <Link href={`/journal/${entry.slug}`} className="text-link underline underline-offset-4">
+                <Link href={`/journal/${entry.slug}`} className="text-link hover:text-accent underline underline-offset-4">
                   {entry.title}
                 </Link>
               </li>

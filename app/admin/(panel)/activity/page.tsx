@@ -98,7 +98,7 @@ export default async function ActivityPage({ searchParams }: Props) {
           Show
         </button>
         {(person || area) && (
-          <Link href="/admin/activity" className="inline-flex min-h-11 items-center text-sm text-link underline underline-offset-4">
+          <Link href="/admin/activity" className="inline-flex min-h-11 items-center text-sm text-link hover:text-accent underline underline-offset-4">
             Clear
           </Link>
         )}
@@ -126,7 +126,7 @@ export default async function ActivityPage({ searchParams }: Props) {
                     <td className={`${td} align-top whitespace-nowrap`}>{entry.staff?.name ?? "Removed account"}</td>
                     <td className={`${td} align-top`}>
                       {link ? (
-                        <Link href={link} className="hover:text-link hover:underline">
+                        <Link href={link} className="hover:text-accent hover:underline">
                           {entry.summary ?? entry.action}
                         </Link>
                       ) : (

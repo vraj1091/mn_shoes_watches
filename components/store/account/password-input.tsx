@@ -55,7 +55,7 @@ export function PasswordInput({
         <div id={strengthId} className="mt-2" aria-live="polite">
           <div className="flex gap-1" aria-hidden>
             {[1, 2, 3, 4].map((step) => (
-              <span key={step} className={`h-1 flex-1 rounded-full ${step <= level ? (level <= 1 ? "bg-sale" : level === 2 ? "bg-ink/60" : "bg-stock") : "bg-line"}`} />
+              <span key={step} className={`h-1 flex-1 rounded-full ${step <= level ? (level <= 1 ? "bg-error" : level === 2 ? "bg-warning" : "bg-success") : "bg-line"}`} />
             ))}
           </div>
           <p className="mt-1 text-xs text-muted">{fill(labels.strength, { level: labels.levels[Math.max(0, level - 1)] ?? "" })}</p>

@@ -46,14 +46,14 @@ export default async function AdminDashboard({ searchParams }: Props) {
         <Card>
           <SalesChart days={dashboard.series} title="Sales per day, last 30 days" />
         </Card>
-        <Card title="Low stock" actions={<Link href="/admin/products?stock=low" className="text-sm text-link underline underline-offset-4">All low stock</Link>}>
+        <Card title="Low stock" actions={<Link href="/admin/products?stock=low" className="text-sm text-link hover:text-accent underline underline-offset-4">All low stock</Link>}>
           {dashboard.lowStock.length === 0 ? (
             <p className="text-sm text-muted">Nothing is running low.</p>
           ) : (
             <ul className="divide-y divide-line text-sm">
               {dashboard.lowStock.map((variant) => (
                 <li key={variant.id} className="flex items-center justify-between gap-3 py-2">
-                  <Link href={`/admin/products/${variant.product.id}`} className="min-w-0 hover:text-link">
+                  <Link href={`/admin/products/${variant.product.id}`} className="min-w-0 hover:text-accent">
                     <span className="block truncate font-medium">{variant.product.title}</span>
                     <span className="block truncate text-xs text-muted">
                       {variant.title === "Default" ? variant.sku : `${variant.title} · ${variant.sku}`}
@@ -72,7 +72,7 @@ export default async function AdminDashboard({ searchParams }: Props) {
           <h2 id="recent-orders" className="text-lg font-semibold">
             Recent orders
           </h2>
-          <Link href="/admin/orders" className="text-sm text-link underline underline-offset-4">
+          <Link href="/admin/orders" className="text-sm text-link hover:text-accent underline underline-offset-4">
             All orders
           </Link>
         </div>
@@ -93,7 +93,7 @@ export default async function AdminDashboard({ searchParams }: Props) {
               {dashboard.recent.map((order) => (
                 <tr key={order.id}>
                   <td className={td}>
-                    <Link href={`/admin/orders/${order.id}`} className="font-semibold text-link underline-offset-4 hover:underline">
+                    <Link href={`/admin/orders/${order.id}`} className="font-semibold text-link hover:text-accent underline-offset-4 hover:underline">
                       {order.number}
                     </Link>
                   </td>
@@ -120,7 +120,7 @@ export default async function AdminDashboard({ searchParams }: Props) {
         <ul>
           {checklist.map((item) => (
             <li key={item.id} className="flex gap-4 border-b border-line px-5 py-4 last:border-b-0">
-              {item.done ? <CheckIcon size={22} className="mt-0.5 shrink-0 text-stock" label="Done" /> : <InfoIcon size={22} className="mt-0.5 shrink-0 text-link" label="To do" />}
+              {item.done ? <CheckIcon size={22} className="mt-0.5 shrink-0 text-success" label="Done" /> : <InfoIcon size={22} className="mt-0.5 shrink-0 text-link hover:text-accent" label="To do" />}
               <div>
                 <p className={`text-base font-medium ${item.done ? "text-muted line-through decoration-1" : ""}`}>{item.label}</p>
                 {!item.done && <p className="mt-0.5 text-sm text-muted">{item.detail}</p>}

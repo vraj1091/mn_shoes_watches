@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 
-/** Sticky header that tightens once the page scrolls (Part 4: "Header shrinks on scroll"). */
+/** Sticky espresso header that tightens once the page scrolls (Part 4: "Header shrinks on scroll"). */
 export function HeaderShell({ children }: { children: ReactNode }) {
   const [scrolled, setScrolled] = useState(false);
 
@@ -26,7 +26,7 @@ export function HeaderShell({ children }: { children: ReactNode }) {
   return (
     <header
       data-scrolled={scrolled || undefined}
-      className="group/header sticky top-0 z-40 border-b border-line bg-canvas transition-[box-shadow] duration-200 data-scrolled:shadow-[0_1px_0_0_var(--line)]"
+      className="chrome group/header sticky top-0 z-40 border-b border-line bg-canvas transition-[box-shadow] duration-200 data-scrolled:shadow-[0_1px_0_0_var(--line)]"
     >
       {children}
     </header>

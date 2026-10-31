@@ -18,7 +18,7 @@ export function OrderStatusForm({
   // After a change the next allowed steps are different; start from the first of them.
   if (options.length > 0 && !options.some((option) => option.value === status)) setStatus(options[0]!.value);
   return (
-    <AdminForm action={action} submitLabel="Update status">
+    <AdminForm action={action} submitLabel="Update status" primary>
       <div className="grid gap-4">
         <Field label="New status">
           <Select name="status" value={status} onChange={(event) => setStatus(event.target.value)}>

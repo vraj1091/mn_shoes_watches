@@ -88,7 +88,7 @@ export function SignInPanel({
       </div>
       <p className="text-sm">
         {labels.newHere}{" "}
-        <Link href={`/account/sign-up?next=${encodeURIComponent(next)}`} prefetch={false} className="text-link underline underline-offset-4">
+        <Link href={`/account/sign-up?next=${encodeURIComponent(next)}`} prefetch={false} className="text-link hover:text-accent underline underline-offset-4">
           {labels.createAccount}
         </Link>
       </p>
@@ -143,7 +143,7 @@ function PasswordForm({ labels, next, email, onEmail }: { labels: AccountLabels;
           <Link
             href={`/account/forgot-password?next=${encodeURIComponent(next)}${email ? `&email=${encodeURIComponent(email.trim())}` : ""}`}
             prefetch={false}
-            className="text-sm text-link underline underline-offset-4"
+            className="text-sm text-link hover:text-accent underline underline-offset-4"
           >
             {labels.forgotPassword}
           </Link>
@@ -300,7 +300,7 @@ function PhoneCodeForm({ labels, next }: { labels: AccountLabels; next: string }
         <Button type="submit" disabled={pending} className="w-full">
           {pending ? labels.verifying : labels.verify}
         </Button>
-        <button type="button" onClick={() => setTarget(null)} className="min-h-11 text-sm text-link underline underline-offset-4">
+        <button type="button" onClick={() => setTarget(null)} className="min-h-11 text-sm text-link hover:text-accent underline underline-offset-4">
           {labels.changeTarget}
         </button>
       </form>

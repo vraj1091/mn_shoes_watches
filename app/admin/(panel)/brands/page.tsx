@@ -46,7 +46,7 @@ export default async function BrandsPage({ searchParams }: Props) {
             {brands.map((brand) => (
               <tr key={brand.id} className="hover:bg-surface">
                 <td className={td}>
-                  <Link href={`/admin/brands/${brand.id}`} className="font-medium hover:text-link">
+                  <Link href={`/admin/brands/${brand.id}`} className="font-medium hover:text-accent">
                     {brand.name}
                   </Link>
                   {brand.isDemo && <span className="ml-2 text-xs text-muted">demo</span>}
@@ -54,7 +54,7 @@ export default async function BrandsPage({ searchParams }: Props) {
                 <td className={`${td} text-muted`}>/brands/{brand.slug}</td>
                 <td className={`${td} text-muted`}>{brand.countryOfOrigin ?? "—"}</td>
                 <td className={`${td} text-right tabular-nums`}>
-                  <Link href={`/admin/products?brand=${brand.id}`} className="hover:text-link">
+                  <Link href={`/admin/products?brand=${brand.id}`} className="hover:text-accent">
                     {brand._count.products}
                   </Link>
                 </td>
@@ -71,7 +71,7 @@ export default async function BrandsPage({ searchParams }: Props) {
       )}
 
       <Card title="Add a brand" className="mt-8 max-w-3xl">
-        <AdminForm action={saveBrand.bind(null, null)} submitLabel="Add brand">
+        <AdminForm action={saveBrand.bind(null, null)} submitLabel="Add brand" primary>
           <BrandFields />
         </AdminForm>
       </Card>

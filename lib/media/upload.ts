@@ -6,11 +6,11 @@ import sharp from "sharp";
 import { prisma, DEFAULT_STORE_ID } from "@/lib/db/client";
 import { uploadPath } from "./storage";
 import { slugify } from "@/lib/catalog/listing";
-import { hex } from "@/lib/design/tokens";
 
 export const MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
 const MAX_EDGE = 1600;
 const ACCEPTED = new Set(["jpeg", "png", "webp", "avif", "gif", "heif", "tiff"]);
+const TRANSPARENT = { r: 0, g: 0, b: 0, alpha: 0 };
 
 export class UploadError extends Error {}
 
@@ -37,8 +37,8 @@ export async function storeUploadedImage(file: File, { alt, staffId }: { alt: st
     .resize({ width: MAX_EDGE, height: MAX_EDGE, fit: "inside", withoutEnlargement: true })
     .webp({ quality: 82 })
     .toBuffer({ resolveWithObject: true });
-  const tile = hex("graphite-75");
-  const blur = await sharp(data).resize(16, 16, { fit: "contain", background: tile }).flatten({ background: tile }).webp({ quality: 40 }).toBuffer();
+  // The preview keeps transparency, so a cut-out photo previews on the tile of either theme.
+  const blur = await sharp(data).resize(16, 16, { fit: "contain", background: TRANSPARENT }).webp({ quality: 40 }).toBuffer();
 
   const now = new Date();
   const base = slugify(file.name.replace(/\.[^.]+$/, "")).slice(0, 48) || "photo";

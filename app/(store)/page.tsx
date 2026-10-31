@@ -118,7 +118,7 @@ export default async function HomePage() {
         <ul className="mx-auto grid max-w-screen-xl grid-cols-2 gap-x-4 gap-y-6 px-4 py-6 sm:px-6 lg:grid-cols-4 lg:px-8">
           {trust.map((item) => (
             <li key={item.title} className="flex items-start gap-3">
-              <span className="mt-0.5 shrink-0 text-link">{item.icon}</span>
+              <span className="mt-0.5 shrink-0 text-link hover:text-accent">{item.icon}</span>
               <span>
                 <span className="block text-sm font-semibold">{item.title}</span>
                 <span className="block text-sm text-muted">{item.note}</span>
@@ -147,7 +147,7 @@ export default async function HomePage() {
                         )}
                       </span>
                       <span className="mt-3 flex items-center justify-between gap-2">
-                        <span className="text-lg font-semibold group-hover:text-link">{department.name}</span>
+                        <span className="text-lg font-semibold group-hover:text-accent">{department.name}</span>
                         <ArrowRightIcon size={18} className="shrink-0 transition-transform group-hover:translate-x-1" />
                       </span>
                       <span className="block text-sm text-muted">{t("home.categoryCount", { count: products.length })}</span>
@@ -167,16 +167,19 @@ export default async function HomePage() {
               { product: forHim, title: t("home.forHim"), href: "/watches/men" },
               { product: forHer, title: t("home.forHer"), href: "/watches/women" },
             ].map((tile) => (
-              <Link key={tile.href} href={tile.href} className="group photo-tile relative flex aspect-[4/3] items-end overflow-hidden rounded-lg p-6 sm:p-8">
-                {tile.product.image && (
-                  <Image src={tile.product.image.url} alt="" fill sizes="(min-width: 768px) 46vw, 92vw" className="object-contain p-[12%] pl-[38%] transition-transform duration-300 group-hover:scale-105" />
-                )}
-                <span className="relative">
-                  <span className="block font-display text-3xl sm:text-4xl">{tile.title}</span>
+              // Words and photo get their own columns, so the photo never runs through the heading on a phone.
+              <Link key={tile.href} href={tile.href} className="group photo-tile grid grid-cols-2 items-end gap-4 overflow-hidden rounded-md p-6 sm:p-8">
+                <span className="text-ink">
+                  <span className="block font-display text-3xl leading-tight sm:text-4xl">{tile.title}</span>
                   <span className="mt-2 inline-flex min-h-11 items-center gap-2 text-sm font-semibold underline underline-offset-4">
                     {t("home.shopNow")}
                     <ArrowRightIcon size={16} />
                   </span>
+                </span>
+                <span className="relative aspect-square">
+                  {tile.product.image && (
+                    <Image src={tile.product.image.url} alt="" fill sizes="(min-width: 768px) 22vw, 44vw" className="object-contain transition-transform duration-300 group-hover:scale-105" />
+                  )}
                 </span>
               </Link>
             ))}
@@ -191,14 +194,14 @@ export default async function HomePage() {
               <h2 id="brand-strip" className="font-display text-2xl lg:text-3xl">
                 {t("home.brandStrip")}
               </h2>
-              <Link href="/brands" className="inline-flex min-h-11 items-center text-sm font-medium text-link underline underline-offset-4">
+              <Link href="/brands" className="inline-flex min-h-11 items-center text-sm font-medium text-link hover:text-accent underline underline-offset-4">
                 {t("home.allBrands")}
               </Link>
             </div>
             <ul className="mt-6 flex flex-wrap gap-2">
               {featuredBrands.map((brand) => (
                 <li key={brand.slug}>
-                  <Link href={`/brands/${brand.slug}`} className="inline-flex min-h-12 items-center rounded-md border border-line bg-raised px-5 text-base font-semibold tracking-wide hover:border-line-strong hover:text-link">
+                  <Link href={`/brands/${brand.slug}`} className="inline-flex min-h-12 items-center rounded-md border border-line bg-raised px-5 text-base font-semibold tracking-wide hover:border-line-strong hover:text-accent">
                     {brand.name}
                   </Link>
                 </li>
@@ -220,7 +223,7 @@ export default async function HomePage() {
                   <blockquote className="mt-3 flex-1 text-base">“{review.body}”</blockquote>
                   <p className="mt-4 text-sm">
                     <span className="font-semibold">{review.authorName}</span>{" "}
-                    <Link href={`/product/${review.product.slug}`} className="text-muted underline underline-offset-2 hover:text-link">
+                    <Link href={`/product/${review.product.slug}`} className="text-muted underline underline-offset-2 hover:text-accent">
                       {t("home.reviewOf", { product: review.product.title })}
                     </Link>
                   </p>
@@ -236,7 +239,7 @@ export default async function HomePage() {
               <h2 id="home-journal" className="font-display text-2xl lg:text-3xl">
                 {t("home.journal")}
               </h2>
-              <Link href="/journal" className="inline-flex min-h-11 items-center text-sm font-medium text-link underline underline-offset-4">
+              <Link href="/journal" className="inline-flex min-h-11 items-center text-sm font-medium text-link hover:text-accent underline underline-offset-4">
                 {t("home.viewAll")}
               </Link>
             </div>

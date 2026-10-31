@@ -92,7 +92,7 @@ export default async function EditProductPage({ params, searchParams }: Props) {
       intro={
         <span className="flex flex-wrap items-center gap-2">
           <StatusBadge tone={STATUS_TONES[status]}>{PRODUCT_STATUS_LABELS[status]}</StatusBadge>
-          {product.isDemo && <StatusBadge tone="badge">Demo product</StatusBadge>}
+          {product.isDemo && <StatusBadge tone="warning">Demo product</StatusBadge>}
           <span className="text-sm">/product/{product.slug}</span>
         </span>
       }
@@ -143,7 +143,7 @@ export default async function EditProductPage({ params, searchParams }: Props) {
           </Card>
 
           <Card title={product.variants.length > 1 || sizeOption ? "Sizes, prices and stock" : "Price and stock"}>
-            <AdminForm action={updateVariants.bind(null, product.id)} submitLabel="Save prices and stock">
+            <AdminForm action={updateVariants.bind(null, product.id)} submitLabel="Save prices and stock" primary>
               <div className="relative -mx-5 overflow-x-auto">
                 <table className="w-full min-w-[28rem] border-collapse text-sm">
                   <caption className="sr-only">Sizes and options</caption>

@@ -19,6 +19,7 @@ import {
   TicketIcon,
   TreeIcon,
   UsersIcon,
+  WarningIcon,
 } from "@/components/icons";
 import { AdminNavLink } from "./admin-nav-link";
 import { StaffSignOutButton } from "./staff-sign-out-button";
@@ -51,7 +52,7 @@ export async function AdminFrame({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-dvh bg-surface lg:grid lg:grid-cols-[15rem_1fr] print:block print:bg-canvas">
-      <aside className="border-b border-line bg-raised print:hidden lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col lg:border-r lg:border-b-0">
+      <aside className="chrome border-b border-line bg-canvas print:hidden lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col lg:border-r lg:border-b-0">
         <div className="flex h-14 items-center justify-between px-4 lg:h-16 lg:px-5">
           <Link href="/admin" className="text-lg font-semibold tracking-tight">
             MN admin
@@ -95,14 +96,17 @@ export async function AdminFrame({ children }: { children: ReactNode }) {
       </aside>
       <div className="min-w-0">
         {demo && (
-          <div role="note" className="border-b border-line bg-badge print:hidden px-4 py-2.5 text-sm text-badge-ink sm:px-6 lg:px-10">
-            <strong>Demo data is live.</strong> Products, brands, photos and orders marked as demo (including real brand names such as
-            Rolex and Chanel) are for trying the shop only.{" "}
-            {can(user.role, "demo.remove") && (
-              <Link href="/admin/settings#demo-data" className="font-semibold underline underline-offset-2">
-                Remove it in Settings before going live.
-              </Link>
-            )}
+          <div role="note" className="flex gap-2 border-b border-line bg-surface px-4 py-2.5 text-sm text-ink print:hidden sm:px-6 lg:px-10">
+            <WarningIcon size={18} className="mt-0.5 shrink-0 text-warning" />
+            <p>
+              <strong>Demo data is live.</strong> Products, brands, photos and orders marked as demo (including real brand names such as
+              Rolex and Chanel) are for trying the shop only.{" "}
+              {can(user.role, "demo.remove") && (
+                <Link href="/admin/settings#demo-data" className="font-semibold underline underline-offset-2">
+                  Remove it in Settings before going live.
+                </Link>
+              )}
+            </p>
           </div>
         )}
         <main id="main" tabIndex={-1} className="outline-none">

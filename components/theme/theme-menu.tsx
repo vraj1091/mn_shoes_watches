@@ -102,7 +102,7 @@ export function ThemeMenu({ labels, icons, align = "right" }: { labels: ThemeMen
           role="menu"
           aria-label={labels.button}
           onKeyDown={onMenuKey}
-          className={`absolute top-full z-50 mt-2 w-44 rounded-md border border-line bg-raised p-1 shadow-overlay ${align === "right" ? "right-0" : "left-0"}`}
+          className={`chrome-exit absolute top-full z-50 mt-2 w-44 rounded-md border border-line bg-raised p-1 shadow-overlay ${align === "right" ? "right-0" : "left-0"}`}
         >
           {CHOICES.map((choice, index) => (
             <button

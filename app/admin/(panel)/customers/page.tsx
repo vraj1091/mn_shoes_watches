@@ -78,7 +78,7 @@ export default async function CustomersPage({ searchParams }: Props) {
               return (
                 <tr key={customer.id} className="hover:bg-surface">
                   <td className={td}>
-                    <Link href={`/admin/customers/${customer.id}`} className="font-medium hover:text-link">
+                    <Link href={`/admin/customers/${customer.id}`} className="font-medium hover:text-accent">
                       {customer.name}
                     </Link>
                     <span className="block text-xs break-all text-muted">

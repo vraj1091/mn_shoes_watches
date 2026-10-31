@@ -1,6 +1,7 @@
 /*
- * Placeholder product images for categories without demo photos: the photo-tile colour, a simple
- * line drawing of the product type and the product name. Never a stock or AI-made photo; the
+ * Placeholder product images for categories without demo photos: a simple line drawing of the
+ * product type and the product name on a transparent background, so the photo tile of either
+ * theme shows through. Never a stock or AI-made photo; the
  * admin flags these products until a real photo is uploaded.
  */
 import { hex } from "../../lib/design/tokens";
@@ -53,15 +54,13 @@ function wrap(text: string, width = 20): string[] {
 }
 
 export function placeholderSvg(icon: PlaceholderIcon, name: string): string {
-  const tile = hex("graphite-75");
-  const ink = hex("graphite-600");
+  const ink = hex("espresso-500");
   const lines = wrap(name);
   const text = lines
     .map((line, i) => `<text x="500" y="${720 + i * 78}" text-anchor="middle">${escapeXml(line)}</text>`)
     .join("");
   return [
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">',
-    `<rect width="1000" height="1000" fill="${tile}"/>`,
     `<g transform="translate(300 110) scale(2)" fill="none" stroke="${ink}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${ICONS[icon]}</g>`,
     `<g font-family="'Segoe UI', Arial, Helvetica, sans-serif" font-size="64" font-weight="600" fill="${ink}">${text}</g>`,
     "</svg>",

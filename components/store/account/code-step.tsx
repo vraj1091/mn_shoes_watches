@@ -116,14 +116,14 @@ export function CodeStep({
       </Button>
       {notice && <FormAlert tone={notice.tone}>{notice.text}</FormAlert>}
       <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
-        <button type="button" onClick={onChangeEmail} className="min-h-11 text-link underline underline-offset-4">
+        <button type="button" onClick={onChangeEmail} className="min-h-11 text-link hover:text-accent underline underline-offset-4">
           {labels.changeEmail}
         </button>
         <button
           type="button"
           onClick={resend}
           disabled={left > 0 || resending}
-          className="min-h-11 text-link underline underline-offset-4 disabled:text-muted disabled:no-underline"
+          className="min-h-11 text-link hover:text-accent underline underline-offset-4 disabled:text-muted disabled:no-underline"
         >
           {left > 0 ? fill(labels.resendIn!, { seconds: left }) : labels.resend}
         </button>

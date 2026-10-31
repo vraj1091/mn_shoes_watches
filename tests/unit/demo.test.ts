@@ -113,9 +113,10 @@ describe("demo catalogue", () => {
     ]);
   });
 
-  it("draws placeholder images on the tile colour with the product name, escaped", () => {
+  it("draws placeholder images on a transparent background (the theme's tile shows through), with the name escaped", () => {
     const svg = placeholderSvg("belt", "Belt & <buckle>");
-    expect(svg).toContain('fill="#F2F3F5"');
+    expect(svg).not.toContain('<rect width="1000" height="1000"');
+    expect(svg).toContain('stroke="#6B6158"');
     expect(svg).toContain("Belt &amp; &lt;buckle&gt;");
     expect(svg.startsWith("<svg")).toBe(true);
   });

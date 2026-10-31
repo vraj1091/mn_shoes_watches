@@ -105,12 +105,12 @@ export function PinCheck({ labels }: { labels: PinLabels }) {
               {fill(labels.result, { range: result.from === result.to ? result.from : `${result.from} – ${result.to}`, pin: result.pin })}
               {result.place && <span className="font-normal text-muted"> ({result.place})</span>}
             </li>
-            <li className={result.cod ? "text-stock" : "text-muted"}>{result.cod ? labels.cod : labels.noCod}</li>
+            <li className={result.cod ? "text-success" : "text-muted"}>{result.cod ? labels.cod : labels.noCod}</li>
             {result.freeAbove !== null && <li className="text-muted">{fill(labels.free, { amount: formatPrice(result.freeAbove) })}</li>}
           </ul>
         )}
         {message && (
-          <p role="alert" className="text-sale">
+          <p role="alert" className="text-error">
             {message}
           </p>
         )}

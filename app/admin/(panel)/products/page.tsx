@@ -165,14 +165,14 @@ export default async function AdminProductsPage({ searchParams }: Props) {
                   </div>
                 </td>
                 <td className={td}>
-                  <Link href={`/admin/products/${product.id}`} className="font-medium text-ink hover:text-link">
+                  <Link href={`/admin/products/${product.id}`} className="font-medium text-ink hover:text-accent">
                     {product.title}
                   </Link>
                   <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted">
                     {[product.brand?.name, product.primaryCategory?.name].filter(Boolean).join(" · ")}
                     {product.isPlaceholderPhoto && (
-                      <span className="inline-flex items-center gap-1 font-semibold text-sale">
-                        <WarningIcon size={14} />
+                      <span className="inline-flex items-center gap-1 font-semibold text-ink">
+                        <WarningIcon size={14} className="text-warning" />
                         Replace photo
                       </span>
                     )}
@@ -186,12 +186,17 @@ export default async function AdminProductsPage({ searchParams }: Props) {
                   {product.variantCount === 0 ? (
                     <span className="text-muted">—</span>
                   ) : product.stock === 0 ? (
-                    <span className="font-medium text-sale">Sold out</span>
+                    <span className="font-medium text-error">Sold out</span>
                   ) : (
                     <>
                       <span className="tabular-nums">{product.stock}</span>
                       {product.variantCount > 1 && <span className="text-muted"> in {product.variantCount} sizes</span>}
-                      {product.lowVariants > 0 && <span className="block text-xs text-sale">{product.lowVariants === 1 && product.variantCount === 1 ? "Low" : `${product.lowVariants} low`}</span>}
+                      {product.lowVariants > 0 && (
+                        <span className="flex items-center gap-1 text-xs text-ink">
+                          <WarningIcon size={12} className="text-warning" />
+                          {product.lowVariants === 1 && product.variantCount === 1 ? "Low" : `${product.lowVariants} low`}
+                        </span>
+                      )}
                     </>
                   )}
                 </td>

@@ -55,7 +55,7 @@ export default async function AccountPage() {
                   <div className="flex flex-wrap items-baseline gap-x-6 gap-y-1">
                     <span className="text-sm">{t(`order.status.${order.status}`)}</span>
                     <span className="price font-medium">{formatPrice(order.grandTotal)}</span>
-                    <Link href={`/order/${order.publicToken}`} prefetch={false} className="text-sm text-link underline underline-offset-4">
+                    <Link href={`/order/${order.publicToken}`} prefetch={false} className="text-sm text-link hover:text-accent underline underline-offset-4">
                       {t("account.viewOrder")}
                     </Link>
                   </div>

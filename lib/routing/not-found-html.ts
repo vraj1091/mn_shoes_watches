@@ -2,7 +2,7 @@ import messages from "@/messages/en.json";
 import { resolve, type Mode } from "@/lib/design/tokens";
 import { formatPrice } from "@/lib/format/money";
 
-const PAGE_TOKENS = ["canvas", "surface", "line", "line-strong", "ink", "muted", "link", "primary", "on-primary"] as const;
+const PAGE_TOKENS = ["canvas", "surface", "line", "line-strong", "ink", "muted", "link", "accent", "primary", "on-primary"] as const;
 
 /** The design tokens this page uses, as CSS variables, from lib/design/tokens.ts. */
 const cssVars = (mode: Mode) => {
@@ -70,7 +70,7 @@ h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute
 ul{list-style:none;margin:0;padding:0}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:1px solid var(--line-strong);border-radius:4px;color:var(--ink);text-decoration:none}
-.chip:hover,.list a:hover{color:var(--link)}
+.chip:hover,.list a:hover{color:var(--accent)}
 .list{border-top:1px solid var(--line);max-width:36rem}
 .list a{display:flex;justify-content:space-between;gap:16px;min-height:48px;align-items:center;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none}
 .price{font-variant-numeric:tabular-nums;white-space:nowrap}

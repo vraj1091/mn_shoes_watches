@@ -34,10 +34,10 @@ export const td = "border-b border-line px-4 py-3 align-middle";
 
 const TONES = {
   neutral: "bg-surface text-ink border-line",
-  good: "bg-surface text-stock border-line",
-  bad: "bg-surface text-sale border-line",
-  info: "bg-surface text-link border-line",
-  badge: "bg-badge text-badge-ink border-transparent",
+  good: "bg-surface text-success border-line",
+  bad: "bg-surface text-error border-line",
+  info: "bg-surface text-link hover:text-accent border-line",
+  warning: "bg-surface text-ink border-warning",
 } as const;
 
 export function StatusBadge({ tone = "neutral", children }: { tone?: keyof typeof TONES; children: ReactNode }) {
@@ -98,7 +98,7 @@ export function Pager({ page, pageCount, href }: { page: number; pageCount: numb
   return (
     <nav aria-label="Pages" className="mt-4 flex items-center justify-between text-sm">
       {page > 1 ? (
-        <Link href={href(page - 1)} className="inline-flex min-h-11 items-center text-link underline underline-offset-4">
+        <Link href={href(page - 1)} className="inline-flex min-h-11 items-center text-link hover:text-accent underline underline-offset-4">
           Previous
         </Link>
       ) : (
@@ -108,7 +108,7 @@ export function Pager({ page, pageCount, href }: { page: number; pageCount: numb
         Page {page} of {pageCount}
       </span>
       {page < pageCount ? (
-        <Link href={href(page + 1)} className="inline-flex min-h-11 items-center text-link underline underline-offset-4">
+        <Link href={href(page + 1)} className="inline-flex min-h-11 items-center text-link hover:text-accent underline underline-offset-4">
           Next
         </Link>
       ) : (

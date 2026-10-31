@@ -49,7 +49,7 @@ export async function NotFoundContent() {
         </nav>
       )}
 
-      <Link href="/" className="mt-12 inline-block text-link underline decoration-1 underline-offset-4 hover:decoration-2">
+      <Link href="/" className="mt-12 inline-block text-link hover:text-accent underline decoration-1 underline-offset-4 hover:decoration-2">
         {t("common.backToShop")}
       </Link>
     </div>

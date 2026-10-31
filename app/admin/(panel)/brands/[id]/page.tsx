@@ -33,7 +33,7 @@ export default async function BrandPage({ params, searchParams }: Props) {
       intro={
         <span className="flex flex-wrap items-center gap-2">
           /brands/{brand.slug}
-          {brand.isDemo && <StatusBadge tone="badge">Demo brand</StatusBadge>}
+          {brand.isDemo && <StatusBadge tone="warning">Demo brand</StatusBadge>}
         </span>
       }
       actions={
@@ -61,7 +61,7 @@ export default async function BrandPage({ params, searchParams }: Props) {
       )}
       <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
         <Card title="Brand">
-          <AdminForm action={saveBrand.bind(null, brand.id)}>
+          <AdminForm action={saveBrand.bind(null, brand.id)} primary>
             <BrandFields brand={brand} />
           </AdminForm>
         </Card>

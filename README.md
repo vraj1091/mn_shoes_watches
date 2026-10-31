@@ -146,9 +146,19 @@ sees is in [Staff and roles](#staff-and-roles).
 ## Colours and themes
 
 Light and dark themes follow the device by default; the sun/moon switch in the header (and in the admin) overrides
-it. All colours come from one file, `lib/design/tokens.ts` (Graphite neutrals, Oxford Navy for actions, Brass for
-accents, plus red and green for status), which `npm run tokens` turns into the CSS variables in `app/theme.css`.
-Components only use the semantic names (`bg-canvas`, `text-ink`, `bg-primary`…), never colour values.
+it. All colours come from one file, `lib/design/tokens.ts`, which `npm run tokens` turns into the CSS variables in
+`app/theme.css`. Components only use the semantic names (`bg-canvas`, `text-ink`, `bg-primary`…), never colour values.
+
+The palette is **Bone, Espresso, Oxblood**, from the materials the shop sells, used 60-30-10:
+
+| Share | Light | Dark | Used for |
+|---|---|---|---|
+| 60 % | Bone `#F5F1EA` page, Paper `#FBF9F5` cards, Linen `#EDE7DD` bands, inputs and photo tiles | `#161210`, `#201B18`, `#2A2420` | Backgrounds |
+| 30 % | Espresso `#2A2320`, Walnut `#6B6158` | `#EDE6DB`, `#A89E92` | Text, the header, footer and admin sidebar |
+| 10 % | Oxblood `#7A1F2B` (hover `#631822`) | `#8E2C33` buttons, `#D2676D` text | One filled button per view, sale prices, badges, active states |
+| Status | success `#2F6B4F`, warning `#9A6A12`, error `#B42318` | lighter tints of the same hues | Always with an icon and words |
+
+Other buttons are espresso outline or text buttons. `npm run check:contrast` checks every pair in both themes (WCAG AA).
 
 ## Data folder
 

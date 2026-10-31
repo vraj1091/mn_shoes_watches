@@ -64,6 +64,8 @@ type Props = {
   wishlist?: ReactNode;
   /** PIN-code delivery check, under the buttons. */
   delivery?: ReactNode;
+  /** Status icons beside the stock line: status colours always come with an icon and words. */
+  stockIcons: { inStock: ReactNode; low: ReactNode };
 };
 
 const shortName = (option: OptionDef) => option.name.replace(/\s*\(.*\)$/, "").toLowerCase();
@@ -74,7 +76,7 @@ const shortName = (option: OptionDef) => option.name.replace(/\s*\(.*\)$/, "").t
  * colour; the canonical URL stays the plain product URL. On phones a bar with the price and
  * "Add to bag" stays at the bottom once the main button scrolls out of view.
  */
-export function BuyBox({ title, options, variants, initial, lowStockThreshold, emiFrom, labels, sizeGuide, wishlist, delivery }: Props) {
+export function BuyBox({ title, options, variants, initial, lowStockThreshold, emiFrom, labels, sizeGuide, wishlist, delivery, stockIcons }: Props) {
   const router = useRouter();
   const [selection, setSelection] = useState<Selection>(initial);
   const [prompt, setPrompt] = useState(false);
@@ -137,14 +139,14 @@ export function BuyBox({ title, options, variants, initial, lowStockThreshold, e
     <div>
       <div className="mt-4">
         <p className="flex flex-wrap items-baseline gap-x-3">
-          <span className={`price text-2xl font-semibold ${discount ? "text-sale" : "text-ink"}`}>{shownPrice}</span>
+          <span className={`price text-2xl font-semibold ${discount ? "text-accent" : "text-ink"}`}>{shownPrice}</span>
           {compareAt && discount > 0 && (
             <>
               <s className="price text-base text-muted">
                 <span className="sr-only">{fill(labels.originalPrice, { price: formatPrice(compareAt) })}</span>
                 <span aria-hidden>{formatPrice(compareAt)}</span>
               </s>
-              <span className="text-sm font-semibold text-sale">{fill(labels.percentOff, { percent: discount })}</span>
+              <span className="text-sm font-semibold text-accent">{fill(labels.percentOff, { percent: discount })}</span>
             </>
           )}
         </p>
@@ -165,7 +167,7 @@ export function BuyBox({ title, options, variants, initial, lowStockThreshold, e
             aria-describedby={highlight ? "choose-prompt" : undefined}
           >
             <div className="mb-2 flex items-center justify-between gap-3">
-              <legend className={`text-sm ${highlight ? "font-semibold text-sale" : "text-ink"}`}>
+              <legend className={`text-sm ${highlight ? "font-semibold text-error" : "text-ink"}`}>
                 {chosen ? fill(labels.selectedValue, { name: option.name, value: chosen.label }) : option.name}
               </legend>
               {isSizeOption(option) && sizeGuide}
@@ -183,7 +185,7 @@ export function BuyBox({ title, options, variants, initial, lowStockThreshold, e
                       option.style === "SWATCH"
                         ? "relative flex size-11 cursor-pointer items-center justify-center rounded-full border border-transparent has-checked:border-ink has-focus-visible:outline-2 has-focus-visible:outline-link"
                         : `relative flex min-h-11 min-w-14 cursor-pointer items-center justify-center rounded-sm border px-3 text-sm tabular-nums has-focus-visible:outline-2 has-focus-visible:outline-link ${
-                            selected ? "border-primary bg-primary text-on-primary" : `${highlight ? "border-sale" : "border-line-strong"} text-ink hover:border-ink`
+                            selected ? "border-accent bg-raised font-semibold text-ink ring-1 ring-accent ring-inset" : `${highlight ? "border-error" : "border-line-strong"} text-ink hover:border-ink`
                           } ${available ? "" : "text-muted line-through decoration-1"} ${exists ? "" : "opacity-40"}`
                     }
                     title={option.style === "SWATCH" ? name : undefined}
@@ -214,16 +216,22 @@ export function BuyBox({ title, options, variants, initial, lowStockThreshold, e
       <div className="mt-6 min-h-6 text-sm" role="status" aria-live="polite">
         {!variant ? (
           missing && (
-            <span id="choose-prompt" className={prompt ? "font-semibold text-sale" : "text-muted"}>
+            <span id="choose-prompt" className={prompt ? "font-semibold text-error" : "text-muted"}>
               {fill(prompt ? labels.chooseFirst : labels.chooseOption, { name: shortName(missing) })}
             </span>
           )
         ) : variant.stock === 0 ? (
           <span className="font-medium text-ink">{labels.soldOut}</span>
         ) : variant.stock <= lowStockThreshold ? (
-          <span className="font-medium text-sale">{fill(labels.onlyLeft, { count: variant.stock })}</span>
+          <span className="inline-flex items-center gap-1.5 font-medium text-ink">
+            <span className="text-warning">{stockIcons.low}</span>
+            {fill(labels.onlyLeft, { count: variant.stock })}
+          </span>
         ) : (
-          <span className="font-medium text-stock">{labels.inStock}</span>
+          <span className="inline-flex items-center gap-1.5 font-medium text-success">
+            {stockIcons.inStock}
+            {labels.inStock}
+          </span>
         )}
         {variant && <span className="ml-3 text-muted">{fill(labels.sku, { sku: variant.sku })}</span>}
       </div>
@@ -233,7 +241,7 @@ export function BuyBox({ title, options, variants, initial, lowStockThreshold, e
           <button type="button" onClick={() => buy("drawer")} disabled={adding} className={buttonClasses("primary", "md", "flex-1")}>
             {adding ? labels.adding : labels.addToBag}
           </button>
-          <button type="button" onClick={() => buy("checkout")} disabled={adding} className={buttonClasses("primary", "md", "flex-1")}>
+          <button type="button" onClick={() => buy("checkout")} disabled={adding} className={buttonClasses("secondary", "md", "flex-1")}>
             {labels.buyNow}
           </button>
           {wishlist}
@@ -270,7 +278,7 @@ export function BuyBox({ title, options, variants, initial, lowStockThreshold, e
 function NotifyMe({ variant, labels }: { variant: VariantDef; labels: BuyBoxLabels }) {
   const [state, action, pending] = useActionState<NotifyState, FormData>(requestBackInStock, { status: "idle" });
   if (state.status === "done") {
-    return <p className="mt-4 rounded-sm border border-line bg-surface px-4 py-3 text-sm text-stock">{labels.notifyDone}</p>;
+    return <p className="mt-4 rounded-sm border border-line bg-surface px-4 py-3 text-sm text-success">{labels.notifyDone}</p>;
   }
   const message =
     state.status === "invalid" ? labels.notifyInvalid : state.status === "busy" ? labels.notifyBusy : state.status === "error" ? labels.notifyError : null;
@@ -292,12 +300,12 @@ function NotifyMe({ variant, labels }: { variant: VariantDef; labels: BuyBoxLabe
           placeholder={labels.notifyEmail}
           className="block min-h-11 w-full rounded-sm border border-line-strong bg-canvas px-3 text-base text-ink placeholder:text-muted"
         />
-        <button type="submit" disabled={pending} className={buttonClasses("primary", "md", "shrink-0")}>
+        <button type="submit" disabled={pending} className={buttonClasses("secondary", "md", "shrink-0")}>
           {labels.notifySubmit}
         </button>
       </div>
       {message && (
-        <p role="alert" className="mt-2 text-sm text-sale">
+        <p role="alert" className="mt-2 text-sm text-error">
           {message}
         </p>
       )}

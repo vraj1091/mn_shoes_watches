@@ -21,7 +21,7 @@ export function BagButton({ initialCount, label, labelEmpty, icon }: { initialCo
         cartStore.open();
       }}
       aria-label={count ? fill(label, { count }) : labelEmpty}
-      className="relative -mr-2 flex size-11 items-center justify-center rounded-sm text-ink transition-colors hover:bg-surface hover:text-link lg:mr-0"
+      className="relative -mr-2 flex size-11 items-center justify-center rounded-sm text-ink transition-colors hover:bg-surface hover:text-accent xl:mr-0"
     >
       {icon}
       {count > 0 && (
@@ -66,7 +66,7 @@ export function CartDrawer({ labels, closeIcon }: { labels: BagLabels; closeIcon
         cartStore.set({ drawerOpen: false, notice: null });
       }}
       onClick={(event) => event.target === event.currentTarget && close()}
-      className="drawer-right m-0 ml-auto h-dvh max-h-none w-[min(92vw,26rem)] max-w-none bg-raised p-0 text-ink shadow-overlay"
+      className="chrome-exit drawer-right m-0 ml-auto h-dvh max-h-none w-[min(92vw,26rem)] max-w-none bg-raised p-0 text-ink shadow-overlay"
     >
       <div className="flex h-full flex-col">
         <div className="flex h-14 shrink-0 items-center justify-between border-b border-line pr-2 pl-5">

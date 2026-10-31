@@ -11,7 +11,7 @@ type Option = { id: string; label: string };
 export function NewProductForm({ categories, brands, sizes }: { categories: (Option & { depth: number })[]; brands: Option[]; sizes: Option[] }) {
   const [kind, setKind] = useState<"single" | "sizes">("single");
   return (
-    <AdminForm action={createProduct} submitLabel="Create draft and add photos">
+    <AdminForm action={createProduct} submitLabel="Create draft and add photos" primary>
       <div className="grid gap-5">
         <Field label="Product name" hint="As shoppers will see it, e.g. “Tan leather Oxford shoes”.">
           <TextInput name="title" required minLength={3} maxLength={140} autoComplete="off" />

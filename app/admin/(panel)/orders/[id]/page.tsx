@@ -48,7 +48,7 @@ export default async function AdminOrderPage({ params }: Props) {
         <span className="flex flex-wrap items-center gap-2">
           <StatusBadge tone={STATUS_TONES[status]}>{STATUS_LABELS[status]}</StatusBadge>
           <span>Placed {formatDateTime(order.createdAt)}</span>
-          {order.isDemo && <StatusBadge tone="badge">Demo order</StatusBadge>}
+          {order.isDemo && <StatusBadge tone="warning">Demo order</StatusBadge>}
         </span>
       }
       actions={
@@ -87,7 +87,7 @@ export default async function AdminOrderPage({ params }: Props) {
                   <div className="min-w-0">
                     {item.brandName && <p className="text-xs tracking-wide text-muted uppercase">{item.brandName}</p>}
                     {item.productId ? (
-                      <Link href={`/admin/products/${item.productId}`} className="font-medium hover:text-link">
+                      <Link href={`/admin/products/${item.productId}`} className="font-medium hover:text-accent">
                         {item.productTitle}
                       </Link>
                     ) : (
@@ -138,7 +138,7 @@ export default async function AdminOrderPage({ params }: Props) {
                 <dd className="price">{formatPrice(order.taxTotal)}</dd>
               </div>
               {order.amountRefunded > 0 && (
-                <div className={`${row} text-sale`}>
+                <div className={`${row} text-accent`}>
                   <dt>Refunded</dt>
                   <dd className="price">−{formatPrice(order.amountRefunded)}</dd>
                 </div>
@@ -184,7 +184,7 @@ export default async function AdminOrderPage({ params }: Props) {
           <Card title="Customer">
             <p className="font-medium">
               {order.customer ? (
-                <Link href={`/admin/customers/${order.customer.id}`} className="hover:text-link">
+                <Link href={`/admin/customers/${order.customer.id}`} className="hover:text-accent">
                   {order.customer.name}
                 </Link>
               ) : (
@@ -268,7 +268,7 @@ export default async function AdminOrderPage({ params }: Props) {
                 </div>
               </dl>
               {shipment.trackingUrl && (
-                <a href={shipment.trackingUrl} target="_blank" rel="noreferrer" className="mt-2 inline-block text-sm text-link underline underline-offset-4">
+                <a href={shipment.trackingUrl} target="_blank" rel="noreferrer" className="mt-2 inline-block text-sm text-link hover:text-accent underline underline-offset-4">
                   Courier tracking page
                 </a>
               )}

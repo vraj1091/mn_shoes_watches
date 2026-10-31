@@ -122,7 +122,7 @@ export function ResetPasswordForm({ labels, next, initialEmail }: { labels: Acco
       <Button type="submit" disabled={pending} className="w-full">
         {pending ? labels.sending : labels.sendCodeShort}
       </Button>
-      <Link href={`/account/sign-in?next=${encodeURIComponent(next)}`} prefetch={false} className="inline-flex min-h-11 items-center text-sm text-link underline underline-offset-4">
+      <Link href={`/account/sign-in?next=${encodeURIComponent(next)}`} prefetch={false} className="inline-flex min-h-11 items-center text-sm text-link hover:text-accent underline underline-offset-4">
         {labels.backToSignIn}
       </Link>
     </form>

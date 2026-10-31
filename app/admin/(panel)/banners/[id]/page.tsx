@@ -34,7 +34,7 @@ export default async function BannerPage({ params }: Props) {
       intro={
         <span className="flex flex-wrap items-center gap-2">
           <StatusBadge tone={state.tone}>{state.label}</StatusBadge>
-          {banner.isDemo && <StatusBadge tone="badge">Demo banner</StatusBadge>}
+          {banner.isDemo && <StatusBadge tone="warning">Demo banner</StatusBadge>}
         </span>
       }
       actions={
@@ -46,7 +46,7 @@ export default async function BannerPage({ params }: Props) {
     >
       <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
         <Card>
-          <AdminForm action={saveBanner.bind(null, banner.id)}>
+          <AdminForm action={saveBanner.bind(null, banner.id)} primary>
             <BannerFields
               banner={{
                 title: banner.title,

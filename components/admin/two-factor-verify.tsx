@@ -66,7 +66,7 @@ export function TwoFactorVerify({ labels }: { labels: Labels }) {
           setUseBackup(!useBackup);
           setError(null);
         }}
-        className="min-h-11 text-sm text-link underline underline-offset-4"
+        className="min-h-11 text-sm text-link hover:text-accent underline underline-offset-4"
       >
         {useBackup ? labels.useAuthenticator : labels.useBackupCode}
       </button>

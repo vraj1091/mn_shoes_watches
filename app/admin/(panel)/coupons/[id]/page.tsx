@@ -36,7 +36,7 @@ export default async function CouponPage({ params, searchParams }: Props) {
       intro={
         <span className="flex flex-wrap items-center gap-2">
           <StatusBadge tone={state.tone}>{state.label}</StatusBadge>
-          {coupon.isDemo && <StatusBadge tone="badge">Demo coupon</StatusBadge>}
+          {coupon.isDemo && <StatusBadge tone="warning">Demo coupon</StatusBadge>}
           <span>
             Used on {orders._count} {orders._count === 1 ? "order" : "orders"}
             {orders._count > 0 && `, ${formatPrice(orders._sum.discountTotal ?? 0)} off ${formatPrice(orders._sum.grandTotal ?? 0)} in sales`}
@@ -57,7 +57,7 @@ export default async function CouponPage({ params, searchParams }: Props) {
       )}
       <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
         <Card>
-          <AdminForm action={saveCoupon.bind(null, coupon.id)}>
+          <AdminForm action={saveCoupon.bind(null, coupon.id)} primary>
             <CouponFields coupon={couponDefaults(coupon)} />
           </AdminForm>
         </Card>

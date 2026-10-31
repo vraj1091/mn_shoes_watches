@@ -45,7 +45,7 @@ export function TrackForm({ labels, initialOrder }: { labels: TrackLabels; initi
 
       <div aria-live="polite">
         {error && (
-          <p role="alert" className="mt-4 text-sm font-medium text-sale">
+          <p role="alert" className="mt-4 text-sm font-medium text-error">
             {error}
           </p>
         )}
@@ -86,7 +86,7 @@ export function TrackForm({ labels, initialOrder }: { labels: TrackLabels; initi
                 </li>
               ))}
             </ol>
-            <Link href={`/order/${state.order.token}`} className="mt-6 inline-block text-sm text-link underline underline-offset-4">
+            <Link href={`/order/${state.order.token}`} className="mt-6 inline-block text-sm text-link hover:text-accent underline underline-offset-4">
               {labels.viewOrder}
             </Link>
           </section>

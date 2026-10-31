@@ -111,8 +111,8 @@ export function ProductPhotos({ productId, photos, placeholder }: { productId: s
   return (
     <div>
       {placeholder && (
-        <div role="note" className="mb-4 flex gap-3 rounded-sm border border-sale/40 bg-surface p-3 text-sm">
-          <WarningIcon size={20} className="mt-0.5 shrink-0 text-sale" />
+        <div role="note" className="mb-4 flex gap-3 rounded-sm border border-warning bg-surface p-3 text-sm">
+          <WarningIcon size={20} className="mt-0.5 shrink-0 text-warning" />
           <p>
             <strong className="font-semibold">Replace photo.</strong> This product shows a generated placeholder image. Upload a real photo and the placeholder is
             removed.
@@ -134,7 +134,7 @@ export function ProductPhotos({ productId, photos, placeholder }: { productId: s
       >
         <UploadIcon size={24} className="text-muted" />
         <span>
-          <span className="font-semibold text-link underline underline-offset-4">Choose photos</span> or drop them here
+          <span className="font-semibold text-link hover:text-accent underline underline-offset-4">Choose photos</span> or drop them here
         </span>
         <span className="text-xs text-muted">JPG, PNG, WebP or AVIF, up to 15 MB each. Shot on white looks best.</span>
         <input
@@ -150,7 +150,7 @@ export function ProductPhotos({ productId, photos, placeholder }: { productId: s
 
       <div aria-live="polite" className="mt-3 min-h-5 text-sm">
         {uploading > 0 && <p>Uploading {uploading === 1 ? "1 photo" : `${uploading} photos`}…</p>}
-        {!uploading && message && <p className={message.tone === "error" ? "text-sale" : "text-stock"}>{message.text}</p>}
+        {!uploading && message && <p className={message.tone === "error" ? "text-error" : "text-success"}>{message.text}</p>}
       </div>
 
       {items.length > 0 && (
@@ -212,7 +212,7 @@ function RemoveButton({ onConfirm, index }: { onConfirm: () => void; index: numb
   const [asking, setAsking] = useState(false);
   if (!asking) {
     return (
-      <button type="button" onClick={() => setAsking(true)} className={buttonClasses("ghost", "sm", "px-2 text-sale")} aria-label={`Remove photo ${index + 1}`}>
+      <button type="button" onClick={() => setAsking(true)} className={buttonClasses("ghost", "sm", "px-2 text-error")} aria-label={`Remove photo ${index + 1}`}>
         <TrashIcon size={16} />
       </button>
     );

@@ -168,7 +168,7 @@ export function SignUpForm({ labels, next, terms }: { labels: AccountLabels; nex
       <p className="text-sm text-muted">{terms}</p>
       <p className="text-sm">
         {labels.haveAccount}{" "}
-        <Link href={`/account/sign-in?next=${encodeURIComponent(next)}`} prefetch={false} className="text-link underline underline-offset-4">
+        <Link href={`/account/sign-in?next=${encodeURIComponent(next)}`} prefetch={false} className="text-link hover:text-accent underline underline-offset-4">
           {labels.signIn}
         </Link>
       </p>

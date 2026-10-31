@@ -14,7 +14,7 @@ export default async function NewCouponPage() {
   return (
     <AdminPage title="Add coupon">
       <Card>
-        <AdminForm action={saveCoupon.bind(null, null)} submitLabel="Add coupon">
+        <AdminForm action={saveCoupon.bind(null, null)} submitLabel="Add coupon" primary>
           <CouponFields coupon={couponDefaults()} />
         </AdminForm>
       </Card>

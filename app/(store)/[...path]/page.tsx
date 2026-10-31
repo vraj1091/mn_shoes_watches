@@ -114,7 +114,7 @@ async function CategoryListing({ category, path, query }: { category: CategoryPa
             <p className="text-base">
               {t("catalog.emptyCategory", { name: parent?.name ?? category.name })}{" "}
               {parent && (
-                <Link href={`/${parent.path}`} className="text-link underline underline-offset-4">
+                <Link href={`/${parent.path}`} className="text-link hover:text-accent underline underline-offset-4">
                   {parent.name}
                 </Link>
               )}

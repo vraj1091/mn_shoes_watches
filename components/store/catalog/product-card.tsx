@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { formatPrice, percentOff } from "@/lib/format/money";
+import { WarningIcon } from "@/components/icons";
 import { fill } from "@/lib/format/template";
 import type { ProductCardData } from "@/lib/catalog/types";
 import { WishlistButton } from "@/components/store/shop/wishlist-button";
@@ -102,7 +103,7 @@ export function ProductCard({
       </h3>
 
       <p className="price mt-1 flex flex-wrap items-baseline gap-x-2 text-base">
-        <span className={discount ? "font-semibold text-sale" : "font-semibold text-ink"}>
+        <span className={discount ? "font-semibold text-accent" : "font-semibold text-ink"}>
           {product.maxPrice > product.minPrice ? fill(labels.from, { price }) : price}
         </span>
         {product.compareAtPrice && discount > 0 && (
@@ -111,7 +112,7 @@ export function ProductCard({
               <span className="sr-only">{fill(labels.originalPrice, { price: formatPrice(product.compareAtPrice) })}</span>
               <span aria-hidden>{formatPrice(product.compareAtPrice)}</span>
             </s>
-            <span className="text-xs font-semibold text-sale">{fill(labels.percentOff, { percent: discount })}</span>
+            <span className="text-xs font-semibold text-accent">{fill(labels.percentOff, { percent: discount })}</span>
           </>
         )}
       </p>
@@ -138,7 +139,10 @@ export function ProductCard({
       )}
 
       {product.lowStockCount !== null && (
-        <p className="mt-1 text-sm font-medium text-sale">{fill(labels.onlyLeft, { count: product.lowStockCount })}</p>
+        <p className="mt-1 flex items-center gap-1.5 text-sm font-medium text-ink">
+          <WarningIcon size={16} className="shrink-0 text-warning" />
+          {fill(labels.onlyLeft, { count: product.lowStockCount })}
+        </p>
       )}
     </article>
   );

@@ -16,7 +16,8 @@ const SOCIAL: { key: keyof SocialLinks; label: string; Icon: typeof InstagramIco
 ];
 
 const heading = "mb-4 text-xs font-semibold tracking-[0.12em] text-muted uppercase";
-const link = "inline-block py-1.5 text-sm text-ink hover:text-link";
+// Oxblood cannot carry text on espresso, so a hover underlines in oxblood and the words stay bone.
+const link = "inline-block py-1.5 text-sm text-ink decoration-accent underline-offset-4 hover:underline";
 
 export async function SiteFooter() {
   const [settings, location, departments] = await Promise.all([
@@ -29,7 +30,7 @@ export async function SiteFooter() {
   const socials = SOCIAL.filter(({ key }) => settings.socialLinks[key]);
 
   return (
-    <footer className="mt-24 border-t border-line bg-surface">
+    <footer className="chrome mt-24 bg-canvas">
       <div className="mx-auto grid max-w-screen-xl gap-12 px-4 py-14 sm:px-6 lg:grid-cols-12 lg:gap-8 lg:px-8">
         <section aria-labelledby="footer-visit" className="lg:col-span-4">
           <h2 id="footer-visit" className="font-display text-3xl">
@@ -217,7 +218,7 @@ export async function SiteFooter() {
                         href={settings.socialLinks[key]}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex size-11 items-center justify-center rounded-sm text-ink hover:text-link"
+                        className="flex size-11 items-center justify-center rounded-sm text-ink hover:text-accent"
                       >
                         <Icon size={22} label={label} />
                       </a>

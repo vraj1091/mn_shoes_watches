@@ -47,7 +47,7 @@ export function SetPasswordForm({ token, email, minLength }: { token: string; em
     return (
       <div className="space-y-5">
         <FormAlert tone="success">Your password is set. Sign in with {email} and the new password.</FormAlert>
-        <Link href="/admin/sign-in" className="inline-flex min-h-11 items-center font-medium text-link underline underline-offset-4">
+        <Link href="/admin/sign-in" className="inline-flex min-h-11 items-center font-medium text-link hover:text-accent underline underline-offset-4">
           Go to sign-in
         </Link>
       </div>
@@ -73,7 +73,7 @@ export function SetPasswordForm({ token, email, minLength }: { token: string; em
         {busy ? "Saving…" : "Set password"}
       </Button>
       {error?.startsWith("This link") && (
-        <Link href="/admin/forgot-password" className="inline-flex min-h-11 items-center text-sm text-link underline underline-offset-4">
+        <Link href="/admin/forgot-password" className="inline-flex min-h-11 items-center text-sm text-link hover:text-accent underline underline-offset-4">
           Email me a new link
         </Link>
       )}

@@ -39,7 +39,7 @@ export function MobileNav({ departments, extraLinks, accountLinks, labels, icons
         aria-label={labels.open}
         aria-haspopup="dialog"
         onClick={open}
-        className="-ml-2 flex size-11 items-center justify-center rounded-sm text-ink hover:bg-surface lg:hidden"
+        className="-ml-2 flex size-11 items-center justify-center rounded-sm text-ink hover:bg-surface xl:hidden"
       >
         {icons.menu}
       </button>
@@ -50,7 +50,7 @@ export function MobileNav({ departments, extraLinks, accountLinks, labels, icons
         onClose={() => document.documentElement.style.removeProperty("overflow")}
         // A click on the backdrop lands on the <dialog> itself; clicks inside land on its content.
         onClick={(event) => event.target === event.currentTarget && close()}
-        className="drawer-left m-0 h-dvh max-h-none w-[min(88vw,22rem)] max-w-none bg-raised p-0 text-ink shadow-overlay backdrop:bg-scrim lg:hidden"
+        className="chrome-exit drawer-left m-0 h-dvh max-h-none w-[min(88vw,22rem)] max-w-none bg-raised p-0 text-ink shadow-overlay backdrop:bg-scrim xl:hidden"
       >
         <div className="flex h-full flex-col">
           <div className="flex h-14 shrink-0 items-center justify-between border-b border-line pr-2 pl-5">
@@ -96,7 +96,7 @@ export function MobileNav({ departments, extraLinks, accountLinks, labels, icons
                       </summary>
                       <ul className="pb-3">
                         <li>
-                          <Link href={dept.href} onClick={close} className={`${row} min-h-11 text-link`}>
+                          <Link href={dept.href} onClick={close} className={`${row} min-h-11 text-link hover:text-accent`}>
                             {labels.shopAll.replace("{name}", dept.name.toLowerCase())}
                           </Link>
                         </li>
@@ -138,7 +138,7 @@ export function MobileNav({ departments, extraLinks, accountLinks, labels, icons
                 ))}
                 {extraLinks.map((link) => (
                   <li key={link.href} className="border-b border-line">
-                    <Link href={link.href} onClick={close} className={`${row} ${link.highlight ? "text-sale" : ""}`}>
+                    <Link href={link.href} onClick={close} className={`${row} ${link.highlight ? "text-accent" : ""}`}>
                       {link.label}
                     </Link>
                   </li>

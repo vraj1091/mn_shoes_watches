@@ -60,7 +60,7 @@ export default async function CouponsPage({ searchParams }: Props) {
               return (
                 <tr key={coupon.id} className="hover:bg-surface">
                   <td className={td}>
-                    <Link href={`/admin/coupons/${coupon.id}`} className="font-mono font-semibold hover:text-link">
+                    <Link href={`/admin/coupons/${coupon.id}`} className="font-mono font-semibold hover:text-accent">
                       {coupon.code}
                     </Link>
                     {coupon.title !== coupon.code && <span className="block text-xs text-muted">{coupon.title}</span>}

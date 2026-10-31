@@ -94,6 +94,12 @@
 @theme inline {
   /* The serif is for the hero and editorial headings only; everything else is sans (DECISIONS.md 45). */
   --font-display: var(--font-bodoni), "Bodoni 72", Didot, Georgia, serif;
+  /*
+   * Bodoni Moda picks its optical size from the font size, and at heading sizes that is the poster cut:
+   * hairline strokes and loose spacing that are hard to read. Its text cut keeps the same letters with
+   * strokes that hold up on a phone (DECISIONS.md 73).
+   */
+  --font-display--font-variation-settings: "opsz" 11;
   --font-sans: var(--font-hanken), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -136,6 +142,12 @@
     display: none !important;
   }
 
+  /* Serif headings in medium weight; a utility such as font-semibold still wins. */
+  .font-display {
+    font-weight: 500;
+    letter-spacing: -0.005em;
+  }
+
   /* Prices line up in columns and do not jump when they change. */
   .price {
     font-variant-numeric: tabular-nums;
@@ -144,14 +156,16 @@
 
 @layer components {
   /*
-   * Product photos are shot on white, so the tile stays light grey in both modes and the photo is
-   * multiplied into it: the white backdrop takes the tile's colour instead of showing as a box.
+   * Product photos sit on Linen (light) or the dark card colour (dark), so every photo looks the
+   * same. In light mode the photo is multiplied into the tile, so a white backdrop on an uploaded
+   * photo takes the Linen colour instead of showing as a box. The demo photos are cut-outs and
+   * need no blending on the dark tile, where multiplying would darken the product.
    */
   .photo-tile {
     background-color: var(--tile);
     color: var(--tile-ink);
   }
-  .photo-tile img {
+  :root:not(.dark) .photo-tile img {
     mix-blend-mode: multiply;
   }
 }

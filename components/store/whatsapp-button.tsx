@@ -13,7 +13,7 @@ export function WhatsappButton({ number }: { number: string }) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={t("footer.whatsapp")}
-      className="fixed right-4 z-30 flex size-12 items-center justify-center rounded-full bg-primary text-on-primary shadow-overlay transition-transform duration-150 hover:scale-105 bottom-[calc(1rem+env(safe-area-inset-bottom)+var(--sticky-cta-height,0px))]"
+      className="fixed right-4 z-30 flex size-12 items-center justify-center rounded-full bg-ink text-canvas shadow-overlay transition-transform duration-150 hover:scale-105 bottom-[calc(1rem+env(safe-area-inset-bottom)+var(--sticky-cta-height,0px))]"
     >
       <WhatsappIcon size={26} />
     </a>

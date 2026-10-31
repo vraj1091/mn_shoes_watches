@@ -25,7 +25,6 @@ import { rateForUnitPrice, type TaxSlab } from "../lib/commerce/gst";
 import { computeTotals, type CouponRule } from "../lib/commerce/totals";
 import { removeDemoData } from "../lib/demo/remove";
 import { ALL_TAGS } from "../lib/cache/tags";
-import { hex } from "../lib/design/tokens";
 import { seedBase, richText, STORE } from "../prisma/seed/base";
 import { ATTRIBUTES, TEMPLATES } from "../prisma/seed/catalog";
 import { BRANDS, DEMO_PAIRINGS, DEMO_PRODUCTS, type DemoProduct, type DummyCategory } from "../prisma/demo/products";
@@ -101,9 +100,9 @@ async function download(url: string, file: string): Promise<boolean> {
   return true;
 }
 
-/** A tiny blurred preview on the photo-tile colour, shown while the full photo loads. */
+/** A tiny blurred preview, shown while the full photo loads. Transparent, so it sits on either theme's tile. */
 async function blurDataUrl(file: string): Promise<string> {
-  const buffer = await sharp(file).resize(16, 16, { fit: "contain", background: hex("graphite-75") }).flatten({ background: hex("graphite-75") }).webp({ quality: 40 }).toBuffer();
+  const buffer = await sharp(file).resize(16, 16, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } }).webp({ quality: 40 }).toBuffer();
   return `data:image/webp;base64,${buffer.toString("base64")}`;
 }
 

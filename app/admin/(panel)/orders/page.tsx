@@ -82,7 +82,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
               return (
                 <tr key={order.id} className="hover:bg-surface">
                   <td className={td}>
-                    <Link href={`/admin/orders/${order.id}`} className="font-semibold text-link underline-offset-4 hover:underline">
+                    <Link href={`/admin/orders/${order.id}`} className="font-semibold text-link hover:text-accent underline-offset-4 hover:underline">
                       {order.number}
                     </Link>
                     <span className="block text-xs text-muted">

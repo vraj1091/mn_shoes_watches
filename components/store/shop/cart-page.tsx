@@ -46,7 +46,7 @@ export function CartPageView({ initial, labels }: { initial: CartView; labels: B
         >
           {labels.checkout}
         </Link>
-        <Link href="/" className="block text-center text-sm text-link underline underline-offset-4">
+        <Link href="/" className="block text-center text-sm text-link hover:text-accent underline underline-offset-4">
           {labels.continueShopping}
         </Link>
       </aside>

@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { checkContrast, hex, iconSvg, palette, semantic, themeCss } from "@/lib/design/tokens";
+import { checkContrast, hex, iconSvg, palette, resolve, semantic, themeCss } from "@/lib/design/tokens";
 
 describe("design tokens", () => {
   it("every text and background pair passes WCAG AA in both modes", () => {
@@ -39,7 +39,26 @@ describe("design tokens", () => {
     expect(offenders).toEqual([]);
   });
 
-  it("uses exactly the three families plus the two status colours", () => {
-    expect(Object.keys(palette).sort()).toEqual(["brass", "graphite", "green", "navy", "red"]);
+  it("uses exactly Bone, Espresso and Oxblood plus the three status colours", () => {
+    expect(Object.keys(palette).sort()).toEqual(["amber", "bone", "espresso", "green", "oxblood", "scarlet"]);
+  });
+
+  it("keeps the brief's exact values (Phase 3) for the 60-30-10 roles", () => {
+    const light = resolve("light");
+    const dark = resolve("dark");
+    expect([light.canvas, light.raised, light.surface, light.line, light.ink, light.muted, light.primary, light["primary-hover"], light["on-primary"]]).toEqual([
+      "#F5F1EA", "#FBF9F5", "#EDE7DD", "#E4DDD1", "#2A2320", "#6B6158", "#7A1F2B", "#631822", "#F5F1EA",
+    ]);
+    expect([dark.canvas, dark.raised, dark.surface, dark.line, dark.ink, dark.muted, dark.primary, dark.accent, dark["primary-hover"]]).toEqual([
+      "#161210", "#201B18", "#2A2420", "#352D28", "#EDE6DB", "#A89E92", "#8E2C33", "#D2676D", "#A3363E",
+    ]);
+    expect([light.success, light.warning, light.error]).toEqual(["#2F6B4F", "#9A6A12", "#B42318"]);
+    expect([light.tile, dark.tile]).toEqual(["#EDE7DD", "#201B18"]);
+    expect(resolve("light", "chrome").canvas).toBe("#2A2320");
+  });
+
+  it("never uses pure black or pure white", () => {
+    const values = Object.values(palette).flatMap((shades) => Object.values(shades) as string[]);
+    expect(values.filter((value) => value === "#000000" || value === "#FFFFFF")).toEqual([]);
   });
 });

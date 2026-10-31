@@ -19,7 +19,7 @@ export function NewsletterForm({ labels }: { labels: Labels }) {
 
   if (state.status === "done") {
     return (
-      <p role="status" className="text-sm text-stock">
+      <p role="status" className="text-sm text-success">
         {labels.done}
       </p>
     );
@@ -46,14 +46,14 @@ export function NewsletterForm({ labels }: { labels: Labels }) {
           aria-describedby={message ? "newsletter-message" : undefined}
           className={inputClasses}
         />
-        <button type="submit" disabled={pending} className={buttonClasses("primary", "md", "shrink-0")}>
+        <button type="submit" disabled={pending} className={buttonClasses("secondary", "md", "shrink-0")}>
           {labels.submit}
         </button>
       </div>
       {/* Honeypot: hidden from people and screen readers, filled in by bots. */}
       <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden className="hidden" />
       {message && (
-        <p id="newsletter-message" role="alert" className="mt-2 text-sm text-sale">
+        <p id="newsletter-message" role="alert" className="mt-2 text-sm text-error">
           {message}
         </p>
       )}

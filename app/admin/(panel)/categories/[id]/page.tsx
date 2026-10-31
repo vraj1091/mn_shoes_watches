@@ -42,7 +42,7 @@ export default async function CategoryPage({ params }: Props) {
             <>
               {" "}
               · in{" "}
-              <Link href={`/admin/categories/${category.parent.id}`} className="text-link underline underline-offset-4">
+              <Link href={`/admin/categories/${category.parent.id}`} className="text-link hover:text-accent underline underline-offset-4">
                 {category.parent.name}
               </Link>
             </>
@@ -69,7 +69,7 @@ export default async function CategoryPage({ params }: Props) {
     >
       <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
         <Card title="Category">
-          <AdminForm action={updateCategory.bind(null, category.id)}>
+          <AdminForm action={updateCategory.bind(null, category.id)} primary>
             <div className="grid gap-5">
               <Field label="Name">
                 <TextInput name="name" defaultValue={category.name} required minLength={2} maxLength={60} />

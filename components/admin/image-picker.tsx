@@ -65,7 +65,7 @@ export function ImagePicker({ name, initial, library }: { name: string; initial:
           </label>
           <p className="max-w-xs text-xs text-muted">A product shot on white works best; it sits beside the headline. Up to 15 MB.</p>
           {error && (
-            <p role="alert" className="text-sale">
+            <p role="alert" className="text-error">
               {error}
             </p>
           )}

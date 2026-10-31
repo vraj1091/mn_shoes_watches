@@ -153,7 +153,7 @@ export function SearchBox({
           id: `${baseId}-all`,
           href: `/search?q=${encodeURIComponent(trimmed)}`,
           remember: trimmed,
-          content: <span className="text-sm font-medium text-link">{fill(labels.viewAll, { q: trimmed })}</span>,
+          content: <span className="text-sm font-medium text-link hover:text-accent">{fill(labels.viewAll, { q: trimmed })}</span>,
         },
       ],
     });
@@ -210,7 +210,7 @@ export function SearchBox({
           {labels.label}
         </label>
         <div
-          className={`flex items-center gap-2 rounded-sm border bg-canvas px-3 transition-colors focus-within:border-ink ${
+          className={`flex items-center gap-2 rounded-sm border bg-surface px-3 transition-colors focus-within:border-ink ${
             size === "header" ? "border-line hover:border-line-strong" : "border-line-strong"
           }`}
         >
@@ -255,7 +255,7 @@ export function SearchBox({
 
       <div
         hidden={!showPopup}
-        className={`absolute top-full right-0 z-50 mt-1 max-h-[70dvh] w-full overflow-y-auto rounded-md border border-line bg-canvas py-2 shadow-overlay ${
+        className={`chrome-exit absolute top-full right-0 z-50 mt-1 max-h-[70dvh] w-full overflow-y-auto rounded-md border border-line bg-raised py-2 shadow-overlay ${
           size === "header" ? "min-w-80" : ""
         }`}
       >

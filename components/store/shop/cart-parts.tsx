@@ -57,10 +57,10 @@ export function FreeDeliveryProgress({ cart, labels }: { cart: CartView; labels:
   return (
     <div>
       <p className="text-sm" aria-live="polite">
-        {done ? <span className="font-medium text-stock">{labels.freeDeliveryDone}</span> : fill(labels.freeDeliveryLeft, { amount: formatPrice(remaining) })}
+        {done ? <span className="font-medium text-success">{labels.freeDeliveryDone}</span> : fill(labels.freeDeliveryLeft, { amount: formatPrice(remaining) })}
       </p>
       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line" role="presentation">
-        <div className={`h-full rounded-full ${done ? "bg-stock" : "bg-primary"}`} style={{ width: `${percent}%` }} />
+        <div className={`h-full rounded-full ${done ? "bg-success" : "bg-primary"}`} style={{ width: `${percent}%` }} />
       </div>
     </div>
   );
@@ -98,15 +98,15 @@ export function CartLines({ cart, labels, compact = false }: { cart: CartView; l
             </Link>
             <div className="min-w-0 flex-1">
               {line.brand && <p className="text-xs font-semibold tracking-wide text-muted uppercase">{line.brand}</p>}
-              <Link href={`/product/${line.slug}`} className="line-clamp-2 text-card font-medium hover:text-link">
+              <Link href={`/product/${line.slug}`} className="line-clamp-2 text-card font-medium hover:text-accent">
                 {line.title}
               </Link>
               {line.variantTitle && <p className="text-sm text-muted">{line.variantTitle}</p>}
               <p className="price mt-1 text-sm">
-                <span className={line.compareAtPrice ? "font-semibold text-sale" : "font-semibold"}>{formatPrice(line.unitPrice)}</span>
+                <span className={line.compareAtPrice ? "font-semibold text-accent" : "font-semibold"}>{formatPrice(line.unitPrice)}</span>
                 {line.compareAtPrice && <s className="ml-2 text-muted">{formatPrice(line.compareAtPrice)}</s>}
               </p>
-              {!line.available && <p className="mt-1 text-sm font-medium text-sale">{labels.unavailable}</p>}
+              {!line.available && <p className="mt-1 text-sm font-medium text-error">{labels.unavailable}</p>}
               {line.available && line.priceChanged && <p className="mt-1 text-sm text-muted">{labels.priceChanged}</p>}
               <div className="mt-2 flex items-center gap-3">
                 {line.available && (
@@ -163,7 +163,7 @@ export function TotalsTable({ cart, labels }: { cart: CartView; labels: BagLabel
         <dd>{formatPrice(totals.subtotal)}</dd>
       </div>
       {totals.discountTotal > 0 && (
-        <div className={`${row} text-stock`}>
+        <div className={`${row} text-success`}>
           <dt>
             {labels.discount}
             {cart.coupon ? ` (${cart.coupon.code})` : ""}
@@ -234,17 +234,17 @@ export function CouponField({ cart, labels, onChange }: { cart: CartView; labels
             <span className="font-semibold">{coupon.code}</span>
             {coupon.label && <span className="block text-muted">{coupon.label}</span>}
           </span>
-          <button type="button" onClick={remove} disabled={pending} className="min-h-11 shrink-0 text-link underline underline-offset-4">
+          <button type="button" onClick={remove} disabled={pending} className="min-h-11 shrink-0 text-link hover:text-accent underline underline-offset-4">
             {labels.couponRemove}
           </button>
         </div>
         {coupon.problem === "MIN_ORDER" ? (
-          <p className="mt-2 text-sale" role="alert">
+          <p className="mt-2 text-error" role="alert">
             {fill(labels.couponMinOrder, { code: coupon.code, label: coupon.label ?? "" })}
           </p>
         ) : (
           message?.tone === "ok" && (
-            <p className="mt-2 text-stock" role="status">
+            <p className="mt-2 text-success" role="status">
               {message.text}
             </p>
           )
@@ -279,7 +279,7 @@ export function CouponField({ cart, labels, onChange }: { cart: CartView; labels
         </button>
       </div>
       {message && (
-        <p id="coupon-message" role={message.tone === "error" ? "alert" : "status"} className={`mt-2 ${message.tone === "error" ? "text-sale" : "text-stock"}`}>
+        <p id="coupon-message" role={message.tone === "error" ? "alert" : "status"} className={`mt-2 ${message.tone === "error" ? "text-error" : "text-success"}`}>
           {message.text}
         </p>
       )}

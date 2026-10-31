@@ -47,7 +47,7 @@ export default async function CheckoutPage() {
     <div className="mx-auto max-w-screen-xl px-4 pt-8 pb-4 sm:px-6 lg:px-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <h1 className="font-display text-4xl lg:text-5xl">{t("checkout.title")}</h1>
-        <Link href="/cart" className="text-sm text-link underline underline-offset-4">
+        <Link href="/cart" className="text-sm text-link hover:text-accent underline underline-offset-4">
           {t("checkout.backToBag")}
         </Link>
       </div>
@@ -58,7 +58,7 @@ export default async function CheckoutPage() {
           ) : (
             <>
               {t("checkout.haveAccount")}{" "}
-              <Link href="/account/sign-in?next=/checkout" prefetch={false} className="text-link underline underline-offset-4">
+              <Link href="/account/sign-in?next=/checkout" prefetch={false} className="text-link hover:text-accent underline underline-offset-4">
                 {t("checkout.signInToFill")}
               </Link>
             </>

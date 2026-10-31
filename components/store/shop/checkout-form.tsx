@@ -207,7 +207,7 @@ export function CheckoutForm({ initial, prefill = {}, labels, bag, states, cod, 
         </p>
       )}
       {errors[name] && (
-        <p id={`checkout-${name}-error`} className="mt-1 text-sm font-medium text-sale">
+        <p id={`checkout-${name}-error`} className="mt-1 text-sm font-medium text-error">
           {errors[name]}
         </p>
       )}
@@ -264,14 +264,14 @@ export function CheckoutForm({ initial, prefill = {}, labels, bag, states, cod, 
                   ))}
                 </select>
                 {errors.stateCode && (
-                  <p id="checkout-stateCode-error" className="mt-1 text-sm font-medium text-sale">
+                  <p id="checkout-stateCode-error" className="mt-1 text-sm font-medium text-error">
                     {errors.stateCode}
                   </p>
                 )}
               </div>
             </div>
             {delivery?.ok && (
-              <p className="mt-4 text-sm font-medium text-stock" role="status">
+              <p className="mt-4 text-sm font-medium text-success" role="status">
                 {fill(labels.deliveryBy, { range: delivery.from === delivery.to ? delivery.from : `${delivery.from} – ${delivery.to}` })}
               </p>
             )}
@@ -339,7 +339,7 @@ export function CheckoutForm({ initial, prefill = {}, labels, bag, states, cod, 
           <TotalsTable cart={view} labels={bag} />
         </div>
         {message && (
-          <p role="alert" className="mt-4 rounded-sm border border-sale/40 bg-raised px-3 py-2 text-sm text-sale">
+          <p role="alert" className="mt-4 rounded-sm border border-error/40 bg-raised px-3 py-2 text-sm text-error">
             {message}
           </p>
         )}

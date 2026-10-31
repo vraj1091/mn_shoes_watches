@@ -9,18 +9,21 @@ export const IDLE: FormState = { status: "idle" };
 
 /**
  * A server-action form with a saved / error message above the button. Inputs are plain server-
- * rendered fields; the action validates and returns FormState (or redirects on create).
+ * rendered fields; the action validates and returns FormState (or redirects on create). The
+ * button is an espresso outline; `primary` makes it the page's one oxblood button.
  */
 export function AdminForm({
   action,
   children,
   submitLabel = "Save",
   className = "",
+  primary = false,
 }: {
   action: (state: FormState, formData: FormData) => Promise<FormState>;
   children: ReactNode;
   submitLabel?: string;
   className?: string;
+  primary?: boolean;
 }) {
   const toast = useToast();
   // The toast is raised as the answer arrives, not from an effect: a save can change the page so
@@ -47,13 +50,13 @@ export function AdminForm({
     >
       {children}
       <div className="mt-6 flex flex-wrap items-center gap-4">
-        <button type="submit" disabled={pending} className={buttonClasses("primary", "md")}>
+        <button type="submit" disabled={pending} className={buttonClasses(primary ? "primary" : "secondary", "md")}>
           {pending ? "Saving…" : submitLabel}
         </button>
         <div aria-live="polite" className="text-sm">
-          {state.status === "saved" && !toast && <span className="font-medium text-stock">{state.message ?? "Saved."}</span>}
+          {state.status === "saved" && !toast && <span className="font-medium text-success">{state.message ?? "Saved."}</span>}
           {state.status === "error" && (
-            <div role="alert" className="text-sale">
+            <div role="alert" className="text-error">
               <p className="font-medium">{state.message ?? "Please fix the following:"}</p>
               {state.errors && state.errors.length > 0 && (
                 <ul className="mt-1 list-disc pl-5">
@@ -98,7 +101,7 @@ export function ConfirmButton({
   if (!asking) {
     return (
       <div>
-        <button type="button" onClick={() => setAsking(true)} className={buttonClasses("secondary", "sm", variant === "danger" ? "text-sale" : "")}>
+        <button type="button" onClick={() => setAsking(true)} className={buttonClasses("secondary", "sm", variant === "danger" ? "text-error" : "")}>
           {label}
         </button>
         {message && (

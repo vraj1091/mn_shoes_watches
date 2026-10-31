@@ -18,11 +18,11 @@ export default async function SignUpPage({ searchParams }: Props) {
   const terms = (
     <>
       {before}
-      <Link href="/policies/terms" className="text-link underline underline-offset-4">
+      <Link href="/policies/terms" className="text-link hover:text-accent underline underline-offset-4">
         {t("account.termsLink")}
       </Link>
       {middle}
-      <Link href="/policies/privacy" className="text-link underline underline-offset-4">
+      <Link href="/policies/privacy" className="text-link hover:text-accent underline underline-offset-4">
         {t("account.privacyLink")}
       </Link>
       {after}

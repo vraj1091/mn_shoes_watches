@@ -106,7 +106,7 @@ export function SalesChart({ days, title }: { days: ChartDay[]; title: string })
         )}
       </div>
       <details className="mt-3 text-sm">
-        <summary className="min-h-11 cursor-pointer py-2 text-link">Show as a table</summary>
+        <summary className="min-h-11 cursor-pointer py-2 text-link hover:text-accent">Show as a table</summary>
         <div className="max-h-64 overflow-y-auto">
           <table className="w-full text-left text-sm">
             <thead>

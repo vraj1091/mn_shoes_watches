@@ -58,7 +58,7 @@ export default async function CategoriesPage({ searchParams }: Props) {
               <td className={td}>
                 <Link
                   href={`/admin/categories/${category.id}`}
-                  className={`hover:text-link ${category.depth === 0 ? "font-semibold" : ""}`}
+                  className={`hover:text-accent ${category.depth === 0 ? "font-semibold" : ""}`}
                   style={{ paddingInlineStart: `${category.depth * 1.5}rem` }}
                 >
                   {category.depth > 0 && <span className="mr-1.5 text-muted">└</span>}
@@ -79,7 +79,7 @@ export default async function CategoriesPage({ searchParams }: Props) {
       </Table>
 
       <Card title="Add a main category" className="mt-8 max-w-xl">
-        <AdminForm action={addCategory.bind(null, null)} submitLabel="Add category">
+        <AdminForm action={addCategory.bind(null, null)} submitLabel="Add category" primary>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Name">
               <TextInput name="name" required minLength={2} maxLength={60} />

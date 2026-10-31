@@ -41,7 +41,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             key={toast.id}
             role={toast.tone === "error" ? "alert" : "status"}
             className={`pointer-events-auto flex w-full items-start gap-3 rounded-md border bg-raised px-4 py-3 text-sm shadow-overlay motion-safe:animate-fade-in ${
-              toast.tone === "error" ? "border-sale/50 text-sale" : "border-stock/50 text-stock"
+              toast.tone === "error" ? "border-error/50 text-error" : "border-success/50 text-success"
             }`}
           >
             <p className="flex-1 font-medium">{toast.message}</p>

@@ -14,7 +14,7 @@ export function ProductRow({ id, title, products, link }: { id: string; title: s
           {title}
         </h2>
         {link && (
-          <Link href={link.href} className="inline-flex min-h-11 shrink-0 items-center text-sm font-medium text-link underline underline-offset-4 hover:no-underline">
+          <Link href={link.href} className="inline-flex min-h-11 shrink-0 items-center text-sm font-medium text-link hover:text-accent underline underline-offset-4 hover:no-underline">
             {link.label}
           </Link>
         )}

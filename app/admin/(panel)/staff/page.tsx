@@ -64,7 +64,7 @@ export default async function StaffPage() {
                     {!person.isActive ? (
                       <StatusBadge tone="bad">Switched off</StatusBadge>
                     ) : pending ? (
-                      <StatusBadge tone="badge">Invite not accepted</StatusBadge>
+                      <StatusBadge tone="warning">Invite not accepted</StatusBadge>
                     ) : (
                       <StatusBadge tone="good">Active</StatusBadge>
                     )}
@@ -102,7 +102,7 @@ export default async function StaffPage() {
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <Card title="Invite someone">
-          <AdminForm action={inviteStaff} submitLabel="Send invite">
+          <AdminForm action={inviteStaff} submitLabel="Send invite" primary>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Name">
                 <TextInput name="name" required autoComplete="off" />

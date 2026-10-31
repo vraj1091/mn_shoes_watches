@@ -36,7 +36,7 @@ test.describe("storefront shell", () => {
     await page.emulateMedia({ colorScheme: "dark" });
     await page.goto("/");
     const background = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-    expect(await background()).toBe("rgb(15, 19, 24)"); // Graphite 950
+    expect(await background()).toBe("rgb(22, 18, 16)"); // #161210, the warm dark page
     if (isMobile) {
       await page.getByRole("button", { name: "Open menu" }).click();
       await chooseRadio(page, "Light", page.getByRole("dialog", { name: "Menu" }));
@@ -44,9 +44,9 @@ test.describe("storefront shell", () => {
       await page.getByRole("button", { name: /^Colour theme/ }).click();
       await page.getByRole("menuitemradio", { name: "Light" }).click();
     }
-    expect(await background()).toBe("rgb(255, 255, 255)"); // Graphite 0
+    expect(await background()).toBe("rgb(245, 241, 234)"); // Bone #F5F1EA
     await page.reload();
-    expect(await background()).toBe("rgb(255, 255, 255)");
+    expect(await background()).toBe("rgb(245, 241, 234)");
     // No flash: the class is on <html> before the page paints.
     expect(await page.evaluate(() => document.documentElement.className)).toContain("light");
   });

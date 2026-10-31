@@ -16,6 +16,6 @@ export async function totpQrCode(totpUri: string): Promise<string> {
     type: "svg",
     margin: 1,
     errorCorrectionLevel: "M",
-    color: { dark: hex("graphite-950"), light: hex("graphite-0") },
+    color: { dark: hex("espresso-900"), light: hex("bone-50") },
   });
 }

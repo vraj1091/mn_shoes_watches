@@ -30,7 +30,7 @@ export default async function BrandsPage() {
                 <li key={brand.slug}>
                   <Link href={`/brands/${brand.slug}`} className="group block h-full rounded-md border border-line bg-raised p-5 transition-colors hover:border-line-strong">
                     <span className="flex items-baseline justify-between gap-3">
-                      <span className="text-lg font-semibold group-hover:text-link">{brand.name}</span>
+                      <span className="text-lg font-semibold group-hover:text-accent">{brand.name}</span>
                       <span className="text-sm text-muted">{brand.productCount === 1 ? t("brands.productsOne") : t("brands.products", { count: brand.productCount })}</span>
                     </span>
                     {brand.intro && <span className="mt-2 line-clamp-3 block text-sm text-muted">{brand.intro}</span>}

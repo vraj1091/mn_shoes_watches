@@ -36,7 +36,7 @@ export default async function OrderPage({ params }: Props) {
   return (
     <div className="mx-auto max-w-3xl px-4 pt-10 pb-4 sm:px-6">
       {!pending && (
-        <p className="flex size-12 items-center justify-center rounded-full bg-surface text-stock">
+        <p className="flex size-12 items-center justify-center rounded-full bg-surface text-success">
           <CheckIcon size={28} />
         </p>
       )}
@@ -47,7 +47,7 @@ export default async function OrderPage({ params }: Props) {
         {order.paymentMethod === "COD" ? (
           <p>{t("order.codPay", { amount: formatPrice(order.grandTotal) })}</p>
         ) : order.paymentStatus === "PAID" ? (
-          <p className="text-stock">{t("order.paid")}</p>
+          <p className="text-success">{t("order.paid")}</p>
         ) : null}
         {order.deliveryMinDate && order.deliveryMaxDate && (
           <p>{t("order.delivery", { range: dayRange(order.deliveryMinDate, order.deliveryMaxDate) })}</p>
@@ -68,7 +68,7 @@ export default async function OrderPage({ params }: Props) {
               <span className="min-w-0 flex-1 text-sm">
                 {item.brandName && <span className="block text-xs font-semibold tracking-wide text-muted uppercase">{item.brandName}</span>}
                 {item.slug ? (
-                  <Link href={`/product/${item.slug}`} className="font-medium hover:text-link">
+                  <Link href={`/product/${item.slug}`} className="font-medium hover:text-accent">
                     {item.productTitle}
                   </Link>
                 ) : (
@@ -88,7 +88,7 @@ export default async function OrderPage({ params }: Props) {
             <dd>{formatPrice(order.subtotal)}</dd>
           </div>
           {order.discountTotal > 0 && (
-            <div className={`${row} text-stock`}>
+            <div className={`${row} text-success`}>
               <dt>
                 {t("bag.discount")}
                 {order.couponCode ? ` (${order.couponCode})` : ""}
