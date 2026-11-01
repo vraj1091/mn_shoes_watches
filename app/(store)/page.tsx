@@ -17,6 +17,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { ProductRow } from "@/components/store/catalog/product-row";
 import { HeroCarousel } from "@/components/store/home/hero-carousel";
 import { PostCard } from "@/components/store/post-card";
+import { SectionHeading } from "@/components/store/section-heading";
 import { Stars } from "@/components/store/product/reviews";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -82,7 +83,7 @@ export default async function HomePage() {
             </ButtonLink>
           )}
         </div>
-        <div className="photo-tile relative order-1 aspect-[4/3] overflow-hidden rounded-lg lg:order-2 lg:col-span-7 lg:aspect-[16/11]">
+        <div className="photo-tile relative order-1 aspect-[4/3] overflow-hidden rounded-md lg:order-2 lg:col-span-7 lg:aspect-[16/11]">
           {banner.image && (
             <Image
               src={banner.image.url}
@@ -118,7 +119,7 @@ export default async function HomePage() {
         <ul className="mx-auto grid max-w-screen-xl grid-cols-2 gap-x-4 gap-y-6 px-4 py-6 sm:px-6 lg:grid-cols-4 lg:px-8">
           {trust.map((item) => (
             <li key={item.title} className="flex items-start gap-3">
-              <span className="mt-0.5 shrink-0 text-link hover:text-accent">{item.icon}</span>
+              <span className="mt-0.5 shrink-0 text-muted">{item.icon}</span>
               <span>
                 <span className="block text-sm font-semibold">{item.title}</span>
                 <span className="block text-sm text-muted">{item.note}</span>
@@ -131,9 +132,7 @@ export default async function HomePage() {
       <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
         {departments.length > 0 && (
           <section aria-labelledby="shop-by-category" className="mt-16">
-            <h2 id="shop-by-category" className="font-display text-3xl lg:text-4xl">
-              {t("home.shopByCategory")}
-            </h2>
+            <SectionHeading id="shop-by-category" title={t("home.shopByCategory")} />
             <ul className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
               {departments.map((department) => {
                 const products = inCategory(index, department.href.slice(1));
@@ -143,14 +142,14 @@ export default async function HomePage() {
                     <Link href={department.href} className="group block">
                       <span className="photo-tile relative block aspect-square overflow-hidden rounded-md">
                         {product?.image && (
-                          <Image src={product.image.url} alt="" fill sizes="(min-width: 1024px) 300px, 46vw" className="object-contain p-[10%] transition-transform duration-300 group-hover:scale-105" />
+                          <Image src={product.image.url} alt="" fill sizes="(min-width: 1024px) 300px, 46vw" className="object-contain p-[10%] transition-transform duration-200 ease-out group-hover:scale-[1.03]" />
                         )}
                       </span>
                       <span className="mt-3 flex items-center justify-between gap-2">
                         <span className="text-lg font-semibold group-hover:text-accent">{department.name}</span>
-                        <ArrowRightIcon size={18} className="shrink-0 transition-transform group-hover:translate-x-1" />
+                        <ArrowRightIcon size={18} className="shrink-0 transition-transform duration-150 group-hover:translate-x-1" />
                       </span>
-                      <span className="block text-sm text-muted">{t("home.categoryCount", { count: products.length })}</span>
+                      <span className="block text-sm text-muted">{products.length === 1 ? t("home.categoryCountOne") : t("home.categoryCount", { count: products.length })}</span>
                     </Link>
                   </li>
                 );
@@ -164,21 +163,21 @@ export default async function HomePage() {
         {forHim && forHer && (
           <section aria-label={`${t("home.forHim")}, ${t("home.forHer")}`} className="mt-16 grid gap-4 md:grid-cols-2">
             {[
-              { product: forHim, title: t("home.forHim"), href: "/watches/men" },
-              { product: forHer, title: t("home.forHer"), href: "/watches/women" },
+              { product: forHim, title: t("home.forHim"), href: "/watches/men", count: inCategory(index, "watches/men").length },
+              { product: forHer, title: t("home.forHer"), href: "/watches/women", count: inCategory(index, "watches/women").length },
             ].map((tile) => (
               // Words and photo get their own columns, so the photo never runs through the heading on a phone.
               <Link key={tile.href} href={tile.href} className="group photo-tile grid grid-cols-2 items-end gap-4 overflow-hidden rounded-md p-6 sm:p-8">
                 <span className="text-ink">
                   <span className="block font-display text-3xl leading-tight sm:text-4xl">{tile.title}</span>
                   <span className="mt-2 inline-flex min-h-11 items-center gap-2 text-sm font-semibold underline underline-offset-4">
-                    {t("home.shopNow")}
+                    {tile.count === 1 ? t("home.seeWatchesOne") : t("home.seeWatches", { count: tile.count })}
                     <ArrowRightIcon size={16} />
                   </span>
                 </span>
                 <span className="relative aspect-square">
                   {tile.product.image && (
-                    <Image src={tile.product.image.url} alt="" fill sizes="(min-width: 768px) 22vw, 44vw" className="object-contain transition-transform duration-300 group-hover:scale-105" />
+                    <Image src={tile.product.image.url} alt="" fill sizes="(min-width: 768px) 22vw, 44vw" className="object-contain transition-transform duration-200 ease-out group-hover:scale-[1.03]" />
                   )}
                 </span>
               </Link>
@@ -190,18 +189,12 @@ export default async function HomePage() {
 
         {featuredBrands.length > 0 && (
           <section aria-labelledby="brand-strip" className="mt-16">
-            <div className="flex items-end justify-between gap-4">
-              <h2 id="brand-strip" className="font-display text-2xl lg:text-3xl">
-                {t("home.brandStrip")}
-              </h2>
-              <Link href="/brands" className="inline-flex min-h-11 items-center text-sm font-medium text-link hover:text-accent underline underline-offset-4">
-                {t("home.allBrands")}
-              </Link>
-            </div>
-            <ul className="mt-6 flex flex-wrap gap-2">
+            <SectionHeading id="brand-strip" title={t("home.brandStrip")} link={{ href: "/brands", label: t("home.allBrands") }} />
+            {/* A stockist list, not a wall of logo boxes. */}
+            <ul className="mt-4 flex flex-wrap gap-x-8 gap-y-1">
               {featuredBrands.map((brand) => (
                 <li key={brand.slug}>
-                  <Link href={`/brands/${brand.slug}`} className="inline-flex min-h-12 items-center rounded-md border border-line bg-raised px-5 text-base font-semibold tracking-wide hover:border-line-strong hover:text-accent">
+                  <Link href={`/brands/${brand.slug}`} className="inline-flex min-h-11 items-center text-base font-medium tracking-[0.12em] text-ink uppercase decoration-accent decoration-2 underline-offset-8 hover:underline">
                     {brand.name}
                   </Link>
                 </li>
@@ -212,16 +205,14 @@ export default async function HomePage() {
 
         {reviews.length > 0 && (
           <section aria-labelledby="home-reviews" className="mt-16">
-            <h2 id="home-reviews" className="font-display text-2xl lg:text-3xl">
-              {t("home.reviews")}
-            </h2>
-            <ul className="mt-6 grid gap-4 md:grid-cols-3">
+            <SectionHeading id="home-reviews" title={t("home.reviews")} />
+            <ul className="mt-8 grid divide-y divide-line md:grid-cols-3 md:divide-x md:divide-y-0">
               {reviews.map((review) => (
-                <li key={review.id} className="flex flex-col rounded-md border border-line bg-raised p-5">
+                <li key={review.id} className="flex flex-col py-6 first:pt-0 last:pb-0 md:px-8 md:py-0 md:first:pl-0 md:last:pr-0">
                   <Stars rating={review.rating} />
                   <span className="sr-only">{t("product.reviewsAverage", { rating: review.rating })}</span>
-                  <blockquote className="mt-3 flex-1 text-base">“{review.body}”</blockquote>
-                  <p className="mt-4 text-sm">
+                  <blockquote className="mt-4 flex-1 text-lg">“{review.body}”</blockquote>
+                  <p className="mt-5 text-sm">
                     <span className="font-semibold">{review.authorName}</span>{" "}
                     <Link href={`/product/${review.product.slug}`} className="text-muted underline underline-offset-2 hover:text-accent">
                       {t("home.reviewOf", { product: review.product.title })}
@@ -235,14 +226,7 @@ export default async function HomePage() {
 
         {posts.length > 0 && (
           <section aria-labelledby="home-journal" className="mt-16">
-            <div className="flex items-end justify-between gap-4">
-              <h2 id="home-journal" className="font-display text-2xl lg:text-3xl">
-                {t("home.journal")}
-              </h2>
-              <Link href="/journal" className="inline-flex min-h-11 items-center text-sm font-medium text-link hover:text-accent underline underline-offset-4">
-                {t("home.viewAll")}
-              </Link>
-            </div>
+            <SectionHeading id="home-journal" title={t("home.journal")} link={{ href: "/journal", label: t("home.viewAll") }} />
             <ul className="mt-6 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {posts.slice(0, 3).map((post) => (
                 <li key={post.slug}>

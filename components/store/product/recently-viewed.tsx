@@ -3,6 +3,7 @@
 import { useEffect, useSyncExternalStore } from "react";
 import type { ProductCardData } from "@/lib/catalog/types";
 import { ProductCard, type CardLabels } from "@/components/store/catalog/product-card";
+import { SectionHeading } from "@/components/store/section-heading";
 
 const KEY = "mn-recently-viewed";
 const MAX = 12;
@@ -56,9 +57,7 @@ export function RecentlyViewed({ current, title, labels }: { current: ProductCar
   if (others.length === 0) return null;
   return (
     <section aria-labelledby="recently-viewed" className="mt-16">
-      <h2 id="recently-viewed" className="font-display text-2xl lg:text-3xl">
-        {title}
-      </h2>
+      <SectionHeading id="recently-viewed" title={title} />
       <ul className="-mx-4 mt-6 flex snap-x scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:overflow-visible sm:px-0 lg:grid-cols-4">
         {others.map((product) => (
           <li key={product.id} className="w-[44vw] shrink-0 snap-start sm:w-auto">

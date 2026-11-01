@@ -36,7 +36,7 @@ const TONES = {
   neutral: "bg-surface text-ink border-line",
   good: "bg-surface text-success border-line",
   bad: "bg-surface text-error border-line",
-  info: "bg-surface text-link hover:text-accent border-line",
+  info: "bg-surface text-ink border-line",
   warning: "bg-surface text-ink border-warning",
 } as const;
 

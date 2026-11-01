@@ -14,6 +14,7 @@ import {
   type Selection,
   type VariantDef,
 } from "@/lib/catalog/variants";
+import { scrollBehavior } from "@/lib/design/motion";
 import { formatPrice, percentOff } from "@/lib/format/money";
 import { fill } from "@/lib/format/template";
 import { buttonClasses } from "@/components/ui/button";
@@ -117,7 +118,7 @@ export function BuyBox({ title, options, variants, initial, lowStockThreshold, e
     if (!variant) {
       setPrompt(true);
       const fieldset = missing ? fieldsetRefs.current[missing.attributeId] : null;
-      fieldset?.scrollIntoView({ behavior: "smooth", block: "center" });
+      fieldset?.scrollIntoView({ behavior: scrollBehavior(), block: "center" });
       fieldset?.querySelector<HTMLInputElement>("input:not(:disabled)")?.focus({ preventScroll: true });
       return;
     }

@@ -60,7 +60,7 @@ export function ProductCard({
               loading={eager ? "eager" : "lazy"}
               placeholder={product.image.blurDataUrl ? "blur" : "empty"}
               blurDataURL={product.image.blurDataUrl ?? undefined}
-              className={`transition-opacity duration-300 ${isPlaceholderImage(product.image.url) ? "object-cover mix-blend-normal" : "object-contain p-[4%]"} ${product.hoverImage ? "lg:group-hover:opacity-0" : ""}`}
+              className={`transition-opacity duration-200 ${isPlaceholderImage(product.image.url) ? "object-cover mix-blend-normal" : "object-contain p-[4%]"} ${product.hoverImage ? "lg:group-hover:opacity-0" : ""}`}
             />
             {product.hoverImage && (
               // Second photo on hover (desktop only); decorative, the first photo already has the alt text.
@@ -69,7 +69,7 @@ export function ProductCard({
                 alt=""
                 fill
                 sizes={CARD_SIZES}
-                className="object-contain p-[4%] opacity-0 transition-opacity duration-300 group-hover:opacity-100 max-lg:hidden"
+                className="object-contain p-[4%] opacity-0 transition-opacity duration-200 group-hover:opacity-100 max-lg:hidden"
               />
             )}
           </>

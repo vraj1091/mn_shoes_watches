@@ -311,7 +311,8 @@ The default is the device setting; a choice is stored under the key the shop alr
 class before the first paint, so there is no flash. The switch is a menu in the desktop header and the admin, and a
 row of three buttons in the phone menu drawer (a fourth header icon would crowd the logo at 390 px). The serif
 (Bodoni Moda) is kept for the hero, page titles and editorial section headings; product names, prices, navigation,
-filters, buttons and the whole admin are set in Hanken Grotesk, with tabular numerals for prices.
+filters, buttons and the whole admin are set in Hanken Grotesk, with tabular numerals for prices. (Body font
+now Instrument Sans: see 74.)
 
 **46. The mega menu floats on the raised surface above a dimmed page.**
 Before, the panel used the page colour with a faint shadow, so in dark mode the category page underneath seemed to
@@ -575,3 +576,36 @@ The owner found headings hard to read and the "Watches for him / her" tiles unre
 A layout check (scratch script, run before each report) loads 26 pages at 390, 768, 1024 and 1440 px and fails on
 text over a photo, sideways scrolling, clipped text or text under 12 px; a second check measures every visible text
 run against its real background in both themes.
+
+**74. Nothing that reads as a template (Phase 4 of the 1 Nov brief).**
+The brief bans the marks of generated sites; a unit test (`tests/unit/design-rules.test.ts`) now fails on any of them
+in `app/` or `components/`, so they cannot creep back.
+- *Body type is Instrument Sans* (replaces Hanken Grotesk from the original brief and 45; the new brief allows
+  Instrument Sans or DM Sans). Instrument Sans is a slightly narrow grotesque with a tailored feel that sits well
+  beside Bodoni; DM Sans is rounder and more geometric. Same loading as before: not preloaded, swapped in from a
+  size-matched fallback.
+- *Serif with restraint.* Bodoni stays for the logo, the hero, page titles, the home collection tiles, Journal titles
+  and store section headings, at one size per level (section headings are all 24/30 px). It is not used inside
+  tasks: forms, the emailed-code step, checkout steps, product details and the admin are all sans.
+- *Corners* are 2 px (buttons, inputs, badges), 4 px (cards, photos) and 6 px (dialogs, sheets); before they were
+  4/8/12. `rounded-full` is kept only for things that are round: colour swatches, count badges, status dots and
+  meters. The WhatsApp button, carousel and gallery arrows, wishlist heart and the order-confirmed tick lost their
+  circles.
+- *Hairlines, not boxes.* Store sections open with a full-width hairline and the heading (`SectionHeading`), brands
+  are a plain stockist row instead of pill boxes, home reviews are three columns divided by hairlines instead of
+  cards, and the hero shows "01 / 03" between square arrows on a hairline instead of dots.
+- *Shadows.* One small shadow (`shadow-overlay`, 8/24 px, espresso-tinted) for what floats above the page: menus,
+  drawers, the sticky buy bar, toasts and the WhatsApp button. The unused card shadow is gone. No gradients, glass,
+  blur, glow or emoji anywhere (there were none; the test keeps it that way).
+- *Motion* is 150–250 ms: photo hovers went from 300 ms and 5 % zoom to 200 ms and 3 %, the WhatsApp button fades
+  rather than grows. Looping animation is only the admin's loading placeholder, behind `motion-safe`. Scrolls started
+  from code (the hero arrows, jumping to the size picker) ignored the reduced-motion setting, because the CSS rule
+  cannot reach `scrollTo({ behavior: "smooth" })`; they now ask `scrollBehavior()` (`lib/design/motion.ts`).
+- *Copy.* The demo reviews were DummyJSON filler ("Highly impressed!", "Waste of money!") under American names. The
+  ratings and dates stay; the text is now written per kind of product and per rating (fit, size, how long a scent
+  lasts, what came in the box) and never promises anything about the shop's own service, under first names with an
+  initial (`prisma/demo/reviews.ts`). Lines are picked so no two products share their first five-star review or
+  reviewer, which the home page shows side by side. "Shop now" on the watch tiles became the real count ("See all 6 watches"). Unused
+  hero strings from the old hand-drawn underline were removed with the underline itself.
+- *Small fixes found on the way.* Three non-interactive things changed colour on hover (home trust icons, an admin
+  checklist icon, the admin "info" badge), and counts of one read "1 stars" and could read "1 products".

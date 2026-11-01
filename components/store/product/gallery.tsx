@@ -151,10 +151,10 @@ export function Gallery({ images, videoEmbed, labels, icons }: { images: Gallery
               )}
               {slides > 1 && (
                 <>
-                  <button type="button" aria-label={labels.previous} onClick={() => move(-1)} className="absolute top-1/2 left-2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-raised shadow-overlay">
+                  <button type="button" aria-label={labels.previous} onClick={() => move(-1)} className="absolute top-1/2 left-2 flex size-11 -translate-y-1/2 items-center justify-center rounded-sm border border-line bg-raised hover:border-line-strong">
                     {icons.previous}
                   </button>
-                  <button type="button" aria-label={labels.next} onClick={() => move(1)} className="absolute top-1/2 right-2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-raised shadow-overlay">
+                  <button type="button" aria-label={labels.next} onClick={() => move(1)} className="absolute top-1/2 right-2 flex size-11 -translate-y-1/2 items-center justify-center rounded-sm border border-line bg-raised hover:border-line-strong">
                     {icons.next}
                   </button>
                 </>

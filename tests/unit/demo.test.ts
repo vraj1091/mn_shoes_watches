@@ -6,6 +6,7 @@ import { BRANDS, DEMO_PAIRINGS, DEMO_PRODUCTS, DUMMY_PRODUCTS, PLACEHOLDER_PRODU
 import { DEMO_BANNERS, DEMO_COUPONS, DEMO_ORDERS, DEMO_POSTS } from "@/prisma/demo/content";
 import { compareAtFromDiscount, inrFromUsd } from "@/prisma/demo/pricing";
 import { placeholderSvg } from "@/prisma/demo/placeholder-svg";
+import { demoReview } from "@/prisma/demo/reviews";
 
 const paths: string[] = [];
 const walk = (nodes: CategorySeed[], parent = "") => {
@@ -127,5 +128,22 @@ describe("demo catalogue", () => {
     for (const product of DUMMY_PRODUCTS) {
       expect(saved[product.dummy.category]!.map((item) => item.title), product.dummy.title).toContain(product.dummy.title);
     }
+  });
+
+  it("writes demo reviews that do not repeat on a product, or among the five-star ones of a kind", () => {
+    const saved = JSON.parse(readFileSync("prisma/demo/dummyjson.json", "utf8")) as Record<string, { title: string; reviews: { rating: number }[] }[]>;
+    const firstFiveStar = new Map<string, string[]>();
+    for (const product of DUMMY_PRODUCTS) {
+      const reviews = saved[product.dummy.category]!.find((item) => item.title === product.dummy.title)!.reviews;
+      const written = reviews.map((review, position) => demoReview(product.dummy.category, product.slug, Math.round(review.rating), position));
+      expect(new Set(written.map((review) => review.body)).size, product.slug).toBe(written.length);
+      expect(new Set(written.map((review) => review.authorName)).size, product.slug).toBe(written.length);
+      const kind = firstFiveStar.get(product.dummy.category) ?? [];
+      kind.push(demoReview(product.dummy.category, product.slug, 5, 0).body);
+      firstFiveStar.set(product.dummy.category, kind);
+    }
+    for (const [kind, bodies] of firstFiveStar) expect(new Set(bodies).size, kind).toBe(bodies.length);
+    const firstNames = DUMMY_PRODUCTS.map((product) => demoReview(product.dummy.category, product.slug, 5, 0).authorName);
+    expect(new Set(firstNames).size).toBe(firstNames.length);
   });
 });

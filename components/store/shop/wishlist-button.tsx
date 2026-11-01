@@ -15,7 +15,7 @@ export function WishlistButton({ productId, title, labels, size = "card" }: { pr
       aria-pressed={saved}
       aria-label={fill(saved ? labels.remove : labels.add, { title })}
       onClick={() => void wishlistStore.toggle(productId)}
-      className={`flex items-center justify-center rounded-full transition-colors ${
+      className={`flex items-center justify-center rounded-sm transition-colors ${
         size === "card" ? "size-11 text-tile-ink hover:text-accent" : "size-11 border border-line text-ink hover:border-line-strong hover:text-accent"
       } aria-pressed:text-accent`}
     >

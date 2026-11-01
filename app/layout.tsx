@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { connection } from "next/server";
-import { Bodoni_Moda, Hanken_Grotesk } from "next/font/google";
+import { Bodoni_Moda, Instrument_Sans } from "next/font/google";
 import { resolve } from "@/lib/design/tokens";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import "./globals.css";
@@ -14,11 +14,11 @@ const display = Bodoni_Moda({
   variable: "--font-bodoni",
 });
 
-const sans = Hanken_Grotesk({
+const sans = Instrument_Sans({
   subsets: ["latin"],
   display: "swap",
   preload: false,
-  variable: "--font-hanken",
+  variable: "--font-instrument",
 });
 
 export const metadata: Metadata = {

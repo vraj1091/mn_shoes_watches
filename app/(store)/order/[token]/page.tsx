@@ -36,7 +36,7 @@ export default async function OrderPage({ params }: Props) {
   return (
     <div className="mx-auto max-w-3xl px-4 pt-10 pb-4 sm:px-6">
       {!pending && (
-        <p className="flex size-12 items-center justify-center rounded-full bg-surface text-success">
+        <p className="text-success">
           <CheckIcon size={28} />
         </p>
       )}

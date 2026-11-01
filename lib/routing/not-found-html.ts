@@ -64,12 +64,12 @@ main{padding:64px 0 96px}
 h1{font:500 38px/1.15 "Bodoni 72",Didot,Georgia,serif;margin:12px 0 0;text-wrap:balance}
 .intro{font-size:18px;color:var(--muted);max-width:60ch;margin:16px 0 0}
 form{display:flex;gap:8px;max-width:36rem;margin:32px 0 0}
-input{flex:1;min-height:44px;padding:0 12px;border:1px solid var(--line-strong);border-radius:4px;background:var(--canvas);color:var(--ink);font:inherit}
-button,.button{display:inline-flex;align-items:center;min-height:44px;padding:0 20px;border:0;border-radius:4px;background:var(--primary);color:var(--on-primary);font-family:inherit;font-size:16px;font-weight:500;line-height:1;text-decoration:none;cursor:pointer}
+input{flex:1;min-height:44px;padding:0 12px;border:1px solid var(--line-strong);border-radius:2px;background:var(--canvas);color:var(--ink);font:inherit}
+button,.button{display:inline-flex;align-items:center;min-height:44px;padding:0 20px;border:0;border-radius:2px;background:var(--primary);color:var(--on-primary);font-family:inherit;font-size:16px;font-weight:500;line-height:1;text-decoration:none;cursor:pointer}
 h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:56px 0 16px;font-weight:600}
 ul{list-style:none;margin:0;padding:0}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:1px solid var(--line-strong);border-radius:4px;color:var(--ink);text-decoration:none}
+.chip{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:1px solid var(--line-strong);border-radius:2px;color:var(--ink);text-decoration:none}
 .chip:hover,.list a:hover{color:var(--accent)}
 .list{border-top:1px solid var(--line);max-width:36rem}
 .list a{display:flex;justify-content:space-between;gap:16px;min-height:48px;align-items:center;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none}

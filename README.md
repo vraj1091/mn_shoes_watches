@@ -160,6 +160,11 @@ The palette is **Bone, Espresso, Oxblood**, from the materials the shop sells, u
 
 Other buttons are espresso outline or text buttons. `npm run check:contrast` checks every pair in both themes (WCAG AA).
 
+Type and shape: Bodoni Moda for the logo, the hero and headings; Instrument Sans for everything else. Corners are
+2 px (buttons, inputs), 4 px (cards, photos) and 6 px (dialogs); sections are divided by hairlines rather than boxes,
+and motion lasts 150–250 ms (none when the device asks for reduced motion). `npm test` fails on gradients, blur,
+large corners, heavy shadows, slow animation or emoji (DECISIONS.md 74).
+
 ## Data folder
 
 Everything the app writes lives in `DATA_DIR` (default `./data`): `mn.db` (database), `cache.db` (page cache,

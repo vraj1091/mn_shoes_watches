@@ -31,17 +31,19 @@
   --text-6xl: 3.75rem;
   --text-6xl--line-height: 1.04;
 
-  /* 4 px on buttons and inputs, 8 px on cards and images; full only for swatches and dots. */
+  /*
+   * Small, tailored corners (DECISIONS.md 74): 2 px on buttons, inputs and badges, 4 px on cards
+   * and photos, 6 px on dialogs and sheets. Full only for things that are round: swatches, dots, counts.
+   */
   --radius-*: initial;
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
   --radius-full: 9999px;
 
-  /* One soft shadow for anything that floats above the page: mega menu, drawers, dialogs. */
+  /* Surfaces are separated by hairlines. Only what floats above the page (menus, drawers, dialogs) casts a shadow, and a small one. */
   --shadow-*: initial;
-  --shadow-overlay: 0 18px 40px -16px var(--shadow-tint), 0 2px 8px -2px var(--shadow-tint);
-  --shadow-card: 0 1px 2px 0 var(--shadow-tint);
+  --shadow-overlay: 0 8px 24px -12px var(--shadow-tint);
 
   --ease-out: cubic-bezier(0.2, 0, 0, 1);
 
@@ -100,7 +102,7 @@
    * strokes that hold up on a phone (DECISIONS.md 73).
    */
   --font-display--font-variation-settings: "opsz" 11;
-  --font-sans: var(--font-hanken), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-sans: var(--font-instrument), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 @layer base {
@@ -171,24 +173,6 @@
 }
 
 @layer utilities {
-  /* A loose hand-drawn stroke under one word in the hero. */
-  .scribble {
-    position: relative;
-    white-space: nowrap;
-  }
-  .scribble::after {
-    content: "";
-    position: absolute;
-    left: -2%;
-    right: -2%;
-    bottom: -0.12em;
-    height: 0.32em;
-    background-color: var(--accent);
-    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 8.5C38 4 79 3 118 4.6c25 1 52 2.9 80 1.1' fill='none' stroke='black' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E")
-      center / 100% 100% no-repeat;
-    pointer-events: none;
-  }
-
   .measure {
     max-width: 68ch;
   }

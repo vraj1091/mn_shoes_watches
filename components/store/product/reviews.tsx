@@ -1,6 +1,7 @@
 import type { ProductReviews } from "@/lib/data/reviews";
 import { formatDate } from "@/lib/format/date";
 import { t } from "@/lib/i18n";
+import { SectionHeading } from "@/components/store/section-heading";
 
 export function Stars({ rating, size = "size-4" }: { rating: number; size?: string }) {
   return (
@@ -17,10 +18,8 @@ export function Stars({ rating, size = "size-4" }: { rating: number; size?: stri
 /** Rating summary with the spread of stars, then the reviews themselves, newest first. */
 export function ReviewsSection({ data }: { data: ProductReviews }) {
   return (
-    <section aria-labelledby="reviews-heading" className="mt-16 border-t border-line pt-12">
-      <h2 id="reviews-heading" className="font-display text-2xl lg:text-3xl">
-        {t("product.reviewsTitle")}
-      </h2>
+    <section aria-labelledby="reviews-heading" className="mt-16">
+      <SectionHeading id="reviews-heading" title={t("product.reviewsTitle")} />
       {data.count === 0 ? (
         <p className="mt-4 text-base text-muted">{t("product.reviewsNone")}</p>
       ) : (
@@ -37,7 +36,7 @@ export function ReviewsSection({ data }: { data: ProductReviews }) {
             <dl className="mt-5 space-y-2">
               {data.distribution.map((row) => (
                 <div key={row.stars} className="flex items-center gap-3 text-sm">
-                  <dt className="w-14 shrink-0 text-muted">{t("product.reviewsStars", { stars: row.stars })}</dt>
+                  <dt className="w-14 shrink-0 text-muted">{row.stars === 1 ? t("product.reviewsStarsOne") : t("product.reviewsStars", { stars: row.stars })}</dt>
                   <dd className="flex flex-1 items-center gap-2">
                     <span className="h-2 flex-1 overflow-hidden rounded-full bg-line">
                       <span className="block h-full rounded-full bg-star" style={{ width: `${(row.count / data.count) * 100}%` }} />

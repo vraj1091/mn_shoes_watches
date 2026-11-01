@@ -86,7 +86,7 @@ export function CodeStep({
   return (
     <form onSubmit={submit} noValidate className="space-y-5">
       <div>
-        <h2 className="font-display text-2xl">{labels.checkEmailTitle}</h2>
+        <h2 className="text-xl font-semibold">{labels.checkEmailTitle}</h2>
         <p className="mt-2 text-base" role="status">
           {sentText ?? fill(labels.checkEmailSent!, { email })}
         </p>

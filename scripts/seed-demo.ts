@@ -31,6 +31,7 @@ import { BRANDS, DEMO_PAIRINGS, DEMO_PRODUCTS, type DemoProduct, type DummyCateg
 import { DEMO_AUTHOR, DEMO_BANNERS, DEMO_COUPONS, DEMO_CUSTOMERS, DEMO_ORDERS, DEMO_POSTS, type DemoOrder } from "../prisma/demo/content";
 import { compareAtFromDiscount, inrFromUsd } from "../prisma/demo/pricing";
 import { placeholderSvg } from "../prisma/demo/placeholder-svg";
+import { demoReview } from "../prisma/demo/reviews";
 
 if (existsSync(".env")) process.loadEnvFile(".env");
 
@@ -306,16 +307,18 @@ async function createProduct(
     if (position === 0) firstMediaId = created.id;
   }
 
-  // DummyJSON's own reviews become demo reviews.
+  // DummyJSON's star ratings become demo reviews, with written text in place of its filler comments.
   for (const [index, review] of reviews.entries()) {
     const at = daysAgo(Math.max(0, seed.publishedDaysAgo - 3 - index * 2), 18);
+    const rating = Math.min(5, Math.max(1, Math.round(review.rating)));
+    const written = seed.source === "dummyjson" ? demoReview(seed.dummy.category, seed.slug, rating, index) : { body: review.comment, authorName: review.reviewerName };
     await prisma.review.create({
       data: {
         storeId: STORE,
         productId: product.id,
-        authorName: review.reviewerName,
-        rating: Math.min(5, Math.max(1, Math.round(review.rating))),
-        body: review.comment,
+        authorName: written.authorName,
+        rating,
+        body: written.body,
         status: "APPROVED",
         isDemo: true,
         isFeatured: review.rating >= 5 && index === 0,
