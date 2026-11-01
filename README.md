@@ -189,6 +189,8 @@ of it in `/tmp`. The project's environment variables on Vercel:
 | `EMAIL_TRANSPORT` | `outbox` |
 | `HIDE_FROM_SEARCH` | `true` |
 
-Limits of the demo: changes (orders, admin edits, uploaded photos) last only while a server instance lives and are not
-shared between instances; no emails are sent, so customer sign-up cannot be completed (guest checkout works); it is
-hidden from search engines.
+Every page carries a "Demo shop" announcement. Limits of the demo: changes (orders, admin edits) last only while a
+server instance lives and are not shared between instances; photo uploads may not appear; no emails are sent, so
+customer sign-up cannot be completed (guest checkout works); unknown addresses show the not-found page with status
+200 rather than 404; it is hidden from search engines. Sign-in sessions travel in an encrypted cookie there, never on
+the real shop (DECISIONS.md 76).

@@ -17,9 +17,13 @@ const env = { ...process.env, NODE_ENV: "production", DATA_DIR: seedDir, DATA_SE
 execSync("npx prisma migrate deploy", { env, stdio: "inherit" });
 execSync("npx tsx scripts/seed-demo.ts", { env, stdio: "inherit" });
 
+const db = new Database(path.join(seedDir, "mn.db"));
+// The demo is public and full of real brand names: every page says it is a demo, in the announcement bar.
+db.prepare(`UPDATE "StoreSettings" SET "announcementEnabled" = 1, "announcementText" = ?, "announcementHref" = NULL WHERE "storeId" = 'main'`).run(
+  "Demo shop: orders here are not real, and nothing is charged or delivered.",
+);
 // One self-contained file: fold the write-ahead log into mn.db and switch it off, so mn.db alone
 // is the whole database. The search index and page cache rebuild themselves at runtime.
-const db = new Database(path.join(seedDir, "mn.db"));
 db.pragma("wal_checkpoint(TRUNCATE)");
 db.pragma("journal_mode = DELETE");
 db.close();

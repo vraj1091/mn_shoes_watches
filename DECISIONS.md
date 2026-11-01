@@ -655,8 +655,26 @@ on Vercel (`VERCEL=1`); the Hostinger build is unchanged.
 - At runtime `DATA_DIR=/tmp/mn-data` and `DATA_SEED_DIR=demo-seed`: each new server instance copies the prepared
   database into `/tmp` before first use (`lib/db/paths.ts`). The search index and page cache rebuild themselves.
   The SQLite page-cache handler is off on Vercel (instances share no disk), so each instance keeps its own cache.
+- Vercel runs the API routes and the pages as separate functions, each with its own copy. Pages share one, so the
+  shop, checkout, order pages and admin agree with each other (a guest order shows in the admin, an admin edit in
+  the shop). Sign-in happens in Better Auth's API route, though, so on the demo only (`DATA_SEED_DIR` set) the
+  session travels in an encrypted, self-refreshing cookie (`lib/auth/demo-session.ts`) that pages accept without
+  a database lookup. The real shop keeps the database check, so switching an account off signs it out at once.
+  Photo uploads also go through an API route and may not appear on the demo.
+- The build sets the announcement bar to "Demo shop: orders here are not real, and nothing is charged or
+  delivered." on every page.
 - What that means for the demo: orders, sign-ups, admin edits and uploaded photos last only as long as the instance
   (minutes to hours) and are not shared between instances; every new instance starts again from the demo data.
   Emails are not sent (`EMAIL_TRANSPORT=outbox`), so customer sign-up codes cannot arrive; guest checkout works.
   Two-factor sign-in for the admin is off, because a set-up would vanish with the instance. `HIDE_FROM_SEARCH=true`
   keeps the copy, with its real brand names and placeholder address, out of search engines.
+- Unknown addresses show the "Page not found" page with status 200 on the demo, not 404. proxy.ts answers real
+  404s by reading the database, but on Vercel it runs as its own function, and Next 16.4 does not apply
+  `outputFileTracingIncludes` to the proxy (its trace was checked), so the prepared database is not shipped with
+  it. The proxy then does what it does on a fresh install with no database: it lets pages decide, and the page
+  shows the not-found content after its 200 has gone out. Visitors see the same page; search engines are kept out.
+  The real shop on Hostinger is one Node process with the database on disk, where the proxy answers 404s as tested.
+- The first deploys also exposed two faults that affected every fresh checkout, not only Vercel: `.gitignore`'s
+  `data/` hid the source folder `lib/data/` from git (now `/data/`), and npm 11 had written a lockfile npm 10
+  rejects (regenerated with npm 10, no versions changed). Copying the prepared database moved from `dataDir()` to
+  the database client, because Vercel sets the variables during the build too and `prisma generate` failed.
