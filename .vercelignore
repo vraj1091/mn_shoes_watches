@@ -3,13 +3,14 @@
 .env
 .env.*
 !.env.example
-data/
-demo-seed/
+# (leading slashes: a bare "data/" would also drop the source folder lib/data/)
+/data/
+/demo-seed/
 # Build output and test reports:
-.next/
-node_modules/
-test-results/
-playwright-report/
-.lighthouseci/
-screenshots/
-coverage/
+/.next/
+/node_modules/
+/test-results/
+/playwright-report/
+/.lighthouseci/
+/screenshots/
+/coverage/

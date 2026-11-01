@@ -12,10 +12,11 @@ build/
 # prisma client (generated on install)
 lib/generated/
 
-# local data: SQLite database, search index, cache, uploads, backups
-data/
+# local data: SQLite database, search index, cache, uploads, backups. The leading slash matters: a bare
+# "data/" also matched the source folder lib/data/, which was never committed until 1 Nov 2026.
+/data/
 # the Vercel demo's database, made at build time by scripts/vercel-build.mjs
-demo-seed/
+/demo-seed/
 
 # env files (.env.example is committed)
 .env
