@@ -12,7 +12,6 @@ import path from "node:path";
 export function dataDir(): string {
   const dir = path.resolve(/*turbopackIgnore: true*/ process.env.DATA_DIR ?? "data");
   mkdirSync(dir, { recursive: true });
-  startFromSeedCopy(dir);
   return dir;
 }
 
@@ -23,12 +22,16 @@ let seedChecked = false;
  * DATA_SEED_DIR names a database prepared at build time (scripts/vercel-build.mjs) and each new
  * instance copies it into DATA_DIR (/tmp) before first use. Changes last as long as the instance.
  * The real shop never sets DATA_SEED_DIR, and an existing database is never overwritten.
+ *
+ * Called by the shop's database client when it opens the database, not by dataDir(): on Vercel the
+ * variable is also set during the build, where Prisma's own tools (generate, migrate) resolve the
+ * folder before the prepared database exists.
  */
-function startFromSeedCopy(dir: string) {
+export function startFromSeedCopy() {
   const source = process.env.DATA_SEED_DIR;
   if (seedChecked || !source) return;
   seedChecked = true;
-  const target = path.join(dir, "mn.db");
+  const target = databaseFile();
   if (!existsSync(target)) copyFileSync(path.resolve(/*turbopackIgnore: true*/ source, "mn.db"), target);
 }
 

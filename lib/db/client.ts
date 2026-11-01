@@ -2,7 +2,7 @@ import "server-only";
 import Database from "better-sqlite3";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import { PrismaClient } from "@/lib/generated/prisma/client";
-import { databaseFile, databaseUrl } from "./paths";
+import { databaseFile, databaseUrl, startFromSeedCopy } from "./paths";
 
 /**
  * WAL lets shoppers keep reading while an order is written. The setting is stored in the
@@ -21,6 +21,7 @@ function enableWal(): string {
 }
 
 function createClient() {
+  startFromSeedCopy();
   const journalMode = enableWal();
   const adapter = new PrismaBetterSqlite3({ url: databaseUrl() });
   const client = new PrismaClient({ adapter });
