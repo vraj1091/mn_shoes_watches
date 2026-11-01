@@ -5,6 +5,7 @@ import { resolveListing } from "@/lib/catalog/scope";
 import { describe, listingIndexing } from "@/lib/seo/listing";
 import { t } from "@/lib/i18n";
 import { Breadcrumbs } from "@/components/store/catalog/breadcrumbs";
+import { ListingIntro } from "@/components/store/catalog/listing-intro";
 import { ListingView } from "@/components/store/catalog/listing-view";
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -39,7 +40,7 @@ export default async function BrandPage({ params, searchParams }: Props) {
         <header>
           <Breadcrumbs items={[{ name: t("brands.title"), href: "/brands" }, { name: brand.name, href: `/brands/${brand.slug}` }]} />
           <h1 className="mt-3 font-display text-4xl lg:text-5xl">{brand.name}</h1>
-          {listing.result.page === 1 && brand.intro && <p className="measure mt-4 text-base lg:text-lg">{brand.intro}</p>}
+          {listing.result.page === 1 && brand.intro && <ListingIntro text={brand.intro} labels={{ more: t("catalog.introMore"), less: t("catalog.introLess") }} />}
         </header>
       }
       empty={

@@ -1,11 +1,14 @@
 import { CaretDownIcon } from "@/components/icons";
+import { JsonLd } from "@/components/seo/json-ld";
 import type { Faq } from "@/lib/data/catalog";
+import { faqPage } from "@/lib/seo/structured-data";
 
-/** Questions and answers as native disclosures: readable without JavaScript and by crawlers. FAQPage JSON-LD comes in Phase 5. */
+/** Questions and answers as native disclosures, readable without JavaScript and by crawlers, plus FAQPage JSON-LD. */
 export function FaqList({ title, faqs }: { title: string; faqs: Faq[] }) {
   if (faqs.length === 0) return null;
   return (
     <section aria-labelledby="faq-heading" className="measure">
+      <JsonLd data={faqPage(faqs)} />
       <h2 id="faq-heading" className="font-display text-2xl lg:text-3xl">
         {title}
       </h2>

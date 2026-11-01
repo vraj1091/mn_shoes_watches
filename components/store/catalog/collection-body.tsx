@@ -3,6 +3,7 @@ import { ancestors } from "@/lib/catalog/query";
 import type { ResolvedListing, ScopeRef } from "@/lib/catalog/scope";
 import { t } from "@/lib/i18n";
 import { Breadcrumbs } from "./breadcrumbs";
+import { ListingIntro } from "./listing-intro";
 import { FaqList } from "./faq-list";
 import { ListingView } from "./listing-view";
 
@@ -30,7 +31,7 @@ export function CollectionBody({
         <header>
           <Breadcrumbs items={[...trail, { name: collection.title, href: collection.landingPath ? `/${collection.landingPath}` : `/collections/${collection.slug}` }]} />
           <h1 className="mt-3 font-display text-4xl lg:text-5xl">{collection.title}</h1>
-          {firstPage && collection.intro && <p className="measure mt-4 text-base text-ink lg:text-lg">{collection.intro}</p>}
+          {firstPage && collection.intro && <ListingIntro text={collection.intro} labels={{ more: t("catalog.introMore"), less: t("catalog.introLess") }} />}
         </header>
       }
       empty={

@@ -146,11 +146,12 @@ export const FIXED_SEGMENTS = new Set([
 ]);
 
 /**
- * Files served at the site root by app/ metadata routes (app/robots.ts, app/icon.svg). Any other
- * root path with an extension (/old-photo.jpg, /wp-login.php) is a real 404, not a 200 error page.
- * tests/unit/routing.test.ts checks this list against the files in app/.
+ * Files served at the site root by app/ metadata routes (app/robots.ts, app/sitemap.ts,
+ * app/icon.svg) and by public/ (og.png, the default link preview). Any other root path with an
+ * extension (/old-photo.jpg, /wp-login.php) is a real 404, not a 200 error page.
+ * tests/unit/routing.test.ts checks this list against the files in app/ and public/.
  */
-export const FIXED_FILES = new Set(["robots.txt", "icon.svg"]);
+export const FIXED_FILES = new Set(["robots.txt", "sitemap.xml", "icon.svg", "og.png"]);
 
 export type RouteDecision = { action: "pass" } | { action: "not-found" } | { action: "redirect"; location: string };
 

@@ -98,7 +98,9 @@ export function BuyBox({ title, options, variants, initial, lowStockThreshold, e
   useEffect(() => {
     const element = buttonsRef.current;
     if (!element) return;
-    const observer = new IntersectionObserver(([entry]) => setShowSticky(!entry!.isIntersecting && entry!.boundingClientRect.top < 0));
+    // The observed area reaches far below the screen, so the buttons only leave it by scrolling off the top. A jump
+    // straight from the foot of the page to the top (tapping the status bar) then still hides the bar again.
+    const observer = new IntersectionObserver(([entry]) => setShowSticky(!entry!.isIntersecting), { rootMargin: "0px 0px 100000px 0px" });
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
@@ -254,11 +256,11 @@ export function BuyBox({ title, options, variants, initial, lowStockThreshold, e
 
       {delivery && <div className="mt-6">{delivery}</div>}
 
-      {/* Phones: price and "Add to bag" stay reachable once the main buttons scroll away. */}
+      {/* Phones: price and "Add to bag" stay reachable once the main buttons scroll away. From tablet width the buy box sits beside the photo. */}
       {!allSoldOut && (
         <div
           hidden={!showSticky}
-          className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-raised px-4 pt-3 shadow-overlay lg:hidden"
+          className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-raised px-4 pt-3 shadow-overlay md:hidden"
           style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
         >
           <div className="mx-auto flex max-w-screen-sm items-center gap-3">

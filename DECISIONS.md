@@ -609,3 +609,38 @@ in `app/` or `components/`, so they cannot creep back.
   hero strings from the old hand-drawn underline were removed with the underline itself.
 - *Small fixes found on the way.* Three non-interactive things changed colour on hover (home trust icons, an admin
   checklist icon, the admin "info" badge), and counts of one read "1 stars" and could read "1 products".
+
+**75. Search engines, link previews and the last layout gaps (Phase 5 of the 1 Nov brief).**
+- *Sitemap.* `/sitemap.xml` lists every live page that is not marked "hide from search": home, categories, products
+  (with up to four photos each), brands that have active products, collections at their landing address, sale,
+  Journal posts, policies, about, FAQ and contact. Built per request from cached data, like the pages, so the build
+  still needs no database. The first version listed three brand pages that 404 (brands with no active products) and
+  a collection that redirects; it now uses the pages' own rules, and an end-to-end test requests every address in
+  the sitemap and fails on anything but 200. robots.txt names the sitemap and reads the site address at request time.
+- *Structured data (JSON-LD).* Store and WebSite on the home page (address details still in [brackets] are left out,
+  not published), Product with price in rupees, stock, rating and up to five reviews on product pages, BreadcrumbList
+  wherever breadcrumbs show, FAQPage wherever questions and answers show, BlogPosting on Journal posts. Built by pure
+  functions in `lib/seo/structured-data.ts` (unit-tested) and written with "<" escaped, so no product name or review
+  can close the script tag.
+- *Link previews.* Product pages share their own photos, Journal posts their cover (type "article"), and every other
+  page a default card (`public/og.png`, 1200 × 630, rendered from the colour tokens by `npm run tokens`). A file-based
+  `opengraph-image` was not used because Next gives it priority over the photos a product page sets. Pages that set no
+  title of their own fall back to their `<title>`. `og.png` and `sitemap.xml` were added to the proxy's list of root
+  files, which would otherwise have answered 404; the routing test now checks `public/` as well as `app/`.
+- *HIDE_FROM_SEARCH=true* blocks every crawler in robots.txt and marks every page noindex, for demo and test copies
+  (the Vercel demo, 76). The real shop leaves it out.
+- *Layout.* Product pages use two columns from 768 px (tablets showed a full screen of photo before the name and
+  price); the sticky phone buy bar stopped hiding when the page jumped straight back to the top (it only watched the
+  screen's bottom edge) and now has an end-to-end test; long category, collection and brand introductions show three
+  lines and "Read more" on phones so products start on the first screen; the admin product filters fold behind
+  "More filters" on phones. Lighthouse budgets now cover a category and a product page too (performance 90).
+- *Performance.* Measured on this laptop, standard Lighthouse (mobile, simulated) gave the category and product
+  pages 86–88 with the CPU at full speed and 63–73 when it slowed down on battery (its benchmark swings 650–1,850,
+  so local scores are not comparable run to run). With real throttling and no CPU slowdown they score 98–99
+  (largest paint 1.9 s, blocking time under 100 ms); with the 4x CPU slowdown that stands in for a low-end phone,
+  50–67. The traces showed why the simulated score is low: the browser finished loading by 0.4 s but first painted
+  at 0.6 s, after React had hydrated the page in small slices, and Lighthouse's model then charges every script to
+  the first paint. Part of that hydration was a second copy of the whole category tree in the phone menu, on every
+  page; the menu now renders its contents when first opened (a `<dialog>` cannot open without JavaScript, and the
+  desktop menu keeps every category link in the HTML for search engines). The deciding numbers are PageSpeed
+  Insights on the deployed site and the Lighthouse step in GitHub Actions, which run on steady hardware.

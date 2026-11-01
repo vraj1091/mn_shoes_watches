@@ -205,6 +205,18 @@ test.describe("product page", () => {
     await expect(recent.getByRole("link", { name: /Kensington plain-toe Oxford/ })).toHaveCount(0);
   });
 
+  test("on a phone the sticky buy bar shows only once the buttons scroll off the top", async ({ page, isMobile }) => {
+    test.skip(!isMobile, "Phone layout only");
+    await page.goto(OXFORD);
+    const bar = page.locator("div.fixed.inset-x-0.bottom-0").filter({ has: page.getByRole("button") });
+    await expect(bar).toBeHidden();
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await expect(bar).toBeVisible();
+    // A jump straight back to the top (tapping the status bar) skips past the screen's bottom edge.
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(bar).toBeHidden();
+  });
+
   test("buttons and swatches meet the 44 px touch target", async ({ page }) => {
     await page.goto(OXFORD);
     const targets = page.locator("main fieldset label").or(page.getByRole("button", { name: "Size guide" }));

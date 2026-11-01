@@ -54,13 +54,14 @@ describe("route decisions in the proxy", () => {
     for (const folder of folders) expect(FIXED_SEGMENTS.has(folder), folder).toBe(true);
   });
 
-  it("knows every file app/ serves at the root, and 404s any other file path", () => {
+  it("knows every file app/ and public/ serve at the root, and 404s any other file path", () => {
     // Metadata routes: robots.ts serves /robots.txt, sitemap.ts /sitemap.xml, icon.svg itself.
     const served: Record<string, string> = { "robots.ts": "robots.txt", "sitemap.ts": "sitemap.xml", "manifest.ts": "manifest.webmanifest" };
     const special = new Set(["layout.tsx", "page.tsx", "not-found.tsx", "error.tsx", "global-error.tsx", "loading.tsx", "template.tsx", "default.tsx"]);
     const files = readdirSync(path.resolve("app"), { withFileTypes: true })
       .filter((entry) => entry.isFile() && !special.has(entry.name) && !entry.name.endsWith(".css"))
-      .map((entry) => served[entry.name] ?? entry.name);
+      .map((entry) => served[entry.name] ?? entry.name)
+      .concat(readdirSync(path.resolve("public"), { withFileTypes: true }).flatMap((entry) => (entry.isFile() ? [entry.name] : [])));
     expect(files).toContain("robots.txt");
     for (const file of files) expect(FIXED_FILES.has(file), file).toBe(true);
     for (const file of FIXED_FILES) expect(decideRoute(`/${file}`, routes).action).toBe("pass");

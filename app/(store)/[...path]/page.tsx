@@ -8,6 +8,7 @@ import { resolveListing } from "@/lib/catalog/scope";
 import { describe, listingIndexing } from "@/lib/seo/listing";
 import { t } from "@/lib/i18n";
 import { Breadcrumbs } from "@/components/store/catalog/breadcrumbs";
+import { ListingIntro } from "@/components/store/catalog/listing-intro";
 import { FaqList } from "@/components/store/catalog/faq-list";
 import { CollectionBody } from "@/components/store/catalog/collection-body";
 import { ListingView } from "@/components/store/catalog/listing-view";
@@ -89,7 +90,7 @@ async function CategoryListing({ category, path, query }: { category: CategoryPa
         <header>
           <Breadcrumbs items={trail.map((node) => ({ name: node.name, href: `/${node.path}` }))} />
           <h1 className="mt-3 font-display text-4xl lg:text-5xl">{category.name}</h1>
-          {firstPage && category.intro && <p className="measure mt-4 text-base text-ink lg:text-lg">{category.intro}</p>}
+          {firstPage && category.intro && <ListingIntro text={category.intro} labels={{ more: t("catalog.introMore"), less: t("catalog.introLess") }} />}
           {children.length > 0 && (
             <nav aria-label={t("catalog.browse")} className="-mx-4 mt-6 overflow-x-auto px-4 sm:mx-0 sm:px-0">
               <ul className="flex gap-2 sm:flex-wrap">

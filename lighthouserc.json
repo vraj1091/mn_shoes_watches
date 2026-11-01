@@ -4,7 +4,12 @@
       "startServerCommand": "node scripts/e2e-server.mjs",
       "startServerReadyPattern": "Ready in",
       "startServerReadyTimeout": 180000,
-      "url": ["http://localhost:3210/", "http://localhost:3210/account/sign-in"],
+      "url": [
+        "http://localhost:3210/",
+        "http://localhost:3210/account/sign-in",
+        "http://localhost:3210/mens-shoes",
+        "http://localhost:3210/product/air-jordan-1-high-red-white-black"
+      ],
       "numberOfRuns": 3,
       "settings": {
         "chromeFlags": "--headless=new --no-sandbox"
@@ -22,6 +27,16 @@
             "largest-contentful-paint": ["error", { "maxNumericValue": 2500, "aggregationMethod": "median-run" }],
             "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }],
             "total-blocking-time": ["warn", { "maxNumericValue": 200, "aggregationMethod": "median-run" }]
+          }
+        },
+        {
+          "matchingUrlPattern": "/(mens-shoes|product/)",
+          "assertions": {
+            "categories:performance": ["error", { "minScore": 0.9, "aggregationMethod": "median-run" }],
+            "categories:accessibility": ["error", { "minScore": 0.95 }],
+            "categories:best-practices": ["error", { "minScore": 1 }],
+            "categories:seo": ["error", { "minScore": 1 }],
+            "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }]
           }
         },
         {

@@ -1,14 +1,18 @@
 import Link from "next/link";
+import { env } from "@/lib/env";
 import { t } from "@/lib/i18n";
+import { breadcrumbList } from "@/lib/seo/structured-data";
 import { CaretRightIcon } from "@/components/icons";
+import { JsonLd } from "@/components/seo/json-ld";
 
 export type Crumb = { name: string; href: string };
 
-/** Breadcrumbs; the last item is the current page. BreadcrumbList JSON-LD is added in Phase 5. */
+/** Breadcrumbs, with the same trail as BreadcrumbList JSON-LD; the last item is the current page. */
 export function Breadcrumbs({ items }: { items: Crumb[] }) {
   const all = [{ name: t("common.home"), href: "/" }, ...items];
   return (
     <nav aria-label={t("catalog.breadcrumbs")} className="text-sm text-muted">
+      <JsonLd data={breadcrumbList(env().APP_URL, all)} />
       <ol className="flex flex-wrap items-center gap-x-1 gap-y-1">
         {all.map((crumb, index) => {
           const last = index === all.length - 1;

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { getStoreSettings } from "@/lib/data/store";
+import { openGraph } from "@/lib/seo/open-graph";
 import { SkipLink } from "@/components/store/skip-link";
 import { StoreChrome } from "@/components/store/store-chrome";
 
@@ -9,6 +10,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: { default: settings.storeName, template: `%s | ${settings.storeName}` },
     applicationName: settings.storeName,
+    openGraph: openGraph(settings.storeName),
+    twitter: { card: "summary_large_image" },
   };
 }
 

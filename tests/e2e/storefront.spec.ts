@@ -88,3 +88,47 @@ test.describe("storefront shell", () => {
     await expect(form.getByRole("status")).toHaveText("Thanks. You are on the list.");
   });
 });
+
+test.describe("search engines and link previews", () => {
+  test("robots.txt points at the sitemap, and every sitemap address answers 200", async ({ request }) => {
+    const robots = await (await request.get("/robots.txt")).text();
+    expect(robots).toMatch(/^Sitemap: http:\/\/localhost:\d+\/sitemap\.xml$/m);
+    expect(robots).toContain("Disallow: /checkout");
+
+    const sitemap = await (await request.get("/sitemap.xml")).text();
+    const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => new URL(match[1]!).pathname);
+    expect(urls).toContain("/");
+    expect(urls).toContain("/product/air-jordan-1-high-red-white-black");
+    const failures: string[] = [];
+    for (const url of urls) {
+      const response = await request.get(url, { maxRedirects: 0 });
+      if (response.status() !== 200) failures.push(`${response.status()} ${url}`);
+    }
+    expect(failures).toEqual([]);
+  });
+
+  test("a product page describes itself to search engines and link previews", async ({ page }) => {
+    await page.goto("/product/air-jordan-1-high-red-white-black");
+    const blocks = await page.locator('script[type="application/ld+json"]').allTextContents();
+    const data = blocks.flatMap((block) => [JSON.parse(block)].flat()) as { "@type": string; [key: string]: unknown }[];
+    const product = data.find((item) => item["@type"] === "Product");
+    expect(product).toMatchObject({ name: "Air Jordan 1 High, red, white and black", brand: { name: "Nike" }, offers: { priceCurrency: "INR" } });
+    expect(data.find((item) => item["@type"] === "BreadcrumbList")).toBeTruthy();
+
+    const image = await page.locator('meta[property="og:image"]').first().getAttribute("content");
+    expect(image).toMatch(/^http:\/\/localhost:\d+\/.+\.webp/);
+    await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute("content", "MN Shoes & Watches");
+    await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute("content", "en_IN");
+  });
+
+  test("the home page describes the shop, and other pages fall back to the shop's preview card", async ({ page, request }) => {
+    await page.goto("/");
+    const blocks = await page.locator('script[type="application/ld+json"]').allTextContents();
+    const types = blocks.flatMap((block) => [JSON.parse(block)].flat()).map((item: { "@type": string }) => item["@type"]);
+    expect(types).toEqual(expect.arrayContaining(["Store", "WebSite"]));
+
+    await page.goto("/about");
+    await expect(page.locator('meta[property="og:image"]').first()).toHaveAttribute("content", /\/og\.png$/);
+    expect((await request.get("/og.png")).headers()["content-type"]).toBe("image/png");
+  });
+});

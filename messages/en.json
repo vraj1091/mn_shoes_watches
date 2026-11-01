@@ -223,6 +223,8 @@
     "sessionExpired": "The sign-in took too long. Start again with your email and password."
   },
   "catalog": {
+    "introMore": "Read more",
+    "introLess": "Show less",
     "breadcrumbs": "Breadcrumb",
     "productCount": "{count} products",
     "productCountOne": "1 product",

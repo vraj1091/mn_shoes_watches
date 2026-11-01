@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { connection } from "next/server";
 import { Bodoni_Moda, Instrument_Sans } from "next/font/google";
 import { resolve } from "@/lib/design/tokens";
+import { env } from "@/lib/env";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import "./globals.css";
 
@@ -21,10 +22,16 @@ const sans = Instrument_Sans({
   variable: "--font-instrument",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.APP_URL ?? "http://localhost:3001"),
-  formatDetection: { telephone: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  await connection();
+  const { APP_URL, HIDE_FROM_SEARCH } = env();
+  return {
+    metadataBase: new URL(APP_URL),
+    formatDetection: { telephone: false },
+    // A demo or test copy of the shop stays out of search results; pages that set their own robots are noindex already.
+    ...(HIDE_FROM_SEARCH === "true" ? { robots: { index: false, follow: false } } : {}),
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",

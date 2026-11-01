@@ -275,3 +275,17 @@ export function iconSvg(): string {
     "",
   ].join("\n");
 }
+
+/** The default link preview (1200 × 630) for pages without a photo of their own; npm run tokens renders it to public/og.png. */
+export function ogImageSvg(): string {
+  return [
+    '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">',
+    `  <rect width="1200" height="630" fill="${hex("espresso-800")}"/>`,
+    `  <text x="96" y="300" font-family="Georgia, 'Times New Roman', serif" font-size="92" font-weight="500" fill="${hex("bone-100")}">MN Shoes &amp; Watches</text>`,
+    `  <path d="M98 350h160" stroke="${hex("oxblood-300")}" stroke-width="4" stroke-linecap="round"/>`,
+    `  <text x="96" y="430" font-family="'Segoe UI', Arial, sans-serif" font-size="38" fill="${hex("espresso-300")}">Shoes, watches and perfumes</text>`,
+    `  <text x="96" y="486" font-family="'Segoe UI', Arial, sans-serif" font-size="38" fill="${hex("espresso-300")}">Kalol, Gujarat</text>`,
+    "</svg>",
+    "",
+  ].join("\n");
+}

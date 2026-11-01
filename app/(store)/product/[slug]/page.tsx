@@ -12,6 +12,9 @@ import { initialSelection, isSizeOption, priceSummary } from "@/lib/catalog/vari
 import { videoEmbedUrl } from "@/lib/catalog/video";
 import { formatPrice } from "@/lib/format/money";
 import { describe } from "@/lib/seo/listing";
+import { productLd } from "@/lib/seo/structured-data";
+import { openGraph } from "@/lib/seo/open-graph";
+import { env } from "@/lib/env";
 import { t } from "@/lib/i18n";
 import { ArrowLeftIcon, ArrowRightIcon, CheckIcon, CloseIcon, PlayIcon, ReturnIcon, RulerIcon, ShieldIcon, WarningIcon } from "@/components/icons";
 import { Breadcrumbs } from "@/components/store/catalog/breadcrumbs";
@@ -27,6 +30,7 @@ import { ReviewsSection, Stars } from "@/components/store/product/reviews";
 import { SizeGuide } from "@/components/store/product/size-guide";
 import { WishlistButton } from "@/components/store/shop/wishlist-button";
 import { wishlistLabels } from "@/components/store/shop/labels";
+import { JsonLd } from "@/components/seo/json-ld";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -48,11 +52,19 @@ async function load(params: Props["params"]) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const product = await load(params);
+  const [product, settings] = await Promise.all([load(params), getStoreSettings()]);
   const name = product.brand ? `${product.brand.name} ${product.title}` : product.title;
+  const description = product.metaDescription ?? describe(product.summary ?? product.highlights.join(". "));
   return {
     title: product.metaTitle ?? name,
-    description: product.metaDescription ?? describe(product.summary ?? product.highlights.join(". ")),
+    description,
+    // Shared on WhatsApp or Instagram, the link shows the product photo rather than the shop's card.
+    openGraph: openGraph(settings.storeName, {
+      title: name,
+      description,
+      url: `/product/${product.slug}`,
+      ...(product.images.length > 0 && !product.isPlaceholderPhoto ? { images: product.images.slice(0, 4).map((image) => ({ url: image.url, alt: image.alt })) } : {}),
+    }),
     // ?variant= and tracking parameters all point at the one product URL.
     alternates: { canonical: `/product/${product.slug}` },
     ...(product.noindex ? { robots: { index: false, follow: true } } : {}),
@@ -75,9 +87,11 @@ export default async function ProductPage({ params, searchParams }: Props) {
 
   return (
     <div className="mx-auto max-w-screen-xl px-4 pt-4 pb-4 sm:px-6 lg:px-8 lg:pt-6">
+      <JsonLd data={productLd(env().APP_URL, product, reviews.reviews, settings.storeName)} />
       <Breadcrumbs items={[...trail.map((node) => ({ name: node.name, href: `/${node.path}` })), { name: product.title, href: `/product/${product.slug}` }]} />
 
-      <div className="mt-4 lg:grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-12">
+      {/* Two columns from tablet width, so name, price and "Add to bag" sit beside the photo, not a screen below it. */}
+      <div className="mt-4 md:grid md:grid-cols-2 md:gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-12">
         {product.images.length > 0 ? (
           <Gallery
             images={product.images}
@@ -100,7 +114,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
           </div>
         )}
 
-        <div className="mt-6 lg:sticky lg:top-24 lg:mt-0 lg:self-start">
+        <div className="mt-6 md:sticky md:top-20 md:mt-0 md:self-start xl:top-24">
           {product.brand && (
             <Link href={`/brands/${product.brand.slug}`} className="text-sm font-semibold tracking-wide text-muted uppercase hover:text-accent">
               {product.brand.name}

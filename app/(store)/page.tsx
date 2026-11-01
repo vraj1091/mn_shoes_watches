@@ -11,6 +11,9 @@ import { toCards } from "@/lib/catalog/cards";
 import { descendantIds, productsInCategories, sortProducts } from "@/lib/catalog/query";
 import type { CatalogIndex, IndexedProduct } from "@/lib/catalog/types";
 import { formatPrice } from "@/lib/format/money";
+import { env } from "@/lib/env";
+import { storeLd } from "@/lib/seo/structured-data";
+import { isPlaceholder } from "@/lib/setup-checklist";
 import { t } from "@/lib/i18n";
 import { ArrowLeftIcon, ArrowRightIcon, ReturnIcon, ShieldIcon, StoreIcon, TruckIcon } from "@/components/icons";
 import { ButtonLink } from "@/components/ui/button";
@@ -18,6 +21,7 @@ import { ProductRow } from "@/components/store/catalog/product-row";
 import { HeroCarousel } from "@/components/store/home/hero-carousel";
 import { PostCard } from "@/components/store/post-card";
 import { SectionHeading } from "@/components/store/section-heading";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Stars } from "@/components/store/product/reviews";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -41,8 +45,9 @@ function inCategory(index: CatalogIndex, path: string) {
 }
 
 export default async function HomePage() {
-  const [settings, departments, index, banners, brands, reviews, posts] = await Promise.all([
+  const [settings, location, departments, index, banners, brands, reviews, posts] = await Promise.all([
     getStoreSettings(),
+    getPrimaryLocation(),
     getCategoryNavigation(),
     getCatalogIndex(),
     getHeroBanners(),
@@ -101,8 +106,16 @@ export default async function HomePage() {
     );
   });
 
+  const store = {
+    name: settings.storeName,
+    phone: location?.phone ?? settings.phone,
+    email: settings.email,
+    address: location ? { street: [location.line1, location.line2].filter(Boolean).join(", "), city: location.city, state: location.state, pin: location.pinCode } : null,
+  };
+
   return (
     <>
+      <JsonLd data={storeLd(env().APP_URL, store, isPlaceholder)} />
       {slides.length > 0 ? (
         <HeroCarousel
           slides={slides}

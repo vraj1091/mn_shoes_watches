@@ -10,6 +10,7 @@ import { EmptyState, Pager, Select, StatusBadge, Table, TextInput, td, th } from
 import { PlusIcon, WarningIcon } from "@/components/icons";
 import { ButtonLink, buttonClasses } from "@/components/ui/button";
 import { FormAlert } from "@/components/ui/field";
+import { PhoneFilters } from "@/components/admin/phone-filters";
 
 export const metadata: Metadata = { title: "Products" };
 
@@ -70,57 +71,59 @@ export default async function AdminProductsPage({ searchParams }: Props) {
           Search
           <TextInput name="q" type="search" defaultValue={filters.q} placeholder="Name, SKU or brand" />
         </label>
-        <label className="grid gap-1.5 text-sm font-medium">
-          Status
-          <Select name="status" defaultValue={filters.status}>
-            <option value="">Any</option>
-            {Object.entries(PRODUCT_STATUS_LABELS).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </Select>
-        </label>
-        <label className="grid gap-1.5 text-sm font-medium">
-          Category
-          <Select name="category" defaultValue={filters.category}>
-            <option value="">All</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {" ".repeat(category.depth)}
-                {category.name}
-              </option>
-            ))}
-          </Select>
-        </label>
-        <label className="grid gap-1.5 text-sm font-medium">
-          Brand
-          <Select name="brand" defaultValue={filters.brand}>
-            <option value="">All</option>
-            <option value="none">No brand</option>
-            {brands.map((brand) => (
-              <option key={brand.id} value={brand.id}>
-                {brand.name}
-              </option>
-            ))}
-          </Select>
-        </label>
-        <label className="grid gap-1.5 text-sm font-medium">
-          Stock
-          <Select name="stock" defaultValue={filters.stock}>
-            <option value="">Any</option>
-            <option value="low">Low (≤ {threshold})</option>
-            <option value="out">Sold out</option>
-          </Select>
-        </label>
-        <label className="grid gap-1.5 text-sm font-medium">
-          Photos
-          <Select name="photo" defaultValue={filters.photo}>
-            <option value="">Any</option>
-            <option value="placeholder">Placeholder only</option>
-            <option value="none">No photos</option>
-          </Select>
-        </label>
+        <PhoneFilters label="More filters" open={Boolean(filters.status || filters.category || filters.brand || filters.stock || filters.photo)}>
+          <label className="grid gap-1.5 text-sm font-medium">
+            Status
+            <Select name="status" defaultValue={filters.status}>
+              <option value="">Any</option>
+              {Object.entries(PRODUCT_STATUS_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </Select>
+          </label>
+          <label className="grid gap-1.5 text-sm font-medium">
+            Category
+            <Select name="category" defaultValue={filters.category}>
+              <option value="">All</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {" ".repeat(category.depth)}
+                  {category.name}
+                </option>
+              ))}
+            </Select>
+          </label>
+          <label className="grid gap-1.5 text-sm font-medium">
+            Brand
+            <Select name="brand" defaultValue={filters.brand}>
+              <option value="">All</option>
+              <option value="none">No brand</option>
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id}>
+                  {brand.name}
+                </option>
+              ))}
+            </Select>
+          </label>
+          <label className="grid gap-1.5 text-sm font-medium">
+            Stock
+            <Select name="stock" defaultValue={filters.stock}>
+              <option value="">Any</option>
+              <option value="low">Low (≤ {threshold})</option>
+              <option value="out">Sold out</option>
+            </Select>
+          </label>
+          <label className="grid gap-1.5 text-sm font-medium">
+            Photos
+            <Select name="photo" defaultValue={filters.photo}>
+              <option value="">Any</option>
+              <option value="placeholder">Placeholder only</option>
+              <option value="none">No photos</option>
+            </Select>
+          </label>
+        </PhoneFilters>
         <div className="flex gap-2">
           <button type="submit" className={buttonClasses("secondary", "md")}>
             Filter
