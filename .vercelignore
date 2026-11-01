@@ -1,0 +1,15 @@
+# Never upload these with a `vercel` CLI deploy (the demo normally builds from GitHub, which has none of them).
+# Local secrets and the local database:
+.env
+.env.*
+!.env.example
+data/
+demo-seed/
+# Build output and test reports:
+.next/
+node_modules/
+test-results/
+playwright-report/
+.lighthouseci/
+screenshots/
+coverage/
