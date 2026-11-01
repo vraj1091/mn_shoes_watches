@@ -9,21 +9,27 @@ const securityHeaders = [
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
 ];
 
+// The Vercel demo (DECISIONS.md 76) builds on Vercel, which sets VERCEL=1. The real shop builds a
+// standalone server for Hostinger.
+const vercel = Boolean(process.env.VERCEL);
+
 const nextConfig: NextConfig = {
-  output: "standalone",
+  output: vercel ? undefined : "standalone",
   poweredByHeader: false,
   cacheComponents: true,
   partialPrefetching: true,
   // Production shares the "use cache" store across every Node process on the host through a
-  // SQLite file, so an admin edit refreshes all of them (DECISIONS.md 24). Dev keeps the default.
+  // SQLite file, so an admin edit refreshes all of them (DECISIONS.md 24). Dev keeps the default,
+  // and so does the Vercel demo, whose instances share no disk.
   cacheHandlers:
-    process.env.NODE_ENV === "production" ? { default: path.resolve("cache-handler.mjs") } : undefined,
+    process.env.NODE_ENV === "production" && !vercel ? { default: path.resolve("cache-handler.mjs") } : undefined,
   serverExternalPackages: ["better-sqlite3", "@node-rs/argon2"],
   // sharp (photo uploads and next/image) loads libvips as a separate shared library (.dll on
   // Windows, .so on Linux) that file tracing cannot see, so the standalone build would fall back to
   // sharp's WebAssembly build and fail. Ship the library files with every route (DECISIONS.md 61).
+  // The Vercel demo also ships the database its build prepared (scripts/vercel-build.mjs).
   outputFileTracingIncludes: {
-    "/**": ["./node_modules/@img/sharp-*/lib/**/*"],
+    "/**": ["./node_modules/@img/sharp-*/lib/**/*", ...(vercel ? ["./demo-seed/mn.db"] : [])],
   },
   // Product photos: demo photos in public/demo and uploads under /media. Sources are about
   // 1,000 px, so the largest sizes are left out; WebP only, because AVIF encoding is slow on

@@ -644,3 +644,19 @@ in `app/` or `components/`, so they cannot creep back.
   page; the menu now renders its contents when first opened (a `<dialog>` cannot open without JavaScript, and the
   desktop menu keeps every category link in the HTML for search engines). The deciding numbers are PageSpeed
   Insights on the deployed site and the Lighthouse step in GitHub Actions, which run on steady hardware.
+
+**76. A demo copy on Vercel, kept apart from the real shop's set-up.**
+The owner asked for a demo on Vercel. Vercel runs the app as serverless functions with no lasting disk, while the
+shop is built around one SQLite file on Hostinger (21–22), so the demo works differently and only when the build runs
+on Vercel (`VERCEL=1`); the Hostinger build is unchanged.
+- `vercel.json` runs `scripts/vercel-build.mjs`: it seeds the demo catalogue into `demo-seed/mn.db` (offline copy,
+  production rules, so the owner password must be set), folds the write-ahead log into that one file, then runs
+  `next build`, which ships the file with the server code.
+- At runtime `DATA_DIR=/tmp/mn-data` and `DATA_SEED_DIR=demo-seed`: each new server instance copies the prepared
+  database into `/tmp` before first use (`lib/db/paths.ts`). The search index and page cache rebuild themselves.
+  The SQLite page-cache handler is off on Vercel (instances share no disk), so each instance keeps its own cache.
+- What that means for the demo: orders, sign-ups, admin edits and uploaded photos last only as long as the instance
+  (minutes to hours) and are not shared between instances; every new instance starts again from the demo data.
+  Emails are not sent (`EMAIL_TRANSPORT=outbox`), so customer sign-up codes cannot arrive; guest checkout works.
+  Two-factor sign-in for the admin is off, because a set-up would vanish with the instance. `HIDE_FROM_SEARCH=true`
+  keeps the copy, with its real brand names and placeholder address, out of search engines.

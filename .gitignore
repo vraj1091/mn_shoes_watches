@@ -14,6 +14,8 @@ lib/generated/
 
 # local data: SQLite database, search index, cache, uploads, backups
 data/
+# the Vercel demo's database, made at build time by scripts/vercel-build.mjs
+demo-seed/
 
 # env files (.env.example is committed)
 .env

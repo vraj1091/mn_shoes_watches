@@ -171,3 +171,24 @@ Everything the app writes lives in `DATA_DIR` (default `./data`): `mn.db` (datab
 safe to delete), `search.db` (search index, rebuilt from products), `uploads/` (admin photo uploads, served at
 `/media/…`), backups and the dev email outbox. On a host, `DATA_DIR` must point outside the app folder so
 redeploys cannot overwrite it.
+
+## Demo copy on Vercel
+
+The real shop runs on Hostinger (see above). For showing the shop to others there is also a Vercel set-up
+(`vercel.json`, DECISIONS.md 76): the build prepares the demo database and each server instance starts from a copy
+of it in `/tmp`. The project's environment variables on Vercel:
+
+| Variable | Value |
+|---|---|
+| `APP_URL` | the demo's address, e.g. `https://mn-shoes-watches.vercel.app` |
+| `DATA_DIR` | `/tmp/mn-data` |
+| `DATA_SEED_DIR` | `demo-seed` |
+| `BETTER_AUTH_SECRET`, `APP_ENCRYPTION_KEY` | new values, as in `.env.example` (never the real shop's) |
+| `ADMIN_EMAIL`, `ADMIN_PASSWORD` | the demo's admin login (12+ characters) |
+| `ADMIN_REQUIRE_2FA` | `false` |
+| `EMAIL_TRANSPORT` | `outbox` |
+| `HIDE_FROM_SEARCH` | `true` |
+
+Limits of the demo: changes (orders, admin edits, uploaded photos) last only while a server instance lives and are not
+shared between instances; no emails are sent, so customer sign-up cannot be completed (guest checkout works); it is
+hidden from search engines.
