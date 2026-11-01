@@ -12,6 +12,7 @@ import { sendEmail } from "@/lib/messaging/email";
 import { INDIAN_MOBILE, sendOtpSms } from "@/lib/messaging/sms";
 import { prefixedAuthRateLimit, rateLimit } from "@/lib/security/rate-limit";
 import { AccountCodeEmail, accountCodeSubject, accountCodeText, type CodePurpose } from "@/emails/account-code";
+import { demoSessionCookie } from "./demo-session";
 import { hashPassword, verifyPassword } from "./password";
 import { CODE_RESEND_SECONDS, codeCooldownKey, CUSTOMER_PASSWORD_MAX, CUSTOMER_PASSWORD_MIN, passwordProblem } from "./customer-rules";
 
@@ -70,6 +71,7 @@ function createCustomerAuth() {
       modelName: "customerSession",
       expiresIn: 60 * 60 * 24 * 30,
       updateAge: 60 * 60 * 24,
+      ...demoSessionCookie(60 * 60 * 24 * 30),
     },
     account: {
       modelName: "customerAccount",

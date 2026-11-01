@@ -9,6 +9,7 @@ import { prisma } from "@/lib/db/client";
 import { env } from "@/lib/env";
 import { audit } from "@/lib/admin/audit";
 import { passwordProblem } from "./customer-rules";
+import { demoSessionCookie } from "./demo-session";
 import { hashPassword, verifyPassword, MIN_PASSWORD_LENGTH } from "./password";
 
 /**
@@ -37,6 +38,7 @@ function createStaffAuth() {
       expiresIn: 60 * 60 * 12,
       updateAge: 60 * 30,
       freshAge: 60 * 15,
+      ...demoSessionCookie(60 * 60 * 12),
     },
     account: { modelName: "staffAccount" },
     verification: { modelName: "staffVerification" },
